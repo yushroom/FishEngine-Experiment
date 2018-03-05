@@ -30,6 +30,22 @@ ADD_SUBDIRECTORY(./ThirdParty/glfw/)
 include_directories(./ThirdParty/glfw/include)
 SET_TARGET_PROPERTIES(glfw PROPERTIES FOLDER "ThirdParty")
 
+if (MSVC)
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251" )
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
+    include_directories(./ThirdParty/glew/include)
+    #set(BUILD_UTILS OFF CACHE BOOL "" FORCE)
+    ADD_SUBDIRECTORY(./ThirdParty/glew/build/cmake)
+
+    # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    # set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    # set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+    # set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
+    SET_TARGET_PROPERTIES(glew PROPERTIES FOLDER "ThirdParty/glew")
+    SET_TARGET_PROPERTIES(glew_s PROPERTIES FOLDER "ThirdParty/glew")
+endif()
+
+
 
 # Autodesk FBX sdk
 # SET( FBXSDK_DIR "" CACHE PATH "Autodesk FBX SDK root directory" )
