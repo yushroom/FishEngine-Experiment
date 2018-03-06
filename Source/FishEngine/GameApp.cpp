@@ -1,5 +1,14 @@
 #include <FishEngine/GameApp.hpp>
-#define GLFW_INCLUDE_GLCOREARB
+
+#include <FishEngine/FishEngine.hpp>
+
+#if FISHENGINE_PLATFORM_WINDOWS
+#	include <GL/glew.h>
+#endif
+
+#if FISHENGINE_PLATFORM_APPLE
+#	define GLFW_INCLUDE_GLCOREARB
+#endif
 #include <GLFW/glfw3.h>
 
 #include <FishEngine/FishEngine.hpp>
@@ -33,6 +42,16 @@ namespace FishEngine
         m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, "FishEngine", nullptr, nullptr);
         glfwMakeContextCurrent(m_window);
         glfwSwapInterval(0);
+
+#if FISHENGINE_PLATFORM_WINDOWS
+		glewExperimental = GL_TRUE;
+		auto err = glewInit();
+		if (err != GLEW_OK)
+		{
+			printf("GLEW not initialized");
+			abort();
+		}
+#endif
 		
 		glfwSetWindowSizeCallback(m_window, GameApp::WindowSizeCallback);
 		glfwSetKeyCallback(m_window, GameApp::KeyCallBack);
