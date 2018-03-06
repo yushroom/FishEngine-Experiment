@@ -4,6 +4,7 @@
 #include "Object.hpp"
 #include "Scene.hpp"
 #include "Component.hpp"
+#include "Transform.hpp"
 
 #include <list>
 #include <vector>
@@ -66,6 +67,21 @@ namespace FishEngine
 		
 		Component* GetComponent(int classID)
 		{
+			return nullptr;
+		}
+		
+		template<class T>
+		T* GetComponentInChildren()
+		{
+			for (auto child : m_transform->GetChildren())
+			{
+				auto ret = child->gameObject()->GetComponent<T>();
+				if (ret != nullptr)
+					return ret;
+				ret = child->gameObject()->GetComponentInChildren<T>();
+				if (ret != nullptr)
+					return ret;
+			}
 			return nullptr;
 		}
 		
