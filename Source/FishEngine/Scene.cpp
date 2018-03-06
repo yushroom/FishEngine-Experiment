@@ -1,10 +1,20 @@
 #include <FishEngine/Scene.hpp>
-
+#include <FishEngine/GameObject.hpp>
 #include <FishEngine/Transform.hpp>
 
 namespace FishEngine
 {
 	Scene* SceneManager::s_activeScene = nullptr;
+	
+//	std::vector<GameObject*> Scene::GetRootGameObjects()
+//	{
+//		std::vector<GameObject*> result;
+//		for (auto t : m_rootTransforms)
+//		{
+//			result.push_back(t->gameObject());
+//		}
+//		return result;
+//	}
 	
 	void Scene::AddTransform(Transform* t)
 	{

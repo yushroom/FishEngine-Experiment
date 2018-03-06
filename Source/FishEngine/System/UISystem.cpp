@@ -4,10 +4,12 @@
 
 #include <FishEngine/Object.hpp>
 #include <FishEngine/GameObject.hpp>
+#include <FishEngine/Transform.hpp>
 #include <FishEngine/RectTransform.hpp>
 
 #define NANOVG_GL3_IMPLEMENTATION
 #include <nanovg/nanovg_gl.h>
+
 
 // Returns 1 if col.rgba is 0.0f,0.0f,0.0f,0.0f, 0 otherwise
 int isBlack(NVGcolor col)
@@ -129,8 +131,44 @@ namespace FishEngine
 		nvgBeginFrame(m_context, windowWidth, windowHeight, pxRatio);
 	}
 	
+	RectTransform* GetRootUI()
+	{
+		auto scene = SceneManager::GetActiveScene();
+		auto& rts = Object::FindObjectsOfType<RectTransform>();
+		if (scene->GetRootCount() < rts.size())
+		{
+			for (auto t : scene->GetRootTransforms())
+			{
+				auto rt = t->gameObject()->GetComponent<RectTransform>();
+				if (rt != nullptr)
+				{
+					return rt;
+				}
+			}
+		}
+		else
+		{
+			for (auto r : rts)
+			{
+				auto rr = dynamic_cast<RectTransform*>(r);
+				if (rr->transform()->GetParent() == nullptr)
+				{
+					return rr;
+				}
+			}
+		}
+		return nullptr;
+	}
+	
 	void UISystem::Update()
 	{
+		RectTransform* root = GetRootUI();
+		root->m_Rect.m_XMin = 0;
+		root->m_Rect.m_YMin = 0;
+		root->m_Rect.m_Width = Screen::width();
+		root->m_Rect.m_Height = Screen::height();
+		root->Update();
+		
 		auto rts = Object::FindObjectsOfType<RectTransform>();
 		RectTransform* rt = nullptr;
 		for (auto r : rts)
@@ -142,29 +180,12 @@ namespace FishEngine
 				break;
 			}
 		}
-		
-//		rt->m_AnchorMin = rt->m_AnchorMax = Vector2(0.5, 0.0);
-//		rt->m_AnchoredPosition = Vector2(0, 83);
-//		rt->m_SizeDelta = Vector2(160, 60);
-//		rt->m_Pivot = Vector2(0.5, 0);
-		
-		Vector2 parentRect{640, 1136};
-		assert(rt->m_AnchorMin == rt->m_AnchorMax);
-		Vector2 anchor;
-		anchor.x = parentRect.x * rt->m_AnchorMin.x;
-		anchor.y = parentRect.y * rt->m_AnchorMin.y;
-//		auto anchor = parentRect * rt->m_AnchorMin;
-		int width = rt->m_SizeDelta.x;
-		int height = rt->m_SizeDelta.y;
-		auto pivot = rt->m_Pivot;
-		pivot.x *= width;
-		pivot.y *= height;
-		auto pivotP = anchor + rt->m_AnchoredPosition;
-//		pos + pivot = pivotP
-		Vector2 pos = pivotP - pivot;
-//		printf("pos:(%f, %f)\n", pos.x, pos.y);
-		
-		drawButton(m_context, 0, "Rotate", pos.x/2, 1136/2 - pos.y/2 - height/2, width/2, height/2, nvgRGBA(255,255,255,255));
+		assert(rt != nullptr);
+		auto r = rt->m_Rect;
+
+		int windowHeight = Screen::height()/ Screen::pixelsPerPoint();
+		int p = Screen::pixelsPerPoint();
+		drawButton(m_context, 0, "Rotate", r.x()/p, windowHeight - r.y()/p - r.height()/p, r.width()/p, r.height()/p, nvgRGBA(255,255,255,255));
 	}
 	
 	void UISystem::AfterDraw()

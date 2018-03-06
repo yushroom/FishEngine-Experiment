@@ -3,6 +3,7 @@
 #include <FishEngine/Script.hpp>
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/ScriptSystem.hpp>
+#include <FishEngine/System/InputSystem.hpp>
 
 #include <FishEngine/Render/Material.hpp>
 
@@ -13,7 +14,7 @@ namespace FishEngine
         puts("======== Start ========");
 		
 		Material::StaticInit();
-		
+		InputSystem::GetInstance().Init();
 		ScriptSystem::GetInstance().Init();
 		UISystem::GetInstance().Init();
 		for (auto o : Object::FindObjectsOfType<GameObject>())

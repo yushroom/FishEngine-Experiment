@@ -12,20 +12,22 @@
 
 #include <FishEngine/Render/Material.hpp>
 
+//#include <typeindex>
+
 namespace FishEngine
 {
-	template<class T>
-	T* GetComponent(GameObject* go)
-	{
-		for (auto c : go->m_components)
-		{
-			if (typeid(*c) == typeid(T))
-			{
-				return dynamic_cast<T*>(c);
-			}
-		}
-		return nullptr;
-	}
+//	template<class T>
+//	T* GetComponent(GameObject* go)
+//	{
+//		for (auto c : go->m_components)
+//		{
+//			if (typeid(*c).hash_code() == typeid(T).hash_code())
+//			{
+//				return dynamic_cast<T*>(c);
+//			}
+//		}
+//		return nullptr;
+//	}
 	
 	void RenderSystem::Update()
 	{
@@ -51,7 +53,8 @@ namespace FishEngine
 		for (auto mf : mfs)
 		{
 			auto go = ((MeshRenderer*)mf)->gameObject();
-			auto mr = GetComponent<MeshRenderer>(go);
+//			auto mr = GetComponent<MeshRenderer>(go);
+			auto mr = go->GetComponent<MeshRenderer>();
 			if (mr != nullptr)
 			{
 				intersection.push_back(go);
@@ -59,10 +62,10 @@ namespace FishEngine
 		}
 		for (auto go : intersection)
 		{
-			auto mesh = GetComponent<MeshFilter>(go)->m_mesh;
+			auto mesh = go->GetComponent<MeshFilter>()->m_mesh;
 			if (mesh != nullptr)
 			{
-				auto material = GetComponent<MeshRenderer>(go)->m_material;
+				auto material = go->GetComponent<MeshRenderer>()->m_material;
 				if (material == nullptr)
 					material = Material::GetErrorMaterial();
 				auto& model = go->m_transform->localToWorldMatrix();

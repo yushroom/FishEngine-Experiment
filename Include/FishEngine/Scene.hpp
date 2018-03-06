@@ -5,6 +5,7 @@
 
 namespace FishEngine
 {
+	class GameObject;
 	class Transform;
 	
 	class Scene
@@ -19,6 +20,12 @@ namespace FishEngine
 		{
 			return m_rootTransforms.size();
 		}
+		
+		const std::vector<Transform*>& GetRootTransforms()
+		{
+			return m_rootTransforms;
+		}
+//		std::vector<GameObject*> GetRootGameObjects();
 		
 		void AddTransform(Transform* t);
 		

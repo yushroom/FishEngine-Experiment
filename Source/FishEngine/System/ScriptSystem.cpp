@@ -46,7 +46,6 @@ namespace FishEngine
 		// object fei_module = import("FishEngineInternal");
 		// main_namespace["precreated_object"] = Base("created on C++ side");
 		// exec_file("testFishEngine.py", main_namespace, main_namespace);
-		//        FishEngine::Run();
 		{
 			s_appModule = import("app");
 			auto Start = s_appModule.attr("Start");

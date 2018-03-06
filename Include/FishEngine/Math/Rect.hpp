@@ -11,13 +11,16 @@ namespace FishEngine
 	{
 //		InjectSerializationFunctionsNonPolymorphic(Rect);
 
-	private:
-		float m_XMin;
-		float m_YMin;
-		float m_Width;
-		float m_Height;
+//	private:
+	public:
+		float m_XMin = 0;
+		float m_YMin = 0;
+		float m_Width = 0;
+		float m_Height = 0;
 
 	public:
+		
+		Rect() = default;
 
 		Rect(float x, float y, float width, float height)
 		{

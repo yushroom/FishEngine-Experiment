@@ -130,6 +130,10 @@ BOOST_PYTHON_MODULE(FishEngineInternal)
 		.def_readwrite("x", &Vector2::x)
 		.def_readwrite("y", &Vector2::y)
 		.def("Set", &Vector2::Set)
+		.def(self+Vector2())
+		.def(self-Vector2())
+		.def(self*float())
+		.def(float()*self)
 	;
 
     // Vector3
@@ -143,6 +147,8 @@ BOOST_PYTHON_MODULE(FishEngineInternal)
 		.def(self+Vector3())
 		.def(self-Vector3())
 		.def(self*Vector3())
+		.def(self*float())
+		.def(float()*self)
 		.def("Dot", &Vector3::Dot).staticmethod("Dot")
     ;
 
