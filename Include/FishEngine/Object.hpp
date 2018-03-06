@@ -32,6 +32,7 @@ namespace FishEngine
         std::string name;
         int instanceID;
 		
+//		virtual int GetClassID() = 0;
 		
 //		static void Destroy(Object* obj)
 //		{

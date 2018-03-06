@@ -240,6 +240,11 @@ namespace FishEngine
 			std::swap(c[index], c[old]);
 			m_RootOrder = index;
 		}
+		
+		const std::vector<Transform*>& GetChildren() const
+		{
+			return m_children;
+		}
 
     protected:
 		friend class GameObject;

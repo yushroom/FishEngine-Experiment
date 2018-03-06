@@ -2,6 +2,7 @@
 
 #include "Component.hpp"
 #include "Math/Vector2.hpp"
+#include "Math/Rect.hpp"
 
 namespace FishEngine
 {
@@ -18,6 +19,8 @@ namespace FishEngine
 		Vector2 m_SizeDelta = {100, 100};
 		Vector2 m_Pivot = {0.5f, 0.5f};
 		
+		mutable Rect m_Rect;
+		
 	public:
 		RectTransform()
 		{
@@ -28,6 +31,8 @@ namespace FishEngine
 		{
 			Object::s_objects[ClassID].erase(this);
 		}
+		
+		void Update();
 		
 		// for python
 		RectTransform* Create();

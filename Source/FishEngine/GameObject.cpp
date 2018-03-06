@@ -5,15 +5,11 @@
 
 namespace FishEngine
 {
-//	constexpr int GameObject::ClassID;
-//    std::list<GameObject*> GameObject::s_gameObjects;
-
     GameObject::GameObject(const std::string& name)
     {
         LOGF;
         this->name = name;
 		m_scene = SceneManager::GetActiveScene();
-//        s_gameObjects.push_back(this);
         m_transform = new Transform();
 		m_scene->AddTransform(m_transform);
         m_transform->m_gameObject = this;
@@ -47,8 +43,6 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 		LOGF;
-//		delete m_transform;
-//		s_gameObjects.remove(this);
 		Object::s_objects[ClassID].erase(this);
 		for (auto comp : m_components)
 		{
@@ -59,17 +53,9 @@ namespace FishEngine
 
 	void GameObject::AddComponent(Component* comp)
 	{
-//		LOGF;
 		m_components.push_back(comp);
 		comp->m_gameObject = this;
 	}
-	
-//	void GameObject::AddScript(Script* comp)
-//	{
-//		LOGF;
-//		m_components.push_back(comp);
-//		comp->m_gameObject = this;
-//	}
 	
 //	void GameObject::AddRectTransform(RectTransform* t)
 //	{
