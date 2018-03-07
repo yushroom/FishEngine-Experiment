@@ -13,7 +13,23 @@ class AssetDataBase:
 
     @staticmethod
     def GUIDToImporter(guid:str)->str:
-        return AssetDataBase.s_GUIDToImporter[guid]
+        if guid in AssetDataBase.s_GUIDToImporter:
+            return AssetDataBase.s_GUIDToImporter[guid]
+
+        from . import FBXImporter, UnityPrefabImporter
+        fullpath = AssetDataBase.GUIDToAssetPath(guid)
+        ext = fullpath.split('.')[-1].lower()
+        if ext == 'fbx':
+            print("imporing fbx:", fullpath)
+            importer = FBXImporter()
+            print("[TODO] FBXImporter.globalScale")
+            importer.globalScale = 100
+            importer.Import(fullpath)
+        elif ext == 'prefab':
+            print("imporing prefab:", fullpath)
+            importer = UnityPrefabImporter(fullpath)
+        AssetDataBase.s_GUIDToImporter[guid] = importer
+        return importer
 
     @staticmethod
     def StaticClean():
