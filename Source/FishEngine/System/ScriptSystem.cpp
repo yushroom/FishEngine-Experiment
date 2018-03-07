@@ -38,7 +38,7 @@ using namespace FishEngine;
 namespace py = pybind11;
 
 
-py::object FindObjectOfType(int classID)
+py::handle FindObjectOfType(int classID)
 {
 	auto& objs = Object::FindObjectsOfType(classID);
 	if (objs.size() == 0)
@@ -54,16 +54,11 @@ py::object FindObjectsOfType(int classID)
 	{
 		auto self = o->GetPyObject();
 		assert(!self.is(py::none()));
-		//PyList_Append(ret, self);
+		ret.append(self);
 	}
 	return ret;
 }
 
-//#define DefClassID \
-//int GameObjectClassID()
-//{
-//
-//}
 
 #define DefObject(classname) \
 	m.def("Create"##classname, [](){ return new classname();}, return_value_policy::reference); \

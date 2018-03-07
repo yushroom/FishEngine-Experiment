@@ -10,13 +10,6 @@
 
 namespace FishEngine
 {
-//	template<class T>
-//	constexpr int ClassID()
-//	{
-////		static_assert(std::is_integral<T::ClassID>::value, "ClassID<T> not implemented");
-//		return T::ClassID;
-//	}
-	
     class Object
     {
     public:
@@ -36,13 +29,13 @@ namespace FishEngine
 			return m_classID;
 		}
 		
-		void SetObject(const pybind11::object& obj)
+		void SetObject(const pybind11::handle& obj)
 		{
 			LOGF;
 			m_self = obj;
 		}
 		
-		pybind11::object GetPyObject() const
+		pybind11::handle GetPyObject() const
 		{
 			return m_self;
 		}
@@ -90,8 +83,8 @@ namespace FishEngine
 		static int s_deleteCounter;
 		
 		int m_classID = 0;
-		pybind11::object m_self;
-		//pybind11::handle m_self;
+		//pybind11::object m_self;
+		pybind11::handle m_self;
 		
 	private:
 		static std::unordered_map<int, std::unordered_set<Object*>> s_objects;
@@ -114,14 +107,4 @@ namespace FishEngine
 	}
 
 }
-
-//namespace std {
-//	template<>
-//	struct hash<FishEngine::Object>
-//	{
-//		size_t operator()(const FishEngine::Object& o) const {
-//			return o.instanceID;
-//		}
-//	};
-//}
 

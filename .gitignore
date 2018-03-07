@@ -3,3 +3,4 @@ __pycache__/
 .vscode/
 *.pyc
 /ThirdParty/FBX\ SDK/
+/ThirdParty/glew/glew.pc

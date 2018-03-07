@@ -32,7 +32,6 @@ int main(int argc, char** argv)
     } catch (error_already_set& e) {
         std::cerr << ">>> Error! Uncaught exception:\n";
 		std::cerr << e.what() << std::endl;
-        PyErr_PrintEx(0);
         return 1;
     }
     return 0;

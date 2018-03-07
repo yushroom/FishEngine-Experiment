@@ -41,10 +41,11 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 		LOGF;
-		for (auto comp : m_components)
-		{
-			delete comp;
-		}
+		//for (auto comp : m_components)
+		//{
+		//	delete comp;
+		//}
+		delete m_transform;
 		m_transform = nullptr;
 	}
 
