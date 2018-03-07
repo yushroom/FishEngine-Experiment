@@ -24,7 +24,7 @@ class GameObject(Object):
         from . import Transform, Prefab
         super().__init__()
         self.__components = []
-        self.m_CachedPtr = FishEngineInternal.GameObject.Create(name)
+        self.m_CachedPtr = FishEngineInternal.GameObject(name)
         self.__transform = Transform()
         # if useRectTransform:
         #     self.m_CachedPtr = FishEngineInternal.GameObject.CreateWithTransform(name)

@@ -1,32 +1,23 @@
 #include <FishEditor/FishEditorInternal.hpp>
 #include "FBXImporter.cpp"
 
-#include <boost/python.hpp>
+#include <pybind11/embed.h>
 
 using namespace FishEditor;
 
 
-BOOST_PYTHON_MODULE(FishEditorInternal)
+PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 {
-	using namespace boost::python;
+	using namespace pybind11;
 	
-	class_<FBXImporter, boost::noncopyable>("FBXImporter")
-		.def("Create", &FBXImporter::Create, return_value_policy<manage_new_object>())
+	class_<FBXImporter>(m, "FBXImporter")
+		.def(init<>())
 		.def("Import", &FBXImporter::Import)
-		.def("GetMeshByName", &FBXImporter::GetMeshByName, return_internal_reference<>())
+		.def("GetMeshByName", &FBXImporter::GetMeshByName, return_value_policy::reference)
 		.def_readwrite("globalScale", &FBXImporter::m_globalScale)
 	;
 }
 
-#if PY_MAJOR_VERSION >= 3
-#   define INIT_MODULE PyInit_FishEditorInternal
-extern "C" PyObject* INIT_MODULE();
-#else
-#   define INIT_MODULE initFishEditorInternal
-extern "C" void INIT_MODULE();
-#endif
-
 void FishEditor::Init()
 {
-	PyImport_AppendInittab("FishEditorInternal", INIT_MODULE);
 }

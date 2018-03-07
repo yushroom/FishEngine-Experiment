@@ -70,7 +70,7 @@ class Material(Object):
 
     def __init__(self):
         super().__init__()
-        self.m_CachedPtr = FishEngineInternal.Material.Create()
+        self.m_CachedPtr = FishEngineInternal.Material()
         self.__shader:Shader = None
 
     @staticmethod

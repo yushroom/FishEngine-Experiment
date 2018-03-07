@@ -1,15 +1,13 @@
 #include <FishEngine/FishEngine.hpp>
-
-#include <boost/python.hpp>
-#include <iostream>
 #include <FishEngine/GameApp.hpp>
 
-using namespace boost::python;
-// namespace bp = boost::python;
+#include <iostream>
+
+
+#include <pybind11/pybind11.h>
+using namespace pybind11;
 
 #include <FishEditor/FishEditorInternal.hpp>
-
-#include <cstdlib>  // setenv
 
 class TestApp : public FishEngine::GameApp
 {
@@ -33,6 +31,7 @@ int main(int argc, char** argv)
 		app.Run();
     } catch (error_already_set& e) {
         std::cerr << ">>> Error! Uncaught exception:\n";
+		std::cerr << e.what() << std::endl;
         PyErr_PrintEx(0);
         return 1;
     }

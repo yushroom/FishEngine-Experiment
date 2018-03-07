@@ -33,8 +33,5 @@ namespace FishEngine
 		}
 		
 		void Update();
-		
-		// for python
-		RectTransform* Create();
 	};
 }

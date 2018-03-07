@@ -98,7 +98,7 @@ int CreateFont(NVGcontext* vg, const char* name, const char* path)
 	const std::string font_root = R"(D:\program\FishEngine-Experiment\Assets\Fonts\)";
 #else
 #endif
-	auto font = nvgCreateFont(vg, "icons", (font_root+path).c_str());
+	auto font = nvgCreateFont(vg, name, (font_root+path).c_str());
 	if (font == -1) {
 		printf("Could not add font icons: %s", path);
 		abort();
@@ -115,9 +115,9 @@ namespace FishEngine
 		m_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 		
 		auto fontIcons = CreateFont(m_context, "icons", "entypo.ttf");
-		auto fontNormal = nvgCreateFont(m_context, "sans", "Roboto-Regular.ttf");
-		auto fontBold = nvgCreateFont(m_context, "sans-bold", "Roboto-Bold.ttf");
-		auto fontEmoji = nvgCreateFont(m_context, "emoji", "NotoEmoji-Regular.ttf");
+		auto fontNormal = CreateFont(m_context, "sans", "Roboto-Regular.ttf");
+		auto fontBold = CreateFont(m_context, "sans-bold", "Roboto-Bold.ttf");
+		auto fontEmoji = CreateFont(m_context, "emoji", "NotoEmoji-Regular.ttf");
 		nvgAddFallbackFontId(m_context, fontNormal, fontEmoji);
 		nvgAddFallbackFontId(m_context, fontBold, fontEmoji);
 	}

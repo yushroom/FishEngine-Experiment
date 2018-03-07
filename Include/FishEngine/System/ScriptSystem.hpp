@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <boost/python/object.hpp>
-
 namespace FishEngine
 {
 	class ScriptSystem
@@ -20,8 +18,5 @@ namespace FishEngine
 		
 	protected:
 		ScriptSystem() = default;
-		
-//	private:
-//		boost::python::object m_appModule;
 	};
 }

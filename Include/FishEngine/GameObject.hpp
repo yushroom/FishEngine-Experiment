@@ -24,18 +24,7 @@ namespace FishEngine
 		
         GameObject(const std::string& name = "GameObject");
 		~GameObject();
-		
-//		virtual int GetClassID() override
-//		{
-//			return ClassID
-//		}
-		
-		// for python
-		static GameObject* Create(const std::string& name)
-		{
-			return new GameObject(name);
-		}
-		
+
         // for python
 		// create GameObject and bind transform
 //		static GameObject* CreateWithTransform(const std::string& name = "GameObject");

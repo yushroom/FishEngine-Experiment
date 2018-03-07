@@ -27,12 +27,6 @@ namespace FishEngine
 			Object::s_objects[ClassID].erase(this);
 		}
 		
-		// for python
-		static Material* Create()
-		{
-			return new Material();
-		}
-		
 		Shader* GetShader() const
 		{
 			return m_shader;

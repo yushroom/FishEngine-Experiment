@@ -4,11 +4,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "FishEngine.hpp"
-//#include <Python.h>
-#include <boost/python/detail/wrap_python.hpp>
-//#include <functional>	// hash
 
-//struct PyObject;
+#include <pybind11/pybind11.h>
+//#include <functional>	// hash
 
 namespace FishEngine
 {
@@ -23,7 +21,7 @@ namespace FishEngine
     {
     public:
 
-		Object(PyObject* pyobj = nullptr);
+		Object();
 		virtual ~Object() = 0;
 		
 		// noncopyable
@@ -33,20 +31,13 @@ namespace FishEngine
         std::string name;
         int instanceID;
 		
-//		virtual int GetClassID() = 0;
-		
-//		static void Destroy(Object* obj)
-//		{
-//			delete obj;
-//		}
-		
-		void SetObject(PyObject* obj)
+		void SetObject(const pybind11::object& obj)
 		{
 			LOGF;
 			m_self = obj;
 		}
 		
-		PyObject* GetPyObject() const
+		pybind11::object GetPyObject() const
 		{
 			return m_self;
 		}
@@ -88,13 +79,13 @@ namespace FishEngine
         static int s_instanceCounter;
 		static int s_deleteCounter;
 		
-		PyObject* m_self = nullptr;
+		pybind11::object m_self;
 		
 	public:
 		static std::unordered_map<int, std::unordered_set<Object*>> s_objects;
     };
 	
-	inline Object::Object(PyObject* pyobj) : m_self(pyobj)
+	inline Object::Object()
 	{
 		++s_instanceCounter;
 		instanceID = s_instanceCounter;

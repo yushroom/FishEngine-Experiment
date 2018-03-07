@@ -74,5 +74,5 @@ namespace FishEngine
 		}
 	}
 	
-	glCheckError();
+	//glCheckError();
 }
