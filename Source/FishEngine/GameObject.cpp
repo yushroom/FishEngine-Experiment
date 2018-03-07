@@ -5,7 +5,7 @@
 
 namespace FishEngine
 {
-    GameObject::GameObject(const std::string& name)
+    GameObject::GameObject(const std::string& name) : Object(GameObject::ClassID)
     {
         LOGF;
         this->name = name;
@@ -14,8 +14,6 @@ namespace FishEngine
 		m_scene->AddTransform(m_transform);
         m_transform->m_gameObject = this;
         m_components.push_back(m_transform);
-		
-		Object::s_objects[ClassID].insert(this);
     }
 	
 //	// for python
@@ -43,7 +41,6 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 		LOGF;
-		Object::s_objects[ClassID].erase(this);
 		for (auto comp : m_components)
 		{
 			delete comp;

@@ -20,7 +20,8 @@ namespace FishEngine
 			   std::vector<Vector2>	&& uv,
 			   std::vector<Vector3>	&& tangents,
 			   std::vector<uint32_t>	&& triangles)
-		: m_vertices(vertices),
+		: Object(Mesh::ClassID),
+		m_vertices(vertices),
 		m_normals(normals),
 		m_uv(uv),
 		m_tangents(tangents),

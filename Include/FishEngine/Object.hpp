@@ -21,7 +21,7 @@ namespace FishEngine
     {
     public:
 
-		Object();
+		Object(int classID);
 		virtual ~Object() = 0;
 		
 		// noncopyable
@@ -30,6 +30,11 @@ namespace FishEngine
 
         std::string name;
         int instanceID;
+
+		int GetClassID() const
+		{
+			return m_classID;
+		}
 		
 		void SetObject(const pybind11::object& obj)
 		{
@@ -74,29 +79,38 @@ namespace FishEngine
 		{
 			return s_objects[classID];
 		}
+
+		static const std::unordered_map<int, std::unordered_set<Object*>>& GetAllObjects()
+		{
+			return s_objects;
+		}
 		
     protected:
         static int s_instanceCounter;
 		static int s_deleteCounter;
 		
+		int m_classID = 0;
 		pybind11::object m_self;
+		//pybind11::handle m_self;
 		
-	public:
+	private:
 		static std::unordered_map<int, std::unordered_set<Object*>> s_objects;
-    };
+	};
 	
-	inline Object::Object()
+	inline Object::Object(int classID) : m_classID(classID)
 	{
 		++s_instanceCounter;
 		instanceID = s_instanceCounter;
 //		printf("Object::Object() ID=%d\n", instanceID);
+		s_objects[classID].insert(this);
 	}
 	
 	inline Object::~Object()
 	{
 //		LOGF;
-//		printf("Object::~Object() ID=%d\n", instanceID);
+		printf("Object::~Object() ID=%d\n", instanceID);
 		++s_deleteCounter;
+		Object::s_objects[m_classID].erase(this);
 	}
 
 }

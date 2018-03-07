@@ -14,7 +14,10 @@ namespace FishEngine
 	{
 		friend class RawMesh;
 	public:
-		Mesh()
+
+		enum { ClassID = 43};
+
+		Mesh() : Object(Mesh::ClassID)
 		{
 			LOGF;
 		}
@@ -32,7 +35,7 @@ namespace FishEngine
 		
 		void Clear();
 		
-		// -1: reander all submeshes
+		// -1: render all sub meshes
 		void Render(int subMeshIndex = -1);
 		
 //		void RenderSkinned();

@@ -29,16 +29,14 @@ namespace FishEngine
 	public:
 		enum {ClassID = 108};
 		
-		Light()
+		Light() : Behaviour(Light::ClassID)
 		{
 			LOGF;
-			Object::s_objects[ClassID].insert(this);
 		}
 		
 		~Light()
 		{
 			LOGF;
-			Object::s_objects[ClassID].erase(this);
 		}
 
 //		static LightPtr Create();

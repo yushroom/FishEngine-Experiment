@@ -18,10 +18,9 @@ namespace FishEngine
 //		static constexpr int ClassID = 4;
 		enum {ClassID = 4};
 
-        Transform() : m_localRotation(0, 0, 0, 1), m_localPosition(0, 0, 0), m_localScale(1, 1, 1)
+        Transform() : Component(Transform::ClassID)
         {
             LOGF;
-			Object::s_objects[ClassID].insert(this);
         }
 		
 		virtual ~Transform();

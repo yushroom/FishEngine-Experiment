@@ -18,10 +18,9 @@ namespace FishEngine
 	public:
 		enum {ClassID = 48};
 		
-		Shader()
+		Shader() : Object(Shader::ClassID)
 		{
 			LOGF;
-			Object::s_objects[ClassID].insert(this);
 		}
 		Shader(const Shader&) = delete;
 		const Shader& operator=(const Shader&) = delete;

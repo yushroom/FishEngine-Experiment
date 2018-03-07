@@ -198,7 +198,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 #if 1
 	class_<Script, Component>(m, "Script")
-		;
+		.def(init<>())
+	;
 #else
 	// Script
 	class_<ScriptWrap, bases<Component>, Script*, boost::noncopyable>("Script")
@@ -305,8 +306,11 @@ namespace FishEngine
 	
 	void ScriptSystem::Clean()
 	{
-		auto app = py::module::import("app");
-		app.attr("Clean")();
+		// note this {}
+		{
+			auto app = py::module::import("app");
+			app.attr("Clean")();
+		}
 		py::finalize_interpreter();
 	}
 	

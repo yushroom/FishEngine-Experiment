@@ -13,10 +13,9 @@ namespace FishEngine
 		
 		enum {ClassID = 21};
 		
-		Material()
+		Material() : Object(Material::ClassID)
 		{
 //			LOGF;
-			Object::s_objects[ClassID].insert(this);
 		}
 		Material(const Material&) = delete;
 		const Material& operator=(const Material&) = delete;
@@ -24,7 +23,6 @@ namespace FishEngine
 		~Material()
 		{
 //			LOGF;
-			Object::s_objects[ClassID].erase(this);
 		}
 		
 		Shader* GetShader() const

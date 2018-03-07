@@ -8,11 +8,12 @@ class AssetImporter:
         
     @property
     def assetPath(self)->str:
-        pass
+        raise NotImplementedError
 
     def SaveAndReimport(self):
-        pass
+        from . import AssetDataBase
+        AssetDataBase.ImportAsset(self.assetPath)
 
     @staticmethod
     def GetAtPath(path:str)->'AssetImporter':
-        pass
+        raise NotImplementedError

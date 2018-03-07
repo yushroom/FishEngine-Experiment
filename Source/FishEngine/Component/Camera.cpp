@@ -37,12 +37,12 @@ namespace FishEngine
 //		return camera;
 //	}
 
-	Camera::Camera(float fov, float zNear, float zFar)
-		: m_fieldOfView(fov), m_farClipPlane(zFar), m_nearClipPlane(zNear)
-	{
-		//m_focusPoint = transform()->position() + transform()->forward() * 5.f;
-//		ResetAspect();
-	}
+//	Camera::Camera(float fov, float zNear, float zFar)
+//		: m_fieldOfView(fov), m_farClipPlane(zFar), m_nearClipPlane(zNear)
+//	{
+//		//m_focusPoint = transform()->position() + transform()->forward() * 5.f;
+////		ResetAspect();
+//	}
 
 
 	const Matrix4x4& Camera::projectionMatrix() const

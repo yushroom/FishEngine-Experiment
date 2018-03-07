@@ -12,6 +12,11 @@ namespace FishEngine
 
 //		DefineComponent(Behaviour)
 
+		Behaviour(int classID) : Component(classID)
+		{
+
+		}
+
 		virtual ~Behaviour() = default;
 
 		// Enabled Behaviours are Updated, disabled Behaviours are not.

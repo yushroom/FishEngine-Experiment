@@ -1,3 +1,14 @@
+from enum import Enum, auto
+
+class ImportAssetOptions(Enum):
+    Default = 0
+    ForceUpdate = 1
+    ForceSynchronousImport = 8
+    ImportRecursive = 0x100
+    DontDownloadFromCacheServer = 0x2000
+    ForceUncompressedImport = 0x4000
+
+
 class AssetDataBase:
     s_assetPathTOGUID = {}
     s_GUIDToAssetPath = {}
@@ -23,7 +34,7 @@ class AssetDataBase:
             print("imporing fbx:", fullpath)
             importer = FBXImporter()
             print("[TODO] FBXImporter.globalScale")
-            importer.globalScale = 100
+            importer.globalScale = 1
             importer.Import(fullpath)
         elif ext == 'prefab':
             print("imporing prefab:", fullpath)
@@ -36,3 +47,8 @@ class AssetDataBase:
         AssetDataBase.s_assetPathTOGUID.clear()
         AssetDataBase.s_GUIDToAssetPath.clear()
         AssetDataBase.s_GUIDToImporter.clear()
+
+    @staticmethod
+    def ImportAsset(path:str, options:ImportAssetOptions):
+        # c++
+        raise NotImplementedError

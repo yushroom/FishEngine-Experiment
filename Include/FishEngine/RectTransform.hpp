@@ -6,7 +6,7 @@
 
 namespace FishEngine
 {
-	class RectTransform : public Component
+	class RectTransform final : public Component
 	{
 //	private:
 	public:
@@ -22,14 +22,12 @@ namespace FishEngine
 		mutable Rect m_Rect;
 		
 	public:
-		RectTransform()
+		RectTransform() : Component(RectTransform::ClassID)
 		{
-			Object::s_objects[ClassID].insert(this);
 		}
 		
 		~RectTransform()
 		{
-			Object::s_objects[ClassID].erase(this);
 		}
 		
 		void Update();

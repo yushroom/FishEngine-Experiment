@@ -10,7 +10,8 @@ namespace FishEngine
     class Component : public Object
     {
     public:
-		Component()
+		enum {ClassID = 2};
+		Component(int classID) : Object(classID)
 		{
 //			LOGF;
 		}
@@ -18,11 +19,6 @@ namespace FishEngine
         virtual ~Component()
 		{
 //			LOGF;
-		}
-		
-		virtual bool IsScript() const
-		{
-			return false;
 		}
 		
 		Transform* transform() const;

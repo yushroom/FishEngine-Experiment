@@ -22,7 +22,7 @@ namespace FishEngine
 			auto go = (GameObject*)o;
 			for (auto comp : go->m_components)
 			{
-				 if (comp->IsScript())
+				 if (comp->GetClassID() == Script::ClassID)
 				 {
 					 auto s = static_cast<Script*>(comp);
 					 s->Start();
@@ -41,7 +41,7 @@ namespace FishEngine
             for (auto comp : go->m_components)
             {
 //                comp->Update();
-				if (comp->IsScript())
+				if (comp->GetClassID() == Script::ClassID)
 				{
 					auto s = static_cast<Script*>(comp);
 					s->Update();
@@ -74,7 +74,7 @@ namespace FishEngine
 		{
 			printf("Memory Leak in FishEngine::Clean(): [%d] objects created but only [%d] objects deleted\n", a, b);
 			
-			for (auto& p : Object::s_objects)
+			for (auto& p : Object::GetAllObjects())
 			{
 				if (p.second.size() != 0)
 				{

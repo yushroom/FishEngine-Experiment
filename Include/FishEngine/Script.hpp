@@ -11,7 +11,8 @@ namespace FishEngine
     class Script : public Component
     {
     public:
-		Script()
+		enum {ClassID = 115};
+		Script() : Component(Script::ClassID)
 		{
 			LOGF;
 		}
@@ -29,11 +30,6 @@ namespace FishEngine
         Func(OnGUI)
         Func(OnDisable)
         Func(OnEnable)
-		
-		virtual bool IsScript() const override final
-		{
-			return true;
-		}
     };
 }
 

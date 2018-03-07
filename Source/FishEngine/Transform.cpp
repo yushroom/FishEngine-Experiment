@@ -7,8 +7,6 @@ namespace FishEngine
 		m_children.clear();
 		// TODO
 //		SetParent(nullptr); // remove from parent
-		
-		Object::s_objects[ClassID].erase(this);
 	}
 	
 	void Transform::RotateAround(const Vector3& point, const Vector3& axis, float angle)

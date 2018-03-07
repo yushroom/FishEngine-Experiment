@@ -11,14 +11,12 @@ namespace FishEngine
 	public:
 		enum {ClassID = 23};
 		
-		MeshRenderer()
+		MeshRenderer() : Component(MeshRenderer::ClassID)
 		{
-			Object::s_objects[ClassID].insert(this);
 		}
 		
 		~MeshRenderer()
 		{
-			Object::s_objects[ClassID].erase(this);
 		}
 		
 //	private:

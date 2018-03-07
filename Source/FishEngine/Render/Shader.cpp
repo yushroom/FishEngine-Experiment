@@ -86,8 +86,6 @@ namespace FishEngine
 		{
 			glDeleteProgram(m_GLProgram);
 		}
-		
-		Object::s_objects[ClassID].erase(this);
 	}
 	
 	Shader* Shader::FromString(const std::string& vs, const std::string& fs)

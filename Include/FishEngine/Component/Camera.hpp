@@ -21,17 +21,15 @@ namespace FishEngine
 	public:
 		enum {ClassID = 20};
 //		DefineComponent(Camera)
-		Camera()
+		Camera() : Behaviour(Camera::ClassID)
 		{
 			LOGF;
-			Object::s_objects[ClassID].insert(this);
 		}
-		Camera(float fov, float nearClipPlane, float farClipPlane);
+		//Camera(float fov, float nearClipPlane, float farClipPlane);
 		
 		~Camera()
 		{
 			LOGF;
-			Object::s_objects[ClassID].erase(this);
 		}
 
 		// The aspect ratio (width divided by height).
