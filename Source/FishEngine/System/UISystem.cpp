@@ -94,7 +94,11 @@ void drawButton(NVGcontext* vg, int preicon, const char* text, float x, float y,
 
 int CreateFont(NVGcontext* vg, const char* name, const char* path)
 {
-	auto font = nvgCreateFont(vg, "icons", "/Users/yushroom/program/github/nanovg/example/entypo.ttf");
+#if FISHENGINE_PLATFORM_WINDOWS
+	const std::string font_root = R"(D:\program\FishEngine-Experiment\Assets\Fonts\)";
+#else
+#endif
+	auto font = nvgCreateFont(vg, "icons", (font_root+path).c_str());
 	if (font == -1) {
 		printf("Could not add font icons: %s", path);
 		abort();
@@ -110,10 +114,10 @@ namespace FishEngine
 	{
 		m_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 		
-		auto fontIcons = CreateFont(m_context, "icons", "/Users/yushroom/program/github/nanovg/example/entypo.ttf");
-		auto fontNormal = nvgCreateFont(m_context, "sans", "/Users/yushroom/program/github/nanovg/example/Roboto-Regular.ttf");
-		auto fontBold = nvgCreateFont(m_context, "sans-bold", "/Users/yushroom/program/github/nanovg/example/Roboto-Bold.ttf");
-		auto fontEmoji = nvgCreateFont(m_context, "emoji", "/Users/yushroom/program/github/nanovg/example/NotoEmoji-Regular.ttf");
+		auto fontIcons = CreateFont(m_context, "icons", "entypo.ttf");
+		auto fontNormal = nvgCreateFont(m_context, "sans", "Roboto-Regular.ttf");
+		auto fontBold = nvgCreateFont(m_context, "sans-bold", "Roboto-Bold.ttf");
+		auto fontEmoji = nvgCreateFont(m_context, "emoji", "NotoEmoji-Regular.ttf");
 		nvgAddFallbackFontId(m_context, fontNormal, fontEmoji);
 		nvgAddFallbackFontId(m_context, fontBold, fontEmoji);
 	}
@@ -163,6 +167,8 @@ namespace FishEngine
 	void UISystem::Update()
 	{
 		RectTransform* root = GetRootUI();
+		if (root == nullptr)
+			return;
 		root->m_Rect.m_XMin = 0;
 		root->m_Rect.m_YMin = 0;
 		root->m_Rect.m_Width = Screen::width();

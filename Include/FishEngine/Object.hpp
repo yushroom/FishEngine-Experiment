@@ -4,7 +4,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "FishEngine.hpp"
-#include <Python.h>
+//#include <Python.h>
+#include <boost/python/detail/wrap_python.hpp>
 //#include <functional>	// hash
 
 //struct PyObject;

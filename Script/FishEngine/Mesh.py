@@ -53,7 +53,7 @@ class Mesh(Object):
     @staticmethod
     def __MeshFromTextFile(n)->'Mesh':
         # print('__MeshFromTextFile', n)
-        with open('/Users/yushroom/program/FishEngine/assets/Models/{}.txt'.format(n), 'r') as f:
+        with open('D:\program\FishEngine-Experiment\Assets\Models\{}.txt'.format(n), 'r') as f:
             m = Mesh()
             mm = FishEngineInternal.Mesh.FromTextFile(f.read())
             m.m_CachedPtr = mm

@@ -18,6 +18,8 @@
     #define FE_EXPORT
 #endif
 
+#include <string>
+
 #if defined(_DEBUG) || defined(DEBUG)
 #include <cassert>
 #define Assert(exp) assert(exp)
