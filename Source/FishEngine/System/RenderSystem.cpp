@@ -12,23 +12,8 @@
 
 #include <FishEngine/Render/Material.hpp>
 
-//#include <typeindex>
-
 namespace FishEngine
 {
-//	template<class T>
-//	T* GetComponent(GameObject* go)
-//	{
-//		for (auto c : go->m_components)
-//		{
-//			if (typeid(*c).hash_code() == typeid(T).hash_code())
-//			{
-//				return dynamic_cast<T*>(c);
-//			}
-//		}
-//		return nullptr;
-//	}
-	
 	void RenderSystem::Update()
 	{
 		glViewport(0, 0, Screen::width(), Screen::height());
@@ -74,5 +59,5 @@ namespace FishEngine
 		}
 	}
 	
-	//glCheckError();
+	glCheckError();
 }

@@ -184,6 +184,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		;
 
 	class_<RectTransform, Component>(m, "RectTransform")
+		.def(init<>())
 		.def_readwrite("m_AnchorMin", &RectTransform::m_AnchorMin)
 		.def_readwrite("m_AnchorMax", &RectTransform::m_AnchorMax)
 		.def_readwrite("m_AnchoredPosition", &RectTransform::m_AnchoredPosition)

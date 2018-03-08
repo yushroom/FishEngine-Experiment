@@ -1,5 +1,4 @@
 #include "RawMesh.hpp"
-
 #include <FishEngine/Render/Mesh.hpp>
 
 using namespace FishEngine;
@@ -12,33 +11,38 @@ Mesh* FishEngine::RawMesh::ToMesh()
 	std::vector<Vector2> uvBuffer;
 	std::vector<uint32_t> indexBuffer;
 	indexBuffer.reserve(m_wedgeIndices.size());
-
+	
 	//std::vector<std::vector<uint32_t>> submeshIndex;
-
+	
 	// used to combine vertex with the same position/uv/...
 	//std::map<uint32_t, uint32_t> indexRemapping;
-
+	
 	// TODO: makes indexed meshes more GPU-friendly
 	// https://github.com/zeux/meshoptimizer
-
+	
 	//positionBuffer.resize(m_vertexCount);
 	normalBuffer.resize(m_vertexCount);    // minimum size
 	tangentBuffer.resize(m_vertexCount);
 	uvBuffer.resize(m_vertexCount);
-
+	
 	std::vector<bool> vertexVisited(m_vertexCount, false);
-
+	
 	bool hasSubMesh = m_subMeshCount > 1;
 	std::vector<uint32_t> subMeshOffset(m_subMeshCount);
 	subMeshOffset[0] = 0;
-
+	
+	// note this: 0, 2, 1, same as Unity
+	const int corners[] = {0, 2, 1};
+	
 	for (int subMeshId = 0; subMeshId < m_subMeshCount; ++subMeshId)
 	{
 		subMeshOffset[subMeshId] = static_cast<int>(indexBuffer.size());
 		for (uint32_t faceId = 0; faceId < m_faceCount; ++faceId)
 		{
-			for (int cornerId = 0; cornerId < 3; ++cornerId)
+//			for (int cornerId = 0; cornerId < 3; ++cornerId)
+			for (int j = 0; j < 3; ++j)
 			{
+				int cornerId = corners[j];
 				if (hasSubMesh && m_submeshMap[faceId] != subMeshId)
 					continue;
 				uint32_t wedgeId = faceId * 3 + cornerId;
@@ -56,9 +60,10 @@ Mesh* FishEngine::RawMesh::ToMesh()
 					int pid = vertexId;
 					while (true)
 					{
-						bool isSame = uvBuffer[pid] == m_wedgeTexCoords[wedgeId] &&
-							normalBuffer[pid] == m_wedgeNormals[wedgeId] &&
-							tangentBuffer[pid] == m_wedgeTangents[wedgeId];
+						bool isSame = uvBuffer[pid] == m_wedgeTexCoords[wedgeId]
+						&& normalBuffer[pid] == m_wedgeNormals[wedgeId]
+						&& tangentBuffer[pid] == m_wedgeTangents[wedgeId]
+						;
 						if (isSame)
 						{
 							indexBuffer.push_back(pid);
@@ -86,7 +91,7 @@ Mesh* FishEngine::RawMesh::ToMesh()
 			}
 		}
 	}
-
+	
 	// now positionBuffer.size() == normalBuffer.size() == uvBuffer.size() == tangentBuffer.size()
 	auto ret = new Mesh(std::move(positionBuffer), std::move(normalBuffer), std::move(uvBuffer), std::move(tangentBuffer), std::move(indexBuffer));
 	if (m_subMeshCount > 1)
@@ -96,3 +101,4 @@ Mesh* FishEngine::RawMesh::ToMesh()
 	}
 	return ret;
 }
+

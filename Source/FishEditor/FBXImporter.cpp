@@ -105,10 +105,9 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 	// indices(triangles)
 	for (int polygonIndex = 0; polygonIndex < polygonCount; ++polygonIndex)
 	{
-		// note this: 0, 2, 1, same as Unity
 		rawMesh.m_wedgeIndices.push_back( fbxMesh->GetPolygonVertex(polygonIndex, 0) );
-		rawMesh.m_wedgeIndices.push_back( fbxMesh->GetPolygonVertex(polygonIndex, 2) );
 		rawMesh.m_wedgeIndices.push_back( fbxMesh->GetPolygonVertex(polygonIndex, 1) );
+		rawMesh.m_wedgeIndices.push_back( fbxMesh->GetPolygonVertex(polygonIndex, 2) );
 	}
 	
 	int vertexId = 0;

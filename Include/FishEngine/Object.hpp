@@ -101,7 +101,7 @@ namespace FishEngine
 	inline Object::~Object()
 	{
 //		LOGF;
-		printf("Object::~Object() ID=%d\n", instanceID);
+//		printf("Object::~Object() ID=%d\n", instanceID);
 		++s_deleteCounter;
 		Object::s_objects[m_classID].erase(this);
 	}

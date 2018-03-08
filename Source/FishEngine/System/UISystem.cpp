@@ -97,6 +97,7 @@ int CreateFont(NVGcontext* vg, const char* name, const char* path)
 #if FISHENGINE_PLATFORM_WINDOWS
 	const std::string font_root = R"(D:\program\FishEngine-Experiment\Assets\Fonts\)";
 #else
+	const std::string font_root = R"(/Users/yushroom/program/FishEngine-Experiment/Assets/Fonts/)";
 #endif
 	auto font = nvgCreateFont(vg, name, (font_root+path).c_str());
 	if (font == -1) {

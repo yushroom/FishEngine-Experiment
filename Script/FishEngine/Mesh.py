@@ -1,4 +1,5 @@
 import FishEngineInternal
+import platform
 
 
 # Mesh = FishEngineInternal.Mesh
@@ -53,7 +54,11 @@ class Mesh(Object):
     @staticmethod
     def __MeshFromTextFile(n)->'Mesh':
         # print('__MeshFromTextFile', n)
-        with open('D:\program\FishEngine-Experiment\Assets\Models\{}.txt'.format(n), 'r') as f:
+        if platform.system == 'windows':
+            q = r'D:\program\FishEngine-Experiment\Assets\Models\{}.txt'
+        else:
+            q = r'/Users/yushroom/program/FishEngine-Experiment/Assets/Models/{}.txt'
+        with open(q.format(n), 'r') as f:
             m = Mesh()
             mm = FishEngineInternal.Mesh.FromTextFile(f.read())
             m.m_CachedPtr = mm

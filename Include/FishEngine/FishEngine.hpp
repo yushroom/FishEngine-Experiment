@@ -27,8 +27,8 @@
 #define Assert(exp) (void(0))
 #endif
 
-#define LOGF puts(__FUNCTION__)
-//#define LOGF
+//#define LOGF puts(__FUNCTION__)
+#define LOGF
 // #define LOGF puts(__func__)
 
 namespace FishEngine
