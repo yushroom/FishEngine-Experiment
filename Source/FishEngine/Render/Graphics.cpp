@@ -17,8 +17,8 @@ namespace FishEngine
 		auto shader = material->GetShader();
 		shader->Use();
 //		auto vp = camera->projectionMatrix() * v;
-		auto mv = camera->worldToCameraMatrix() * mat;
-		auto mvp = camera->projectionMatrix() * mv;
+		auto mv = camera->GetWorldToCameraMatrix() * mat;
+		auto mvp = camera->GetProjectionMatrix() * mv;
 		auto lightDir = light->GetTransform()->GetForward();
 		auto loc1 = glGetUniformLocation(shader->m_GLProgram, "MATRIX_MVP");
 		auto loc2 = glGetUniformLocation(shader->m_GLProgram, "MATRIX_M");

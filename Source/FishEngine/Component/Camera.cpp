@@ -45,7 +45,7 @@ namespace FishEngine
 //	}
 
 
-	const Matrix4x4& Camera::projectionMatrix() const
+	const Matrix4x4& Camera::GetProjectionMatrix() const
 	{
 		float aspect = Screen::GetAspect();
 		if (m_aspect != aspect)
@@ -91,7 +91,7 @@ namespace FishEngine
 //		return Ray(transform()->position(), ray_world.normalized()); 
 //	}
 
-	Matrix4x4 Camera::worldToCameraMatrix() const
+	Matrix4x4 Camera::GetWorldToCameraMatrix() const
 	{
 		return GetTransform()->GetWorldToLocalMatrix();
 	}

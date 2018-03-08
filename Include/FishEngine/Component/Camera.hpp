@@ -20,12 +20,11 @@ namespace FishEngine
 	{
 	public:
 		enum {ClassID = 20};
-//		DefineComponent(Camera)
+
 		Camera() : Behaviour(Camera::ClassID)
 		{
 			LOGF;
 		}
-		//Camera(float fov, float nearClipPlane, float farClipPlane);
 		
 		~Camera()
 		{
@@ -33,23 +32,23 @@ namespace FishEngine
 		}
 
 		// The aspect ratio (width divided by height).
-		float aspect() const
+		float GetAspect() const
 		{
 //			return m_aspect;
 			return Screen::GetAspect();
 		}
 
-		float fieldOfView() const
+		float GetFieldOfView() const
 		{
 			return m_fieldOfView;
 		}
 
-		float orthographicSize() const
+		float GetOrthographicSize() const
 		{
 			return m_orthographicSize;
 		}
 		
-		void setOrthographicSize(float size)
+		void SetOrthographicSize(float size)
 		{
 			m_orthographicSize = size;
 			m_isDirty = true;
@@ -73,46 +72,46 @@ namespace FishEngine
 //			m_isAspectSet = true;
 //		}
 
-		void setFieldOfView(float fieldOfView)
+		void SetFieldOfView(float fieldOfView)
 		{
 			m_fieldOfView = fieldOfView;
 			m_isDirty = true;
 		}
 
-		float nearClipPlane() const
+		float GetNearClipPlane() const
 		{
 			return m_nearClipPlane;
 		}
 
-		void setNearClipPlane(const float nearClipPlane)
+		void SetNearClipPlane(const float nearClipPlane)
 		{
 			m_nearClipPlane = nearClipPlane;
 			m_isDirty = true;
 		}
 
-		float farClipPlane() const
+		float GetFarClipPlane() const
 		{
 			return m_farClipPlane;
 		}
 
-		void setFarClipPlane(const float farClipPlane)
+		void SetFarClipPlane(const float farClipPlane)
 		{
 			m_farClipPlane = farClipPlane;
 			m_isDirty = true;
 		}
 		
-		Frustum frustum() const
+		Frustum GetFrustum() const
 		{
-			return {m_fieldOfView, m_farClipPlane, m_nearClipPlane, this->aspect()};
+			return {m_fieldOfView, m_farClipPlane, m_nearClipPlane, this->GetAspect()};
 		}
 
 		// Matrix that transforms from world to camera space (i.e. view matrix).
-		Matrix4x4 worldToCameraMatrix() const;
+		Matrix4x4 GetWorldToCameraMatrix() const;
 
 		// projection matrix.
-		const Matrix4x4& projectionMatrix() const;
+		const Matrix4x4& GetProjectionMatrix() const;
 
-		const Vector4& viewport() const
+		const Vector4& GetViewport() const
 		{
 			return m_viewport;
 		}
