@@ -9,4 +9,7 @@ public:
 	typedef FishGUI::TreeWidget<FishEngine::Transform*> Super;
 
 	HierarchyWidget(const char* name);
+
+private:
+	void OnSelectionChanged();
 };

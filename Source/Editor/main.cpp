@@ -1,11 +1,17 @@
+#include <FishEngine/Render/GLEnvironment.hpp>	// fix  fatal error C1189: #error:  gl.h included before glew.h
+
 #include <FishGUI/FishGUI.hpp>
 #include <FishGUI/Window.hpp>
+
 #include <UnityLayout.hpp>
 #include <UnityToolBar.hpp>
+#include <DirTreeWidget.hpp>
+#include <FileListWidget.hpp>
 
 #include "SceneViewApp.hpp"
 #include "HierarchyWidget.hpp"
 #include "GLWidget.hpp"
+#include "InspectorWindow.hpp"
 
 #include <FishEditor/FishEditorInternal.hpp>
 
@@ -42,7 +48,7 @@ int main()
 try
 {
 	FishGUI::Init();
-	auto win = FishGUI::NewWindow("Fish GUI", 950, 600);
+	auto win = FishGUI::NewWindow("FishEditor", 950, 600);
 	auto mainLayout = new UnityLayout();
 	win->SetLayout(mainLayout);
 
@@ -51,10 +57,16 @@ try
 	auto statusBar = new FishGUI::StatusBar();
 	mainLayout->SetStatusBar(statusBar);
 
+
+	FishEditor::Init();
+	auto app = new SceneViewApp();
+	app->Init();
+
+
 	auto right = new FishGUI::TabWidget("right");
 	right->SetWidth(270);
 	right->SetMinSize(250, 150);
-	auto inspector = new IMWidget2("Inspector");
+	auto inspector = new InspectorWindow("Inspector");
 	right->AddChild(inspector);
 
 	auto bottom = new FishGUI::TabWidget("bottom");
@@ -65,6 +77,29 @@ try
 	bottom->AddChild(project);
 	bottom->AddChild(console);
 
+	auto rootNode = new FileNode(R"(D:\program\github\MonumentVally-Demo\Assets)");
+	//auto rootNode = new FileNode(ApplicationFilePath());
+	//	auto rootNode = new FileNode(R"(D:\program\FishGUI)");
+	//	rootNode->Find("/Users/yushroom/program/FishEngine/Example/Sponza/Assets/texture");
+	auto dirs = new DirTreeWidget("Dirs", rootNode);
+	dirs->SetWidth(150);
+	dirs->SetMinSize(100, 100);
+	auto files = new UnityFileWidget("Files");
+	files->SetWidth(400);
+	files->SetMinSize(200, 100);
+	files->GetFileListWidget()->SetRoot(rootNode);
+	dirs->GetSelectionModel()->selectionChanged.connect([files](FileNode* node) {
+		if (node != nullptr)
+			files->GetFileListWidget()->SetRoot(node);
+	});
+
+	{
+		auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		project->SetLayout(layout);
+		layout->Split(dirs, files);
+	}
+
+
 	auto left = new FishGUI::TabWidget("Left");
 	left->SetWidth(200);
 	left->SetMinSize(200, 150);
@@ -74,7 +109,7 @@ try
 	auto center = new FishGUI::TabWidget("Center");
 	center->SetWidth(500);
 	center->SetMinSize(150, 150);
-	auto scene = new GLWidget("Scene");
+	auto scene = new GLWidget("Scene", app);
 	auto game = new IMWidget2("Game");
 	auto assetStore = new IMWidget2("Asset Store");
 	center->AddChild(scene);
@@ -89,14 +124,11 @@ try
 	layout2->Split(layout3, bottom);
 	layout3->Split(left, center);
 
-	
-	FishEditor::Init();
-	auto app = new SceneViewApp(scene);
-	app->Init();
-	scene->m_app = app;
+	scene->Init();
 
-	win->SetOverlayDraw([app]() {
-		app->Update();
+
+	win->SetOverlayDraw([scene]() {
+		scene->DrawScene();
 	});
 
 	FishGUI::Run();

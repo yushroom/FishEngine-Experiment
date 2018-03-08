@@ -48,4 +48,22 @@ HierarchyWidget::HierarchyWidget(const char* name) : Super(name)
 {
 	m_model = new HierarchyModel();
 	m_imContext->ymargin = 0;
+
+	m_selectionModel.selectionChanged.connect([this](FishEngine::Transform* selected) {
+		this->OnSelectionChanged();
+	});
+}
+
+#include <FishEditor/Selection.hpp>
+
+void HierarchyWidget::OnSelectionChanged()
+{
+	if (m_selectionModel.SelectedItems().empty())
+	{
+		FishEditor::Selection::s_activeObject = nullptr;
+	}
+	else
+	{
+		FishEditor::Selection::s_activeObject = m_selectionModel.SelectedItem();
+	}
 }
