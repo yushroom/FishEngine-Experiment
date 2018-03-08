@@ -22,7 +22,7 @@ void FishEngine::BoneWeight::AddBoneData(uint32_t boneIndex, float weight)
 		}
 	}
 	// more than MaxBoneForEachVertex
-	LogWarning(Format("more than %1% bones", MaxBoneForEachVertex));
+	LogWarning(Format("more than {} bones", MaxBoneForEachVertex));
 
 	int minId = 0;
 	float minWeight = this->weight[0];

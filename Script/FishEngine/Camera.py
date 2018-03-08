@@ -11,7 +11,7 @@ class Camera(Component):
         """
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.Camera()
-        self.m_CachedPtr.SetObject(self)
+        self.m_CachedPtr.SetPyObject(self)
 
     # fieldOfView = FishEngineInternal.Camera.fieldOfView
     @property

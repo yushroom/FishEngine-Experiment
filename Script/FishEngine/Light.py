@@ -7,4 +7,4 @@ class Light(Component):
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.Light()
-        self.m_CachedPtr.SetObject(self)
+        self.m_CachedPtr.SetPyObject(self)

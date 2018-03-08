@@ -5,8 +5,8 @@
 
 namespace FishEngine
 {
-	Transform* Component::transform() const
+	Transform* Component::GetTransform() const
 	{
-		return m_gameObject->m_transform;
+		return m_gameObject->GetTransform();
 	}
 }

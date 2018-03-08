@@ -1,4 +1,5 @@
 #include <FishEngine/Transform.hpp>
+#include <FishEngine/Scene.hpp>
 
 namespace FishEngine
 {
@@ -12,12 +13,12 @@ namespace FishEngine
 	void Transform::RotateAround(const Vector3& point, const Vector3& axis, float angle)
 	{
 		// step1: update position
-		auto vector = this->position();
+		auto vector = this->GetPosition();
 		auto rotation = Quaternion::AngleAxis(angle, axis);
 		Vector3 vector2 = vector - point;
 		vector2 = rotation * vector2;
 		vector = point + vector2;
-		setPosition(vector);
+		SetPosition(vector);
 		
 		// step2: update rotation
 		m_localRotation = rotation * m_localRotation;
@@ -33,7 +34,7 @@ namespace FishEngine
 #if 1
 		m_localToWorldMatrix.SetTRS(m_localPosition, m_localRotation, m_localScale);
 		if (m_parent != nullptr) {
-			m_localToWorldMatrix = m_parent->localToWorldMatrix() * m_localToWorldMatrix;
+			m_localToWorldMatrix = m_parent->GetLocalToWorldMatrix() * m_localToWorldMatrix;
 		}
 //		m_worldToLocalMatrix = m_localToWorldMatrix.inverse();
 #else
@@ -56,6 +57,11 @@ namespace FishEngine
 		{
 			return;
 		}
+
+		if (parent == nullptr)
+			SceneManager::GetActiveScene()->AddTransform(this);
+		else if (old_parent == nullptr)
+			SceneManager::GetActiveScene()->RemoveTransform(this);
 		
 		// new parent can not be child of this
 		auto p = parent;
@@ -92,9 +98,9 @@ namespace FishEngine
 		{
 			Matrix4x4 mat = Matrix4x4::TRS(m_localPosition, m_localRotation, m_localScale);
 			if (old_parent != nullptr)
-				mat = old_parent->localToWorldMatrix() * mat;
+				mat = old_parent->GetLocalToWorldMatrix() * mat;
 			if (parent != nullptr)
-				mat = parent->worldToLocalMatrix() * mat;
+				mat = parent->GetWorldToLocalMatrix() * mat;
 			Matrix4x4::Decompose(mat, &m_localPosition, &m_localRotation, &m_localScale);
 		}
 		//UpdateMatrix();

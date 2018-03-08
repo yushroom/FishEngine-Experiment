@@ -8,29 +8,29 @@
 
 namespace FishEngine
 {
-    class Script : public Component
-    {
-    public:
-		enum {ClassID = 115};
+	class Script : public Component
+	{
+	public:
+		enum { ClassID = 115 };
 		Script() : Component(Script::ClassID)
 		{
 			LOGF;
 		}
 
-        virtual ~Script()
-        {
-            LOGF;
-        }
+		virtual ~Script()
+		{
+			LOGF;
+		}
 
-        Func(Awake)
-        Func(Start)
-        Func(Update)
-        Func(FixedUpdate)
-        Func(LateUpdate)
-        Func(OnGUI)
-        Func(OnDisable)
-        Func(OnEnable)
-    };
+		Func(Awake)
+		Func(Start)
+		Func(Update)
+		Func(FixedUpdate)
+		Func(LateUpdate)
+		Func(OnGUI)
+		Func(OnDisable)
+		Func(OnEnable)
+	};
 }
 
 #undef Func

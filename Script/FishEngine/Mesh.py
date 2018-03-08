@@ -54,7 +54,8 @@ class Mesh(Object):
     @staticmethod
     def __MeshFromTextFile(n)->'Mesh':
         # print('__MeshFromTextFile', n)
-        if platform.system == 'windows':
+        print(platform.system)
+        if platform.system() == 'Windows':
             q = r'D:\program\FishEngine-Experiment\Assets\Models\{}.txt'
         else:
             q = r'/Users/yushroom/program/FishEngine-Experiment/Assets/Models/{}.txt'

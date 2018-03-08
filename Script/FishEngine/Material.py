@@ -21,9 +21,10 @@ out vec3 normal;
 void main()
 {
     gl_Position = MATRIX_MVP * vec4(InputPositon, 1);
-    //color = InputNormal*0.5+0.5;
+    //normal = InputNormal*0.5+0.5;
     normal = mat3(MATRIX_M) * InputNormal;
-    normal = normalize(normal);
+    //normal = normalize(normal);
+    //normal = normalize(InputNormal);
     //color = vec3(gl_Position.z);
 }
 '''
@@ -36,6 +37,7 @@ out vec4 fragColor;
 void main()
 {
     vec3 N = normalize(normal);
+    //fragColor = vec4(normal, 1);
     float ndotl = clamp(dot(N, -LightDir), 0, 1);
     fragColor = vec4(vec3(ndotl), 1);
     //fragColor = vec4(N*0.5+0.5, 1);

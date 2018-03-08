@@ -327,8 +327,8 @@ void FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 //			{
 //				mesh->setName(nodeName);
 //			}
-			mesh->name = nodeName;
-			m_meshes[mesh->name] = mesh;
+			mesh->SetName(nodeName);
+			m_meshes[nodeName] = mesh;
 //
 //			if (IsNewlyCreated())
 //			{

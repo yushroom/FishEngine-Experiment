@@ -7,6 +7,8 @@
 
 #include <FishEngine/Render/Material.hpp>
 
+#include <exception>
+
 namespace FishEngine
 {
     void Start()
@@ -20,7 +22,7 @@ namespace FishEngine
 		for (auto o : Object::FindObjectsOfType<GameObject>())
 		{
 			auto go = (GameObject*)o;
-			for (auto comp : go->m_components)
+			for (auto comp : go->GetAllComponents())
 			{
 				 if (comp->GetClassID() == Script::ClassID)
 				 {
@@ -38,7 +40,7 @@ namespace FishEngine
         for (auto o : Object::FindObjectsOfType<GameObject>())
         {
 			auto go = (GameObject*)o;
-            for (auto comp : go->m_components)
+            for (auto comp : go->GetAllComponents())
             {
 //                comp->Update();
 				if (comp->GetClassID() == Script::ClassID)
@@ -81,6 +83,7 @@ namespace FishEngine
 					printf("Class[ID:%d] has %lu obj\n", p.first, p.second.size());
 				}
 			}
+			throw std::runtime_error("Memory Leak!");
 		}
 	}
 }

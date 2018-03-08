@@ -6,10 +6,10 @@ namespace FishEngine
 {
 	void RectTransform::Update()
 	{
-		auto parent = this->transform()->GetParent();
+		auto parent = this->GetTransform()->GetParent();
 		if (parent != nullptr)
 		{
-			auto parent_rt = parent->gameObject()->GetComponent<RectTransform>();
+			auto parent_rt = parent->GetGameObject()->GetComponent<RectTransform>();
 			assert(parent_rt != nullptr);
 			auto& parentRect = parent_rt->m_Rect;
 			
@@ -32,9 +32,9 @@ namespace FishEngine
 			}
 		}
 		
-		for (auto childT : this->transform()->GetChildren())
+		for (auto childT : this->GetTransform()->GetChildren())
 		{
-			auto childRT = childT->gameObject()->GetComponent<RectTransform>();
+			auto childRT = childT->GetGameObject()->GetComponent<RectTransform>();
 			assert(childRT != nullptr);
 			childRT->Update();
 		}

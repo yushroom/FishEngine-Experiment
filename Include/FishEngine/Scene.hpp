@@ -25,7 +25,6 @@ namespace FishEngine
 		{
 			return m_rootTransforms;
 		}
-//		std::vector<GameObject*> GetRootGameObjects();
 		
 		void AddTransform(Transform* t);
 		

@@ -7,6 +7,7 @@
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/RectTransform.hpp>
 
+#if 0
 #define NANOVG_GL3_IMPLEMENTATION
 #include <nanovg/nanovg_gl.h>
 
@@ -108,6 +109,7 @@ int CreateFont(NVGcontext* vg, const char* name, const char* path)
 	return font;
 }
 
+
 namespace FishEngine
 {
 	
@@ -130,9 +132,9 @@ namespace FishEngine
 	
 	void UISystem::BeginDraw()
 	{
-		float pxRatio = Screen::pixelsPerPoint();
-		int windowWidth = static_cast<int>( Screen::width() / pxRatio );
-		int windowHeight = static_cast<int>( Screen::height() / pxRatio );
+		float pxRatio = Screen::GetPixelsPerPoint();
+		int windowWidth = static_cast<int>( Screen::GetWidth() / pxRatio );
+		int windowHeight = static_cast<int>( Screen::GetHeight() / pxRatio );
 		nvgBeginFrame(m_context, windowWidth, windowHeight, pxRatio);
 	}
 	
@@ -144,7 +146,7 @@ namespace FishEngine
 		{
 			for (auto t : scene->GetRootTransforms())
 			{
-				auto rt = t->gameObject()->GetComponent<RectTransform>();
+				auto rt = t->GetGameObject()->GetComponent<RectTransform>();
 				if (rt != nullptr)
 				{
 					return rt;
@@ -156,7 +158,7 @@ namespace FishEngine
 			for (auto r : rts)
 			{
 				auto rr = dynamic_cast<RectTransform*>(r);
-				if (rr->transform()->GetParent() == nullptr)
+				if (rr->GetTransform()->GetParent() == nullptr)
 				{
 					return rr;
 				}
@@ -172,8 +174,8 @@ namespace FishEngine
 			return;
 		root->m_Rect.m_XMin = 0;
 		root->m_Rect.m_YMin = 0;
-		root->m_Rect.m_Width = Screen::width();
-		root->m_Rect.m_Height = Screen::height();
+		root->m_Rect.m_Width = Screen::GetWidth();
+		root->m_Rect.m_Height = Screen::GetHeight();
 		root->Update();
 		
 		auto rts = Object::FindObjectsOfType<RectTransform>();
@@ -181,7 +183,7 @@ namespace FishEngine
 		for (auto r : rts)
 		{
 			auto rr = (RectTransform*)r;
-			if (rr->gameObject()->name == "Button")
+			if (rr->GetGameObject()->GetName() == "Button")
 			{
 				rt = rr;
 				break;
@@ -190,8 +192,8 @@ namespace FishEngine
 		assert(rt != nullptr);
 		auto r = rt->m_Rect;
 
-		int windowHeight = Screen::height()/ Screen::pixelsPerPoint();
-		int p = Screen::pixelsPerPoint();
+		int windowHeight = Screen::GetHeight()/ Screen::GetPixelsPerPoint();
+		int p = Screen::GetPixelsPerPoint();
 		drawButton(m_context, 0, "Rotate", r.x()/p, windowHeight - r.y()/p - r.height()/p, r.width()/p, r.height()/p, nvgRGBA(255,255,255,255));
 	}
 	
@@ -205,3 +207,31 @@ namespace FishEngine
 		nvgDeleteGL3(m_context);
 	}
 }
+
+#else
+namespace FishEngine
+{
+
+	void UISystem::Init()
+	{
+	}
+
+	void UISystem::BeginDraw()
+	{
+	}
+
+	void UISystem::Update()
+	{
+	}
+
+	void UISystem::AfterDraw()
+	{
+	}
+
+	void UISystem::Clean()
+	{
+	}
+}
+
+
+#endif

@@ -1,5 +1,4 @@
-#ifndef Ray_hpp
-#define Ray_hpp
+#pragma once
 
 #include "Vector3.hpp"
 //#include "Macro.hpp"
@@ -35,5 +34,3 @@ namespace FishEngine
 		bool IntersectPlane(const Vector3& normal, const Vector3& point, float* t) const;
 	};
 }
-
-#endif // Ray_hpp

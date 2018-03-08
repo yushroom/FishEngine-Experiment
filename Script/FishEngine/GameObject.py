@@ -32,14 +32,14 @@ class GameObject(Object):
         # else:
         #     self.m_CachedPtr = FishEngineInternal.GameObject.CreateWithRectTransform(name)
         #     self.__transform = RectTransform()
-        self.__transform.m_CachedPtr = self.m_CachedPtr.transform
+        self.__transform.m_CachedPtr = self.m_CachedPtr.GetTransform()
         self.__transform.gameObject = self  # also add transform to __components
         self.__scene:Scene = Scene.SceneManager.GetActiveScene()
         self.__scene.gameObjects.append(self)
         self.m_IsActive = True
         self.m_PrefabInternal:Prefab = None
-        self.m_CachedPtr.SetObject(self)
-        self.__transform.m_CachedPtr.SetObject( self.m_CachedPtr.transform )
+        self.m_CachedPtr.SetPyObject(self)
+        self.__transform.m_CachedPtr.SetPyObject( self.m_CachedPtr.GetTransform() )
 
     # @staticmethod
     # def CreateWithTransform(name:str="GameObject"):

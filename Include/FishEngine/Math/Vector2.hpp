@@ -1,5 +1,4 @@
-#ifndef Vector2_hpp
-#define Vector2_hpp
+#pragma once
 
 #include "Mathf.hpp"
 #include "../FishEngine.hpp"
@@ -175,5 +174,3 @@ namespace FishEngine
 	};
 
 }
-
-#endif // Vector2_hpp

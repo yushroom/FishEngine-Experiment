@@ -4,30 +4,29 @@
 
 namespace FishEngine
 {
-    class GameObject;
+	class GameObject;
 	class Transform;
 
-    class Component : public Object
-    {
-    public:
+	class Component : public Object
+	{
+	public:
 		enum {ClassID = 2};
 		Component(int classID) : Object(classID)
 		{
-//			LOGF;
 		}
 		
-        virtual ~Component()
+		virtual ~Component()
 		{
-//			LOGF;
 		}
 		
-		Transform* transform() const;
-		GameObject* gameObject() const
+		Transform* GetTransform() const;
+		GameObject* GetGameObject() const
 		{
 			return m_gameObject;
 		}
 
-    // protected:
-        GameObject* m_gameObject = nullptr;
-    };
+	protected:
+		friend class GameObject;
+		GameObject* m_gameObject = nullptr;
+	};
 }

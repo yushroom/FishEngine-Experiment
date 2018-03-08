@@ -21,7 +21,7 @@ void _checkOpenGLError(const char *file, int line)
 		default:                        error = "UNKNOWN_ERROR";
 		}
 
-		LogError(Format("GL_%1% - %2%:%3%", error, file, line));
+		LogError(Format("GL_{}- {}:{}", error, file, line));
 		err = glGetError();
 	}
 }

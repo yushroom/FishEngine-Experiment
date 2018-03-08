@@ -10,9 +10,9 @@
 
 namespace FishEngine
 {
-    class Object
-    {
-    public:
+	class Object
+	{
+	public:
 
 		Object(int classID);
 		virtual ~Object() = 0;
@@ -21,26 +21,38 @@ namespace FishEngine
 		Object(const Object&) = delete;
 		const Object& operator=(const Object&) = delete;
 
-        std::string name;
-        int instanceID;
+	public:
 
+		const std::string& GetName() const
+		{
+			return m_name;
+		}
+		void SetName(const std::string& name)
+		{
+			m_name = name;
+		}
+
+		int GetInstanceID() const
+		{
+			return m_instanceID;
+		}
 		int GetClassID() const
 		{
 			return m_classID;
 		}
 		
-		void SetObject(const pybind11::handle& obj)
+		void SetPyObject(const pybind11::handle& obj)
 		{
-			LOGF;
 			m_self = obj;
 		}
 		
-		pybind11::handle GetPyObject() const
+		const pybind11::handle& GetPyObject() const
 		{
 			return m_self;
 		}
 
 		
+	public:
 		static int GetInstanceCounter()
 		{
 			return s_instanceCounter;
@@ -78,22 +90,24 @@ namespace FishEngine
 			return s_objects;
 		}
 		
-    protected:
-        static int s_instanceCounter;
-		static int s_deleteCounter;
-		
-		int m_classID = 0;
-		//pybind11::object m_self;
-		pybind11::handle m_self;
+	protected:
+		std::string			m_name;
+		pybind11::handle	m_self;
+
+	private:
+		int					m_classID = 0;
+		int					m_instanceID = 0;
 		
 	private:
+		static int s_instanceCounter;
+		static int s_deleteCounter;
 		static std::unordered_map<int, std::unordered_set<Object*>> s_objects;
 	};
 	
 	inline Object::Object(int classID) : m_classID(classID)
 	{
 		++s_instanceCounter;
-		instanceID = s_instanceCounter;
+		m_instanceID = s_instanceCounter;
 //		printf("Object::Object() ID=%d\n", instanceID);
 		s_objects[classID].insert(this);
 	}

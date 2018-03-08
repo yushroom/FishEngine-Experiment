@@ -26,7 +26,7 @@ namespace FishEngine
 			return s_current;
 		}
 		
-		void Resize(int width, int height);
+		virtual void Resize(int width, int height);
 
     protected:
 		// GLFW callback

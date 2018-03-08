@@ -8,7 +8,6 @@ namespace FishEngine
 {
 	class RectTransform final : public Component
 	{
-//	private:
 	public:
 		
 		enum {ClassID = 224};

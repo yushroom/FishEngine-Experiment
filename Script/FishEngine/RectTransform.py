@@ -7,7 +7,7 @@ class RectTransform(Component):
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.RectTransform()
-        self.m_CachedPtr.SetObject(self)
+        self.m_CachedPtr.SetPyObject(self)
         # self.m_AnchorMin = [0.5, 0]
         # self.m_AnchorMax =[0.5, 0]
         # self.m_AnchoredPosition = [0, 83]

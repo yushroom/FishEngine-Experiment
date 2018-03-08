@@ -10,7 +10,7 @@ class Script(Component):
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.Script()
-        self.m_CachedPtr.SetObject(self)
+        self.m_CachedPtr.SetPyObject(self)
         Script.__scripts[type(self)].add(self)
 
     def Awake(self):

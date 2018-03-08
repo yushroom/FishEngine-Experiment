@@ -10,7 +10,7 @@ class MeshFilter(Component):
         super().__init__()
         self.__mesh:Mesh = None
         self.m_CachedPtr = FishEngineInternal.MeshFilter()
-        self.m_CachedPtr.SetObject(self)
+        self.m_CachedPtr.SetPyObject(self)
 
     @property
     def mesh(self):

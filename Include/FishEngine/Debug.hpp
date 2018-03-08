@@ -1,5 +1,4 @@
-#ifndef Debug_hpp
-#define Debug_hpp
+#pragma once
 
 #include "FishEngine.hpp"
 //#include "ReflectClass.hpp"
@@ -48,5 +47,3 @@ namespace FishEngine
 #define LogInfo(message) FishEngine::Debug::Log(FishEngine::LogType::Log, (message), __FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define LogWarning(message) FishEngine::Debug::Log(FishEngine::LogType::Warning, (message), __FILE__, __LINE__, __PRETTY_FUNCTION__)
 #define LogError(message) FishEngine::Debug::Log(FishEngine::LogType::Error, (message), __FILE__, __LINE__, __PRETTY_FUNCTION__)
-
-#endif /* Debug_hpp */

@@ -13,25 +13,35 @@
 
 namespace FishEngine
 {
-    class Component;
-    class Transform;
+	class Component;
+	class Transform;
 	class RectTransform;
 
-    class GameObject : public Object
-    {
-    public:
+	class GameObject : public Object
+	{
+	public:
 		enum {ClassID = 1};
 		
-        GameObject(const std::string& name = "GameObject");
+		GameObject(const std::string& name = "GameObject");
 		~GameObject();
 
-        // for python
+		// for python
 		// create GameObject and bind transform
 //		static GameObject* CreateWithTransform(const std::string& name = "GameObject");
 		
 		// for python
 		// special version for RectTransform
 //		static GameObject* CreateWithRectTransform(const std::string& name = "GameObject");
+
+		Transform* GetTransform() const
+		{
+			return m_transform;
+		}
+
+		const std::list<Component*>& GetAllComponents() const
+		{
+			return m_components;
+		}
 
 		void AddComponent(Component* comp);
 		
@@ -41,21 +51,23 @@ namespace FishEngine
 			static_assert(std::is_base_of<Component, T>::value, "T must be a Component");
 			for (Component* t : m_components)
 			{
-				if (typeid(*t).hash_code() == typeid(T).hash_code())
+				if (t->GetClassID() == T::ClassID)
 				{
 					return dynamic_cast<T*>(t);
 				}
-//				auto p = dynamic_cast<T*>(t);
-//				if (p != nullptr)
-//				{
-//					return p;
-//				}
 			}
 			return nullptr;
 		}
 		
 		Component* GetComponent(int classID)
 		{
+			for (Component* t : m_components)
+			{
+				if (t->GetClassID() == classID)
+				{
+					return t;
+				}
+			}
 			return nullptr;
 		}
 		
@@ -77,16 +89,20 @@ namespace FishEngine
 //		void AddRectTransform(RectTransform* t);
 //		void RemoveRectTransform();
 
-        Transform* m_transform = nullptr;
-        std::list<Component*> m_components;
-		
 		Scene* GetScene() const
 		{
 			return m_scene;
 		}
 
-    protected:
-		
-		Scene* m_scene = nullptr;
-    };
+	protected:
+		Scene*					m_scene = nullptr;
+		Transform*				m_transform = nullptr;
+		std::list<Component*>	m_components;
+	};
+
+	inline void GameObject::AddComponent(Component* comp)
+	{
+		m_components.push_back(comp);
+		comp->m_gameObject = this;
+	}
 }

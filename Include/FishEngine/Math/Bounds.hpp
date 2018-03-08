@@ -1,5 +1,4 @@
-#ifndef Bounds_hpp
-#define Bounds_hpp
+#pragma once
 
 #include "../FishEngine.hpp"
 #include "Vector3.hpp"
@@ -161,4 +160,3 @@ namespace FishEngine
 	};
 }
 
-#endif // Bounds_hpp

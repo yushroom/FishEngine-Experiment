@@ -1,5 +1,4 @@
-#ifndef Mathf_hpp
-#define Mathf_hpp
+#pragma once
 
 #include "../FishEngine.hpp"
 #include <cmath>
@@ -513,4 +512,3 @@ namespace FishEngine
 
 }
 
-#endif // Mathf_hpp

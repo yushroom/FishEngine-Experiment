@@ -10,8 +10,10 @@ namespace FishEngine
 	
 	void Screen::SetResolution(int width, int height, bool fullscreen, int preferredRefreshRate)
 	{
-//		s_width = width;
-//		s_height = height;
+		if (s_width == width && s_height == height)
+			return;
+		s_width = width;
+		s_height = height;
 		auto app = GameApp::GetCurrent();
 		app->Resize(width, height);
 	}

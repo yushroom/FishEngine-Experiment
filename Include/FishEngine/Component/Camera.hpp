@@ -36,7 +36,7 @@ namespace FishEngine
 		float aspect() const
 		{
 //			return m_aspect;
-			return Screen::aspect();
+			return Screen::GetAspect();
 		}
 
 		float fieldOfView() const

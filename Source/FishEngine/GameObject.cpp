@@ -8,7 +8,7 @@ namespace FishEngine
     GameObject::GameObject(const std::string& name) : Object(GameObject::ClassID)
     {
         LOGF;
-        this->name = name;
+        this->SetName(name);
 		m_scene = SceneManager::GetActiveScene();
         m_transform = new Transform();
 		m_scene->AddTransform(m_transform);
@@ -49,11 +49,7 @@ namespace FishEngine
 		m_transform = nullptr;
 	}
 
-	void GameObject::AddComponent(Component* comp)
-	{
-		m_components.push_back(comp);
-		comp->m_gameObject = this;
-	}
+
 	
 //	void GameObject::AddRectTransform(RectTransform* t)
 //	{

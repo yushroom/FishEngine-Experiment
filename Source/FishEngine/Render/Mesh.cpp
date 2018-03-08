@@ -318,7 +318,7 @@ namespace FishEngine
 		
 		if (subMeshIndex < 0 && subMeshIndex != -1)
 		{
-			LogWarning(Format( "invalid subMeshIndex %1%", subMeshIndex ));
+			LogWarning(Format( "invalid subMeshIndex {}", subMeshIndex ));
 			subMeshIndex = -1;
 		}
 		else if (subMeshIndex >= m_subMeshCount)

@@ -16,12 +16,13 @@ namespace FishEngine
 {
 	void RenderSystem::Update()
 	{
-		glViewport(0, 0, Screen::width(), Screen::height());
+		glViewport(0, 0, Screen::GetWidth(), Screen::GetHeight());
 		glClearColor(0.2f, 0.3f, 0.3f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		
 		glFrontFace(GL_CW);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 		
 		
 		auto camera = Object::FindObjectOfType<Camera>();
@@ -37,7 +38,7 @@ namespace FishEngine
 		std::vector<GameObject*> intersection;
 		for (auto mf : mfs)
 		{
-			auto go = ((MeshRenderer*)mf)->gameObject();
+			auto go = ((MeshRenderer*)mf)->GetGameObject();
 //			auto mr = GetComponent<MeshRenderer>(go);
 			auto mr = go->GetComponent<MeshRenderer>();
 			if (mr != nullptr)
@@ -53,11 +54,10 @@ namespace FishEngine
 				auto material = go->GetComponent<MeshRenderer>()->m_material;
 				if (material == nullptr)
 					material = Material::GetErrorMaterial();
-				auto& model = go->m_transform->localToWorldMatrix();
+				auto& model = go->GetTransform()->GetLocalToWorldMatrix();
 				Graphics::DrawMesh(mesh, material, -1, camera, model, light);
 			}
 		}
+		glCheckError();
 	}
-	
-	glCheckError();
 }

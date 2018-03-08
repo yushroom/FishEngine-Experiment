@@ -1,5 +1,4 @@
-#ifndef Color_hpp
-#define Color_hpp
+#pragma once
 
 #include "Math/Mathf.hpp"
 #include "Math/Vector3.hpp"
@@ -128,6 +127,3 @@ namespace FishEngine
 		static void RGBToHSVHelper(float offset, float dominantcolor, float colorone, float colortwo, float* H, float* S, float* V);
 	};
 }
-
-
-#endif // Color_hpp

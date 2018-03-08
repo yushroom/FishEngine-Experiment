@@ -1,1 +1,2 @@
 pybind11 2.2.2
+folly v2018.03.05.00 https://github.com/facebook/folly/releases

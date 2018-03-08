@@ -124,10 +124,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	// Object
 	class_<Object>(m, "Object")
-		.def_readwrite("name", &Object::name)
-		.def_readonly("instanceID", &Object::instanceID)
-		.def("SetObject", &Object::SetObject)
-		//		.def("Destroy", &Object::Destroy).staticmethod("Destroy")
+		.def_property("name", &Object::GetName, &Object::SetName, return_value_policy::copy)
+		.def_property_readonly("instanceID", &Object::GetInstanceID)
+		.def("SetPyObject", &Object::SetPyObject)
 		;
 
 	class_<Scene>(m, "Scene");
@@ -146,40 +145,38 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def(init<>())
 		.def(init<const std::string&>())
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)GameObject::ClassID; })
-		.def_readonly("transform", &GameObject::m_transform)
+		.def("GetTransform", &GameObject::GetTransform, return_value_policy::reference)
 		.def("AddComponent", &GameObject::AddComponent)
 		;
 
 	class_<Component, Object>(m, "Component")
-		.def_readwrite("gameObject", &Component::m_gameObject);
+		.def("GetGameObject", &Component::GetGameObject);
 	;
 
-	//http://www.boost.org/doc/libs/1_66_0/libs/python/doc/html/reference/function_invocation_and_creation/models_of_callpolicies.html
-
 	//m.def("CreateTransform", []() { return new Transform(); }, return_value_policy::reference);
-	m.def("TransformClassID", []() { return Transform::ClassID; });
 
 	// Transform
 	class_<Transform, Component>(m, "Transform")
-		.def("localPosition", &Transform::localPosition)
-		.def("localRotation", &Transform::localRotation)
-		.def("localEulerAngles", &Transform::localEulerAngles)
-		.def("localScale", &Transform::localScale)
-		.def("position", &Transform::position)
-		.def("rotation", &Transform::rotation)
-		.def("eulerAngles", &Transform::eulerAngles)
-		.def("SetLocalPosition", &Transform::setLocalPosition)
-		.def("SetLocalRotation", &Transform::setLocalRotation)
-		.def("SetLocalEulerAngles", &Transform::setLocalEulerAngles)
-		.def("SetLocalScale", &Transform::setLocalScale)
-		.def("SetPosition", &Transform::setPosition)
-		.def("SetRotation", &Transform::setRotation)
-		.def("SetEulerAngles", &Transform::setEulerAngles)
+		.def_property_readonly_static("ClassID", [](py::object) { return (int)Transform::ClassID; })
+		.def("localPosition", &Transform::GetLocalPosition)
+		.def("localRotation", &Transform::GetLocalRotation)
+		.def("localEulerAngles", &Transform::GetLocalEulerAngles)
+		.def("localScale", &Transform::GetLocalScale)
+		.def("position", &Transform::GetPosition)
+		.def("rotation", &Transform::GetRotation)
+		.def("eulerAngles", &Transform::GetEulerAngles)
+		.def("SetLocalPosition", &Transform::SetLocalPosition)
+		.def("SetLocalRotation", &Transform::SetLocalRotation)
+		.def("SetLocalEulerAngles", &Transform::SetLocalEulerAngles)
+		.def("SetLocalScale", &Transform::SetLocalScale)
+		.def("SetPosition", &Transform::SetPosition)
+		.def("SetRotation", &Transform::SetRotation)
+		.def("SetEulerAngles", &Transform::SetEulerAngles)
 		.def("GetParent", &Transform::GetParent, return_value_policy::reference)
 		.def("SetParent", &Transform::SetParent)
 		.def_property("m_RootOrder", &Transform::GetRootOrder, &Transform::SetRootOrder)
-		.def("localToWorldMatrix", &Transform::localToWorldMatrix, return_value_policy::copy)
-		.def("worldToLocalMatrix", &Transform::worldToLocalMatrix)
+		.def("localToWorldMatrix", &Transform::GetLocalToWorldMatrix, return_value_policy::copy)
+		.def("worldToLocalMatrix", &Transform::GetWorldToLocalMatrix)
 		.def("RotateAround", &Transform::RotateAround)
 		;
 
@@ -192,18 +189,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_readwrite("m_Pivot", &RectTransform::m_Pivot)
 		;
 
-#if 1
 	class_<Script, Component>(m, "Script")
 		.def(init<>())
 	;
-#else
-	// Script
-	class_<ScriptWrap, bases<Component>, Script*, boost::noncopyable>("Script")
-		//        .def("SetObject", &Script::SetObject)
-		.def("Start", &Script::Start, &ScriptWrap::default_Start)
-		.def("Update", &Script::Update, &ScriptWrap::default_Update)
-		;
-#endif
 
 	class_<Mesh, Object>(m, "Mesh")
 		.def_static("FromTextFile", &Mesh::FromTextFile, return_value_policy::take_ownership)
@@ -249,8 +237,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		;
 
 	class_<Screen>(m, "Screen")
-		.def_property_readonly_static("width", [](py::object) { return Screen::width(); })
-		.def_property_readonly_static("height", [](py::object) { return Screen::height(); })
+		.def_property_readonly_static("width", [](py::object) { return Screen::GetWidth(); })
+		.def_property_readonly_static("height", [](py::object) { return Screen::GetHeight(); })
 		.def_static("SetResolution", &Screen::SetResolution)
 		;
 
