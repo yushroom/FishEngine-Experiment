@@ -14,6 +14,7 @@
 #include "InspectorWindow.hpp"
 
 #include <FishEditor/FishEditorInternal.hpp>
+#include <FishEditor/EditorApplication.hpp>
 
 #include <pybind11/pybind11.h>
 #include <iostream>
@@ -44,6 +45,17 @@ protected:
 	RenderFunction	m_renderFunction;
 };
 
+
+enum class EditorLayoutType
+{
+	e2By3,
+	e4Split,
+	eDefault,
+	eTall,
+	eWide,
+};
+
+
 int main()
 try
 {
@@ -57,25 +69,21 @@ try
 	auto statusBar = new FishGUI::StatusBar();
 	mainLayout->SetStatusBar(statusBar);
 
+	auto& editorApp = FishEditor::EditorApplication::GetInstance();
+	editorApp.Init();
 
-	FishEditor::Init();
-	auto app = new SceneViewApp();
-	app->Init();
+	//FishEditor::Init();
+	//auto app = new SceneViewApp();
+	//app->Init();
 
 
-	auto right = new FishGUI::TabWidget("right");
-	right->SetWidth(270);
-	right->SetMinSize(250, 150);
 	auto inspector = new InspectorWindow("Inspector");
-	right->AddChild(inspector);
-
-	auto bottom = new FishGUI::TabWidget("bottom");
-	bottom->SetHeight(180);
-	bottom->SetMinSize(150, 150);
 	auto project = new FishGUI::Widget("Project");
 	auto console = new IMWidget2("Console");
-	bottom->AddChild(project);
-	bottom->AddChild(console);
+	auto hierarchy = new HierarchyWidget("Hierarchy");
+	auto scene = new IMWidget2("Scene");
+	//auto game = new GLWidget("Game", app);
+	auto assetStore = new IMWidget2("Asset Store");
 
 	auto rootNode = new FileNode(R"(D:\program\github\MonumentVally-Demo\Assets)");
 	//auto rootNode = new FileNode(ApplicationFilePath());
@@ -93,42 +101,92 @@ try
 			files->GetFileListWidget()->SetRoot(node);
 	});
 
+
+	EditorLayoutType layoutType = EditorLayoutType::e2By3;
+
+	if (layoutType == EditorLayoutType::eDefault)
 	{
-		auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
-		project->SetLayout(layout);
-		layout->Split(dirs, files);
+		auto right = new FishGUI::TabWidget("right");
+		right->SetWidth(270);
+		right->SetMinSize(250, 150);
+		right->AddChild(inspector);
+
+		auto bottom = new FishGUI::TabWidget("bottom");
+		bottom->SetHeight(180);
+		bottom->SetMinSize(150, 150);
+		bottom->AddChild(project);
+		bottom->AddChild(console);
+
+		{
+			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+			project->SetLayout(layout);
+			layout->Split(dirs, files);
+		}
+
+		auto left = new FishGUI::TabWidget("Left");
+		left->SetWidth(200);
+		left->SetMinSize(200, 150);
+		left->AddChild(hierarchy);
+
+		auto center = new FishGUI::TabWidget("Center");
+		center->SetWidth(500);
+		center->SetMinSize(150, 150);
+		center->AddChild(scene);
+		center->AddChild(game);
+		center->AddChild(assetStore);
+
+		auto layout1 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		auto layout2 = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
+		auto layout3 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		mainLayout->SetCenterLayout(layout1);
+		layout1->Split(layout2, right);
+		layout2->Split(layout3, bottom);
+		layout3->Split(left, center);
+
+	}
+	else if (layoutType == EditorLayoutType::e2By3)
+	{
+		auto tab1 = new FishGUI::TabWidget("1");
+		auto tab2 = new FishGUI::TabWidget("2");
+		auto tab3 = new FishGUI::TabWidget("3");
+		auto tab4 = new FishGUI::TabWidget("4");
+		auto tab5 = new FishGUI::TabWidget("5");
+
+		tab1->AddChild(inspector);
+		tab2->AddChild(project);
+		tab3->AddChild(hierarchy);
+		tab4->AddChild(scene);
+		tab5->AddChild(game);
+
+		tab1->SetMinSize(270, 150);
+		tab1->SetMinSize(250, 150);
+		tab2->SetMinSize(150, 150);
+		tab3->SetMinSize(150, 150);
+		tab4->SetMinSize(150, 150);
+
+		{
+			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
+			project->SetLayout(layout);
+			layout->Split(dirs, files);
+			files->SetMinSize(150, 150);
+		}
+
+		auto layout1 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		auto layout2 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		auto layout3 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+		auto layout4 = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
+		mainLayout->SetCenterLayout(layout1);
+		layout1->Split(layout2, tab1);
+		layout2->Split(layout3, tab2);
+		layout3->Split(layout4, tab3);
+		layout4->Split(tab4, tab5);
 	}
 
 
-	auto left = new FishGUI::TabWidget("Left");
-	left->SetWidth(200);
-	left->SetMinSize(200, 150);
-	auto hierarchy = new HierarchyWidget("Hierarchy");
-	left->AddChild(hierarchy);
+	game->Init();
 
-	auto center = new FishGUI::TabWidget("Center");
-	center->SetWidth(500);
-	center->SetMinSize(150, 150);
-	auto scene = new GLWidget("Scene", app);
-	auto game = new IMWidget2("Game");
-	auto assetStore = new IMWidget2("Asset Store");
-	center->AddChild(scene);
-	center->AddChild(game);
-	center->AddChild(assetStore);
-
-	auto layout1 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
-	auto layout2 = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
-	auto layout3 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
-	mainLayout->SetCenterLayout(layout1);
-	layout1->Split(layout2, right);
-	layout2->Split(layout3, bottom);
-	layout3->Split(left, center);
-
-	scene->Init();
-
-
-	win->SetOverlayDraw([scene]() {
-		scene->DrawScene();
+	win->SetOverlayDraw([game]() {
+		game->DrawScene();
 	});
 
 	FishGUI::Run();

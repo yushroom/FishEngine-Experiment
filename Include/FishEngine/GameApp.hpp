@@ -4,7 +4,27 @@ struct GLFWwindow;
 
 namespace FishEngine
 {
-    class GameApp
+	class AbstractGameApp
+	{
+	public:
+		AbstractGameApp();
+		virtual ~AbstractGameApp() = default;
+
+		virtual void Init() = 0;
+		virtual void Start() = 0;
+		virtual void Update() = 0;
+		virtual void Shutdown() = 0;
+
+		static AbstractGameApp* GetCurrent()
+		{
+			return s_current;
+		}
+
+	protected:
+		static AbstractGameApp* s_current;
+	};
+
+    class GameApp : public AbstractGameApp
     {
     public:
 		
@@ -12,8 +32,8 @@ namespace FishEngine
 		virtual ~GameApp() = default;
 		
         virtual int Run();
-        virtual void Init() = 0;
-        virtual void Update() = 0;
+        //virtual void Init() = 0;
+        //virtual void Update() = 0;
 		
 		void SetWindowSize(int w, int h)
 		{
@@ -21,12 +41,12 @@ namespace FishEngine
 			m_windowHeight = h;
 		}
 		
+		virtual void Resize(int width, int height);
+
 		static GameApp* GetCurrent()
 		{
-			return s_current;
+			return (GameApp*) AbstractGameApp::s_current;
 		}
-		
-		virtual void Resize(int width, int height);
 
     protected:
 		// GLFW callback
@@ -42,7 +62,5 @@ namespace FishEngine
 		GLFWwindow* m_window = nullptr;
         int m_windowWidth = 1;
         int m_windowHeight = 1;
-		
-		static GameApp* s_current;
     };
 }

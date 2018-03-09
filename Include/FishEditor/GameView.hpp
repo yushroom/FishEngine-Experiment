@@ -1,0 +1,7 @@
+namespace FishEditor
+{
+	class GameView
+	{
+
+	};
+}

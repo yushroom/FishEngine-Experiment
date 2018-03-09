@@ -277,10 +277,14 @@ namespace FishEngine
 		auto globals = main.attr("__dict__");
 		py::module::import("FishEngineInternal");
 		py::exec(code, globals);
+	}
+	
+	void ScriptSystem::Start()
+	{
 		auto app = py::module::import("app");
 		app.attr("Start")();
 	}
-	
+
 	void ScriptSystem::Update()
 	{
 		auto app = py::module::import("app");

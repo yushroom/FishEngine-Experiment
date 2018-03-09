@@ -7,7 +7,6 @@
 #include <FishEngine/System/UISystem.hpp>
 
 
-
 class SceneViewApp : public FishEngine::GameApp
 {
 public:
@@ -23,12 +22,18 @@ public:
 
 	virtual void Init() override
 	{
+		FishEngine::Init();
 		FishEngine::Start();
 	}
 
 	virtual void Update() override
 	{
 		FishEngine::Update();
+		DrawScene();
+	}
+
+	void DrawScene()
+	{
 		FishEngine::RenderSystem::GetInstance().Update();
 		FishEngine::UISystem::GetInstance().BeginDraw();
 		FishEngine::UISystem::GetInstance().Update();

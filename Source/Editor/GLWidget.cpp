@@ -33,7 +33,7 @@ void GLWidget::DrawImpl()
 void GLWidget::DrawScene()
 {
 	m_framebuffer.Bind();
-	m_app->Update();
+	m_app->DrawScene();
 	m_framebuffer.Unbind();
 }
 

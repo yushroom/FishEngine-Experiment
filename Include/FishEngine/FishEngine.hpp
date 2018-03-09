@@ -38,6 +38,7 @@ namespace FishEngine
 	class Ray;
 	class Matrix4x4;
 	
+	void Init();
     void Start();
     void Update();
 //    void Run();

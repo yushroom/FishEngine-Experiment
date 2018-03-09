@@ -12,6 +12,7 @@ namespace FishEngine
 		}
 		
 		void Init();
+		void Start();
 		void Update();
 		void Clean();
 		void Reload();

@@ -11,14 +11,19 @@
 
 namespace FishEngine
 {
-    void Start()
-    {
-        puts("======== Start ========");
-		
+	void Init()
+	{
+		puts("======== Init ========");
 		Material::StaticInit();
 		InputSystem::GetInstance().Init();
 		ScriptSystem::GetInstance().Init();
 		UISystem::GetInstance().Init();
+	}
+
+    void Start()
+    {
+		ScriptSystem::GetInstance().Start();
+        puts("======== Start ========");
 		for (auto o : Object::FindObjectsOfType<GameObject>())
 		{
 			auto go = (GameObject*)o;

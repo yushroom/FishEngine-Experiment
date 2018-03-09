@@ -25,12 +25,16 @@
 
 namespace FishEngine
 {
-	GameApp* GameApp::s_current = nullptr;
-	
-	GameApp::GameApp()
+	AbstractGameApp* AbstractGameApp::s_current = nullptr;
+
+	AbstractGameApp::AbstractGameApp()
 	{
 		Assert(s_current == nullptr);
 		s_current = this;
+	}
+	
+	GameApp::GameApp()
+	{
 	}
 	
     int GameApp::Run()
@@ -62,6 +66,7 @@ namespace FishEngine
 		glfwGetFramebufferSize(m_window, &Screen::s_width, &Screen::s_height);
 		Screen::s_pixelsPerPoint = static_cast<float>(Screen::s_width) / m_windowWidth;
 		
+		FishEngine::Init();
 		FishEngine::Start();
 		Init();
 		
