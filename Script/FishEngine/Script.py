@@ -1,8 +1,9 @@
 from . import Component
-# from . import FishEngineInternal
 import FishEngineInternal
 import weakref
 from collections import defaultdict
+
+from typing import List
 
 class Script(Component):
     __slots__ = ()
@@ -36,5 +37,17 @@ class Script(Component):
 
     def OnEnable(self):
         pass
+
+    # for c++
+    def GetVisiableAttributes(self)->List[str]:
+        a = dir(self)
+        b = dir(self.__class__)
+        diff = set(a) - set(b)
+
+        # __speed -> _Rotator__speed
+        hidden_prefix = '_' + self.__class__.__name__ + '__'
+        return [x for x in a if x not in b and not x.startswith(hidden_prefix)]
+        # ret = [x for x in a and x not in b]
+        # return ret
 
 # Script = FishEngineInternal.Script

@@ -11,9 +11,11 @@ def printT(t):
 
 
 class Rotator2(Script):
+    # __slots__ = ('speed', '__hidden')
     def __init__(self):
         super().__init__()
         self.speed = 1.0
+        self.__hidden = True    # test
 
     def SystemUpdate(self):
         self.transform.RotateAround(self.transform.parent.position, Vector3.up(), self.speed)
@@ -85,8 +87,11 @@ def Start():
     printT(earth.transform)
     printT(moon.transform)
 
-    earth.AddComponent(Rotator2()).speed = 1
+    r:Rotator2 = earth.AddComponent(Rotator2())
+    r.speed = 1
     moon.AddComponent(Rotator2()).speed = 2
+
+    print(r.GetVisiableAttributes())
 
     plane = GameObject.CreatePrimitive(PrimitiveType.Plane)
     # cube = GameObject.CreatePrimitive(PrimitiveType.Cube)

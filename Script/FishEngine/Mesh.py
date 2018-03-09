@@ -48,7 +48,9 @@ class Mesh(Object):
     def GetInternalMesh(name:str):
         # print(Mesh.__dict__)
         if not hasattr(Mesh, name):
-            setattr(Mesh, name, Mesh.__MeshFromTextFile(name))
+            mesh = Mesh.__MeshFromTextFile(name)
+            mesh.name = name
+            setattr(Mesh, name, mesh)
         return getattr(Mesh, name)
 
     @staticmethod

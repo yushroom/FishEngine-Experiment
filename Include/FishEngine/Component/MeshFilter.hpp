@@ -18,6 +18,11 @@ namespace FishEngine
 		~MeshFilter()
 		{
 		}
+
+		Mesh* GetMesh() const
+		{
+			return m_mesh;
+		}
 		
 //	private:
 		Mesh* m_mesh = nullptr;
