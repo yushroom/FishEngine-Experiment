@@ -1,3 +1,5 @@
+#pragma once
+
 #include <FishEngine/Component/Camera.hpp>
 
 using namespace FishEngine;

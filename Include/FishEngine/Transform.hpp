@@ -5,22 +5,23 @@
 #include "Math/Quaternion.hpp"
 #include "Math/Matrix4x4.hpp"
 
-#include "Scene.hpp"
-
 #include <vector>
 
 namespace FishEngine
 {
 	class Transform : public Component
 	{
+		friend class GameObject;
 	public:
-		
 		enum {ClassID = 4};
 
+	protected:
 		Transform() : Component(Transform::ClassID)
 		{
 			LOGF;
 		}
+		
+	public:
 		
 		virtual ~Transform();
 		
@@ -219,26 +220,7 @@ namespace FishEngine
 		void UpdateMatrix() const;
 		
 		int GetRootOrder() const { return m_RootOrder; }
-		void SetRootOrder(int index)
-		{
-			assert(index >= 0);
-			if (m_parent != nullptr)
-			{
-				// rootOrder in .unity file may > total size
-//				if (index >= m_parent->m_children.size())
-//					index = m_parent->m_children.size()-1;
-				assert(index <= m_parent->m_children.size());
-			}
-			if (index == m_RootOrder)
-				return;
-			int old = m_RootOrder;
-			auto& c = m_parent == nullptr ?
-						SceneManager::GetActiveScene()->m_rootTransforms :
-						m_parent->m_children;
-			c[index]->m_RootOrder = old;
-			std::swap(c[index], c[old]);
-			m_RootOrder = index;
-		}
+		void SetRootOrder(int index);
 		
 		const std::vector<Transform*>& GetChildren() const
 		{
@@ -249,6 +231,8 @@ namespace FishEngine
 		{
 			return m_children[index];
 		}
+		
+		Transform* Clone() const;
 
 	protected:
 		friend class GameObject;

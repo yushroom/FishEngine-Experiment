@@ -2,7 +2,6 @@
 
 #include "FishEngine.hpp"
 #include "Object.hpp"
-#include "Scene.hpp"
 #include "Component.hpp"
 #include "Transform.hpp"
 
@@ -16,13 +15,21 @@ namespace FishEngine
 	class Component;
 	class Transform;
 	class RectTransform;
+	class Scene;
+	
+	enum class GameObjectConstructionFlag
+	{
+		WithTransform,
+		WithRectTransform,
+		Empty,
+	};
 
 	class GameObject : public Object
 	{
 	public:
 		enum {ClassID = 1};
 		
-		GameObject(const std::string& name = "GameObject");
+		GameObject(const std::string& name = "GameObject", GameObjectConstructionFlag flag = GameObjectConstructionFlag::WithTransform);
 		~GameObject();
 
 		// for python
@@ -71,19 +78,40 @@ namespace FishEngine
 			return nullptr;
 		}
 		
+		// Returns the component of Type type in the GameObject or any of its children using depth first search.
+		// A component is returned only if it is found on an active GameObject.
 		template<class T>
 		T* GetComponentInChildren()
 		{
+			// find self
+			auto c = GetComponent<T>();
+			if (c != nullptr)
+				return c;
+				
+			// find children
 			for (auto child : m_transform->GetChildren())
 			{
-				auto ret = child->gameObject()->GetComponent<T>();
-				if (ret != nullptr)
-					return ret;
-				ret = child->gameObject()->GetComponentInChildren<T>();
+				auto ret = child->GetGameObject()->GetComponentInChildren<T>();
 				if (ret != nullptr)
 					return ret;
 			}
 			return nullptr;
+		}
+		
+		// Returns all components of Type type in the GameObject or any of its children.
+		template<class T>
+		void GetComponentsInChildren(std::vector<T*>& components)
+		{
+			// find self
+			auto c = GetComponent<T>();
+			if (c != nullptr)
+				components.push_back(c);
+			
+			// find children
+			for (auto child : m_transform->GetChildren())
+			{
+				child->GetGameObject()->GetComponentsInChildren<T>(components);
+			}
 		}
 		
 //		void AddRectTransform(RectTransform* t);
@@ -93,6 +121,8 @@ namespace FishEngine
 		{
 			return m_scene;
 		}
+		
+		GameObject* Clone(Scene* scene = nullptr);
 
 	protected:
 		Scene*					m_scene = nullptr;

@@ -1,9 +1,10 @@
-#include "HierarchyWidget.hpp"
+#include "HierarchyView.hpp"
 
 #include <FishGUI/ModelView/TreeWidget.hpp>
 
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/GameObject.hpp>
+#include <FishEngine/Scene.hpp>
 
 class HierarchyModel : public FishGUI::TItemModel<FishEngine::Transform*>
 {
@@ -44,7 +45,7 @@ public:
 };
 
 
-HierarchyWidget::HierarchyWidget(const char* name) : Super(name)
+HierarchyView::HierarchyView(const char* name) : Super(name)
 {
 	m_model = new HierarchyModel();
 	m_imContext->ymargin = 0;
@@ -56,7 +57,7 @@ HierarchyWidget::HierarchyWidget(const char* name) : Super(name)
 
 #include <FishEditor/Selection.hpp>
 
-void HierarchyWidget::OnSelectionChanged()
+void HierarchyView::OnSelectionChanged()
 {
 	if (m_selectionModel.SelectedItems().empty())
 	{

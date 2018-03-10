@@ -1,14 +1,46 @@
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/Scene.hpp>
+#include <FishEngine/GameObject.hpp>
+#include <FishEngine/Scene.hpp>
 
 namespace FishEngine
 {
 	Transform::~Transform()
 	{
-		m_children.clear();
+		LOGF;
+//		if (!m_children.empty())
+//		{
+//			for (auto c : m_children)
+//			{
+//				delete c->GetGameObject();
+//			}
+//		}
+//		m_children.clear();
 		// TODO
 //		SetParent(nullptr); // remove from parent
 	}
+	
+	void Transform::SetRootOrder(int index)
+	{
+		assert(index >= 0);
+		if (m_parent != nullptr)
+		{
+			// rootOrder in .unity file may > total size
+			//				if (index >= m_parent->m_children.size())
+			//					index = m_parent->m_children.size()-1;
+			assert(index <= m_parent->m_children.size());
+		}
+		if (index == m_RootOrder)
+			return;
+		int old = m_RootOrder;
+		auto& c = m_parent == nullptr ?
+		SceneManager::GetActiveScene()->m_rootTransforms :
+		m_parent->m_children;
+		c[index]->m_RootOrder = old;
+		std::swap(c[index], c[old]);
+		m_RootOrder = index;
+	}
+	
 	
 	void Transform::RotateAround(const Vector3& point, const Vector3& axis, float angle)
 	{
@@ -59,9 +91,9 @@ namespace FishEngine
 		}
 
 		if (parent == nullptr)
-			SceneManager::GetActiveScene()->AddTransform(this);
+			SceneManager::GetActiveScene()->AddRootTransform(this);
 		else if (old_parent == nullptr)
-			SceneManager::GetActiveScene()->RemoveTransform(this);
+			SceneManager::GetActiveScene()->RemoveRootTransform(this);
 		
 		// new parent can not be child of this
 		auto p = parent;
@@ -81,7 +113,8 @@ namespace FishEngine
 		{
 			//p->m_children.remove(this);
 			// TODO: remove first, not remove all
-			old_parent->m_children.erase(old_parent->m_children.begin()+m_RootOrder);
+//			old_parent->m_children.erase(old_parent->m_children.begin()+m_RootOrder);
+			std::remove(old_parent->m_children.begin(), old_parent->m_children.end(), this);
 		}
 		
 		// old_parent.localToWorld * old_localToWorld = new_parent.localToWorld * new_localToWorld
@@ -118,5 +151,14 @@ namespace FishEngine
 			}
 			m_isDirty = true;
 		}
+	}
+	
+	Transform* Transform::Clone() const
+	{
+		auto cloned = new Transform();
+		cloned->m_localPosition = this->m_localPosition;
+		cloned->m_localRotation = this->m_localRotation;
+		cloned->m_localScale = this->m_localScale;
+		cloned->m_isDirty = true;
 	}
 }

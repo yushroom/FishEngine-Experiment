@@ -8,13 +8,14 @@
 #include <DirTreeWidget.hpp>
 #include <FileListWidget.hpp>
 
-#include "SceneViewApp.hpp"
-#include "HierarchyWidget.hpp"
-#include "GLWidget.hpp"
-#include "InspectorWindow.hpp"
+//#include "SceneViewApp.hpp"
+#include "HierarchyView.hpp"
+//#include "GLWidget.hpp"
+#include "InspectorView.hpp"
 
 #include <FishEditor/FishEditorInternal.hpp>
 #include <FishEditor/EditorApplication.hpp>
+#include <FishEditor/GameView.hpp>
 
 #include <pybind11/pybind11.h>
 #include <iostream>
@@ -72,21 +73,21 @@ try
 	auto& editorApp = FishEditor::EditorApplication::GetInstance();
 	editorApp.Init();
 
-	//FishEditor::Init();
-	//auto app = new SceneViewApp();
-	//app->Init();
+	FishEditor::Init();
+//	auto app = new SceneViewApp();
+//	app->Init();
 
 
-	auto inspector = new InspectorWindow("Inspector");
+	auto inspector = new InspectorView("Inspector");
 	auto project = new FishGUI::Widget("Project");
 	auto console = new IMWidget2("Console");
-	auto hierarchy = new HierarchyWidget("Hierarchy");
+	auto hierarchy = new HierarchyView("Hierarchy");
 	auto scene = new IMWidget2("Scene");
-	//auto game = new GLWidget("Game", app);
+	auto game = new FishEditor::GameView();
 	auto assetStore = new IMWidget2("Asset Store");
 
-	auto rootNode = new FileNode(R"(D:\program\github\MonumentVally-Demo\Assets)");
-	//auto rootNode = new FileNode(ApplicationFilePath());
+//	auto rootNode = new FileNode(R"(D:\program\github\MonumentVally-Demo\Assets)");
+	auto rootNode = new FileNode(ApplicationFilePath());
 	//	auto rootNode = new FileNode(R"(D:\program\FishGUI)");
 	//	rootNode->Find("/Users/yushroom/program/FishEngine/Example/Sponza/Assets/texture");
 	auto dirs = new DirTreeWidget("Dirs", rootNode);
@@ -102,7 +103,7 @@ try
 	});
 
 
-	EditorLayoutType layoutType = EditorLayoutType::e2By3;
+	EditorLayoutType layoutType = EditorLayoutType::eDefault;
 
 	if (layoutType == EditorLayoutType::eDefault)
 	{
@@ -134,6 +135,7 @@ try
 		center->AddChild(scene);
 		center->AddChild(game);
 		center->AddChild(assetStore);
+		center->SetActiveTab(1);
 
 		auto layout1 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
 		auto layout2 = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
@@ -184,9 +186,29 @@ try
 
 
 	game->Init();
+//	editorApp.Start();
+	toolBar->OnRun.connect([&editorApp](){
+		editorApp.Play();
+	});
+	
+	toolBar->OnStop.connect([&editorApp](){
+		editorApp.Stop();
+	});
+	
+	toolBar->OnPause.connect([&editorApp](){
+		editorApp.Pause();
+	});
+	
+	toolBar->OnResume.connect([&editorApp](){
+		editorApp.Resume();
+	});
+	
+	toolBar->OnNextFrame.connect([&editorApp]{
+		editorApp.NextFrame();
+	});
 
-	win->SetOverlayDraw([game]() {
-		game->DrawScene();
+	win->SetOverlayDraw([&editorApp]() {
+		editorApp.Update();
 	});
 
 	FishGUI::Run();

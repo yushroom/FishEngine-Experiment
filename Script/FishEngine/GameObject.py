@@ -118,7 +118,7 @@ class GameObject(Object):
     @staticmethod
     def CreatePrimitive(type: PrimitiveType)->'GameObject':
         from . import MeshFilter, Mesh, MeshRenderer, Material
-        go = GameObject("GameObject")
+        go = GameObject(type.name)
         mf = go.AddComponent(MeshFilter())
         mf.mesh = Mesh.GetInternalMesh(type.name)
         mr = go.AddComponent(MeshRenderer())

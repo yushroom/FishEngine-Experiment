@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FishEngine.hpp"
+#include <boost/signals2/signal.hpp>
 
 //namespace FishGame { class GameApp; }
 
@@ -26,6 +27,8 @@ namespace FishEngine
 //		static void setPixelsPerPoint(const float value) { s_pixelsPerPoint = value; }
 		
 		static void SetResolution(int width, int height, bool fullscreen, int preferredRefreshRate = 0);
+		
+		static boost::signals2::signal<void(int, int)> OnResolutionChange;
 		
 	private:
 		friend class GameApp;

@@ -9,6 +9,7 @@ import yaml
 
 from . import YAMLUtils
 
+from timing import timing
 
 def MakeQuat(d):
     return Quaternion(d['x'], d['y'], d['z'], d['w'])
@@ -216,6 +217,7 @@ class UnityPrefabImporter:
         return rootGO
 
 class UnitySceneImporter:
+    @timing
     def __init__(self, path:str):
         f, fileID2Index = YAMLUtils.removeUnityTagAlias(path)
         data = list(yaml.load_all(f))

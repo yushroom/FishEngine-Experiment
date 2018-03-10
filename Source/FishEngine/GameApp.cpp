@@ -35,6 +35,9 @@ namespace FishEngine
 	
 	GameApp::GameApp()
 	{
+		Screen::OnResolutionChange.connect([this](int w, int h){
+			this->Resize(w, h);
+		});
 	}
 	
     int GameApp::Run()
@@ -133,6 +136,8 @@ namespace FishEngine
 	
 	void GameApp::Resize(int width, int height)
 	{
+		if (width == m_windowWidth && height == m_windowHeight)
+			return;
 		glfwSetWindowSize(m_window, width, height);
 		// call WindowSizeCallback automatically
 //		m_windowWidth = width;

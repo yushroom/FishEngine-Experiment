@@ -2,11 +2,13 @@
 #include "Object.hpp"
 #include <vector>
 #include <list>
+#include "GameObject.hpp"
+#include "Transform.hpp"
 
 namespace FishEngine
 {
-	class GameObject;
-	class Transform;
+//	class GameObject;
+//	class Transform;
 	
 	class Scene
 	{
@@ -26,13 +28,54 @@ namespace FishEngine
 			return m_rootTransforms;
 		}
 		
-		void AddTransform(Transform* t);
+		void Clean();
 		
-		void RemoveTransform(Transform* t);
+		Scene* Clone();
+		
+		template<class T>
+		T* FindComponent()
+		{
+//			for (auto t : m_rootTransforms)
+//			{
+//				auto c = t->GetGameObject()->template GetComponentInChildren<T>();
+//				if (c != nullptr)
+//					return c;
+//			}
+//			return nullptr;
+			auto& all = Object::FindObjectsOfType<T>();
+			for (auto c : all)
+			{
+				auto cc = (T*)c;
+				if (cc->GetGameObject()->GetScene() == this)
+					return cc;
+			}
+			return nullptr;
+		}
+		
+		template<class T>
+		std::vector<T*> FindComponents()
+		{
+			std::vector<T*> components;
+			for (auto t : m_rootTransforms)
+			{
+				t->GetGameObject()->template GetComponentsInChildren<T>(components);
+			}
+			return components;
+		}
+	
+	private:
+		void AddRootTransform(Transform* t);
+		void RemoveRootTransform(Transform* t);
 		
 	private:
 		friend class Transform;
+		friend class GameObject;
 		std::vector<Transform*> m_rootTransforms;
+		
+		std::string m_name;
+		
+		// relative path of the scene. Like: "Assets/MyScenes/MyScene.unity".
+		std::string m_path;
 	};
 	
 	
@@ -53,6 +96,7 @@ namespace FishEngine
 		}
 		
 	private:
+		friend class Scene;
 		static std::list<Scene*> s_scenes;
 		static Scene* s_activeScene;
 	};

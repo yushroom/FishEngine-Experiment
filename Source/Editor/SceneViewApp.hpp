@@ -25,6 +25,11 @@ public:
 		FishEngine::Init();
 		FishEngine::Start();
 	}
+	
+	virtual void Start() override
+	{
+		
+	}
 
 	virtual void Update() override
 	{
@@ -43,5 +48,10 @@ public:
 	virtual void Resize(int width, int height) override
 	{
 		FishEngine::Screen::SetResolution(width, height, false);
+	}
+	
+	virtual void Shutdown() override
+	{
+		
 	}
 };

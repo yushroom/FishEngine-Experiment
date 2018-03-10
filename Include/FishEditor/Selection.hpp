@@ -1,6 +1,9 @@
 #pragma once
 
 #include <FishEngine/Transform.hpp>
+#include <boost/signals2/signal.hpp>
+
+class HierarchyView;
 
 namespace FishEditor
 {
@@ -20,9 +23,11 @@ namespace FishEditor
 				return static_cast<FishEngine::Transform*>(s_activeObject);
 			return nullptr;
 		}
+		
+		static boost::signals2::signal<void(void)> selectionChanged;
 
 	private:
-		friend class HierarchyWidget;
+		friend class ::HierarchyView;
 		static FishEngine::Object* s_activeObject;
 	};
 }

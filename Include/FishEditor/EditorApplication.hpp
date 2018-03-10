@@ -1,3 +1,4 @@
+#pragma once
 
 class EditorInternalApp;
 
@@ -20,6 +21,7 @@ namespace FishEditor
 		void Play();
 		void Stop();
 		void Pause();
+		void Resume();
 		void NextFrame();
 
 	private:

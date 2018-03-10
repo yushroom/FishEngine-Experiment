@@ -129,7 +129,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("SetPyObject", &Object::SetPyObject)
 		;
 
-	class_<Scene>(m, "Scene");
+	class_<Scene>(m, "Scene")
+		.def("Clean", &Scene::Clean);
 
 	class_<SceneManager>(m, "SceneManager");
 

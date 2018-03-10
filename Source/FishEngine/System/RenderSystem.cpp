@@ -9,6 +9,7 @@
 
 #include <FishEngine/Render/Graphics.hpp>
 #include <FishEngine/Render/GLEnvironment.hpp>
+#include <FishEngine/Scene.hpp>
 
 #include <FishEngine/Render/Material.hpp>
 
@@ -25,8 +26,11 @@ namespace FishEngine
 		glEnable(GL_CULL_FACE);
 		
 		
-		auto camera = Object::FindObjectOfType<Camera>();
-		auto light = Object::FindObjectOfType<Light>();
+//		auto camera = Object::FindObjectOfType<Camera>();
+//		auto light = Object::FindObjectOfType<Light>();
+		auto scene = SceneManager::GetActiveScene();
+		auto camera = scene->FindComponent<Camera>();
+		auto light = scene->FindComponent<Light>();
 		if (camera == nullptr || light == nullptr)
 		{
 			puts("camera or light is None");

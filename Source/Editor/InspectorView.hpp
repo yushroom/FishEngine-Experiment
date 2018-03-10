@@ -3,11 +3,11 @@
 #include <FishGUI/FishGUI.hpp>
 
 
-class InspectorWindow : public FishGUI::IMWidget
+class InspectorView : public FishGUI::IMWidget
 {
 public:
 
-	InspectorWindow(const char* name) : IMWidget(name)
+	InspectorView(const char* name) : IMWidget(name)
 	{
 
 	}

@@ -2,25 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(FishEngine_Python)
 set(CMAKE_CXX_STANDARD 14)
 
-
-find_package(PythonInterp 3 REQUIRED)
-find_package(PythonLibs 3 REQUIRED)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR})
-
-# add_definitions(-DBOOST_ALL_NO_LIB=1)
-# if (WIN32)
-#     SET(BOOST_ROOT "D:\\library\\boost_1_64_0")
-# endif()
-# SET(Boost_USE_STATIC_LIBS ON)
-# SET(Boost_USE_MULTITHREADED ON)
-# # SET(Boost_USE_STATIC_RUNTIME OFF)
-# FIND_PACKAGE(Boost REQUIRED COMPONENTS filesystem)
-# INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-
-add_subdirectory(./ThirdParty/pybind11)
-include_directories(./ThirdParty/pybind11/include)
-
-# find_package(folly REQUIRED)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 
 # glfw
@@ -48,7 +30,6 @@ if (MSVC)
     SET_TARGET_PROPERTIES(glew PROPERTIES FOLDER "ThirdParty/glew")
     SET_TARGET_PROPERTIES(glew_s PROPERTIES FOLDER "ThirdParty/glew")
 endif()
-
 
 
 # Autodesk FBX sdk
@@ -95,11 +76,32 @@ file(GLOB_RECURSE SRCS ${CMAKE_CURRENT_LIST_DIR}/Source/FishEditor/*.cpp)
 add_library(FishEditor ${HEADERS} ${SRCS})
 
 
+# python3
+find_package(PythonInterp 3 REQUIRED)
+find_package(PythonLibs 3 REQUIRED)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR})
+
+# add_definitions(-DBOOST_ALL_NO_LIB=1)
+# if (WIN32)
+#     SET(BOOST_ROOT "D:\\library\\boost_1_64_0")
+# endif()
+# SET(Boost_USE_STATIC_LIBS ON)
+# SET(Boost_USE_MULTITHREADED ON)
+# # SET(Boost_USE_STATIC_RUNTIME OFF)
+FIND_PACKAGE(Boost REQUIRED COMPONENTS filesystem)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+add_subdirectory(./ThirdParty/pybind11)
+include_directories(./ThirdParty/pybind11/include)
+
+find_package(folly REQUIRED)
+include_directories(${FOLLY_INCLUDE_DIR})
+
 
 # glm
 include_directories(./ThirdParty/glm)
 #FishGUI
-SET(FishGUI_DIR "D:/program/FishGUI")
+SET(FishGUI_DIR ../FishGUI)
 SET(FishGUI_INCLUDE_DIR ${FishGUI_DIR}/include)
 SET(FishGUI_SRC_DIR ${FishGUI_DIR}/src)
 # aux_source_directory(${FishGUI_SRC_DIR} SRCS)
@@ -120,11 +122,11 @@ target_link_libraries(Test FishEditor)
 # target_link_libraries(Test FishGame)
 target_link_libraries(Test nanovg)
 target_link_libraries(Test glfw)
-# target_link_libraries(Test ${Boost_LIBRARIES})
+target_link_libraries(Test ${Boost_LIBRARIES})
 # target_link_libraries(Test ${PYTHON_LIBRARY})
 target_link_libraries(Test ${FBXSDK_LIB})
 target_link_libraries(Test pybind11::embed)
-# target_link_libraries(Test Folly::folly)
+target_link_libraries(Test ${FOLLY_LIBRARIES})
 if (MSVC)
 	target_link_libraries(Test glew_s)
 	# target_link_libraries(Test opengl32.lib)
@@ -147,6 +149,8 @@ target_link_libraries(Editor nanovg)
 target_link_libraries(Editor glfw)
 target_link_libraries(Editor ${FBXSDK_LIB})
 target_link_libraries(Editor pybind11::embed)
+target_link_libraries(Editor ${FOLLY_LIBRARIES})
+target_link_libraries(Editor ${Boost_LIBRARIES})
 if (MSVC)
 	target_link_libraries(Editor glew_s)
 else()

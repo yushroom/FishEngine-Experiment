@@ -3,4 +3,5 @@
 using namespace FishEngine;
 using namespace FishEditor;
 
-FishEngine::Object* Selection::s_activeObject = nullptr;
+boost::signals2::signal<void(void)> Selection::selectionChanged;
+Object* Selection::s_activeObject = nullptr;

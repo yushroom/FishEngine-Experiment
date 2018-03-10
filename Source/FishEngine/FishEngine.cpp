@@ -4,8 +4,8 @@
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/ScriptSystem.hpp>
 #include <FishEngine/System/InputSystem.hpp>
-
 #include <FishEngine/Render/Material.hpp>
+#include <FishEngine/Scene.hpp>
 
 #include <exception>
 
@@ -37,36 +37,34 @@ namespace FishEngine
 			}
         }
     }
+	
+	void UpdateRecursively(GameObject* go)
+	{
+		for (auto comp : go->GetAllComponents())
+		{
+			if (comp->GetClassID() == Script::ClassID)
+			{
+				auto s = static_cast<Script*>(comp);
+				s->Update();
+			}
+		}
+		for (auto child : go->GetTransform()->GetChildren())
+		{
+			UpdateRecursively(child->GetGameObject());
+		}
+	}
 
     void Update()
     {
 //		puts("======== Update ========");
 		ScriptSystem::GetInstance().Update();
-        for (auto o : Object::FindObjectsOfType<GameObject>())
-        {
-			auto go = (GameObject*)o;
-            for (auto comp : go->GetAllComponents())
-            {
-//                comp->Update();
-				if (comp->GetClassID() == Script::ClassID)
-				{
-					auto s = static_cast<Script*>(comp);
-					s->Update();
-				}
-            }
-        }
-    }
-
-//    void Run()
-//    {
-//        LOGF;
-//        Start();
-//        for (int i = 0; i < 10; ++i)
-//        {
-//            printf("======== Frame %d: ========\n", i);
-//            Update();
-//        }
-//    }
+		
+		auto scene = SceneManager::GetActiveScene();
+		for (auto t : scene->GetRootTransforms())
+		{
+			UpdateRecursively(t->GetGameObject());
+		}
+	}
 	
 	void Clean()
 	{

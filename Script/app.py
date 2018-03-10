@@ -77,8 +77,8 @@ class LogMaterial(Script):
 
 
 def Start():
-    # demo1.Start()
-    demo2.Start()
+    demo1.Start()
+    # demo2.Start()
     # demo3.Start()
 
 def Start4():
@@ -114,12 +114,12 @@ def Update():
         s.Update()
     
 def Clean():
-    gos = Object.FindObjectsOfType(GameObject)
-    if len(gos) > 0:
-        for go in gos:
-            Object.DestroyImmediate(go)
-        del gos
-        del go
+    # gos = Object.FindObjectsOfType(GameObject)
+    # if len(gos) > 0:
+    #     for go in gos:
+    #         Object.DestroyImmediate(go)
+    #     del gos
+    #     del go
     SceneManager.GetActiveScene().Clean()
     SceneManager.StaticClean()
     Material.StaticClean()

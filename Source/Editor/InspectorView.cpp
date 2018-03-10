@@ -1,4 +1,4 @@
-#include "InspectorWindow.hpp"
+#include "InspectorView.hpp"
 
 #include <FishEditor/Selection.hpp>
 
@@ -171,7 +171,7 @@ void Dispatch(Component* c)
 	}
 }
 
-void InspectorWindow::DrawImpl()
+void InspectorView::DrawImpl()
 {
 	auto t = Selection::GetActiveTransform();
 	if (t == nullptr)
