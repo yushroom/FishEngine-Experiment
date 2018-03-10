@@ -1,46 +1,26 @@
 from . import Object
 import FishEngineInternal
-import weakref
+from typing import Type, List, Set
 
 class Component(Object):
     __slots__ = ('__gameObject')
     def __init__(self):
-        # self.name = "Transform"
         super().__init__()
-        self.__gameObject = None    # __gameObject is a weakref
         # self.__tag = ""
 
     # def __del__(self):
     #     print('Component.__del__')
     #     # self.m_gameObject = None
 
-    # @property
-    # def gameObject(self)->"GameObject":
-    #     if self.__gameObject is None:
-    #         return None
-    #     return self.__gameObject()
-    # @gameObject.setter
-    # def gameObject(self, go:"GameObject"):
-    #     # from . import GameObject
-    #     # assert(isinstance(go, GameObject))
-    #     if self.__gameObject() == go:
-    #         return
-    #     if go is not None:
-    #         self.__gameObject = weakref.ref(go)
-    #         go.components.append(self)
-    #     else:
-    #         go = None
-
     @property
     def gameObject(self)->"GameObject":
-        return self.__gameObject
+        return self.m_CachedPtr.GetGameObject().GetPyObject()
     @gameObject.setter
     def gameObject(self, go:"GameObject"):
-        assert(self.__gameObject is None)
-        if self.__gameObject == go:
-            return
-        self.__gameObject = go
-        go.components.append(self)
+        assert(self.gameObject is None)
+        from . import GameObject
+        assert(isinstance(go, GameObject))
+        go.AddComopnent(self)
 
     @property
     def transform(self):
@@ -49,4 +29,10 @@ class Component(Object):
             return None
         return go.transform
 
-# Component = FishEngineInternal.Component
+    @staticmethod
+    def FindByType(componentType:Type('Component'))->List['Component']:
+        return Object.FindObjectsOfType(componentType)
+
+    @staticmethod
+    def FindByTypes(*componentTypes)->Set['Component']:
+        return set.intersection(*[Component.FindByType(t) for t in componentTypes])

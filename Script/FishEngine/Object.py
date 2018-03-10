@@ -3,6 +3,7 @@
 import FishEngineInternal
 # import gc
 # from collections import defaultdict
+from typing import Type, List
 
 class Object():
 
@@ -25,6 +26,10 @@ class Object():
 
     @property
     def cachedPtr(self):
+        return self.m_CachedPtr
+
+    @property
+    def cpp(self):
         return self.m_CachedPtr
 
     def __str__(self):
@@ -89,7 +94,7 @@ class Object():
 
     # ret: list of Object
     @staticmethod
-    def FindObjectsOfType(type):
+    def FindObjectsOfType(type: Type['Object']) -> List['Object']:
     # def FindObjectsOfType(type: Type[Object]):
         from . import Script
         if issubclass(type, Script):

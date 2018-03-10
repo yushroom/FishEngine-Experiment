@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 /ThirdParty/FBX\ SDK/
 /ThirdParty/glew/glew.pc
+/ThirdParty/glm

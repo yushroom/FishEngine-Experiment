@@ -41,12 +41,12 @@ namespace FishEngine
 			return m_classID;
 		}
 		
-		void SetPyObject(const pybind11::handle& obj)
+		void SetPyObject(const pybind11::object& obj)
 		{
 			m_self = obj;
 		}
 		
-		const pybind11::handle& GetPyObject() const
+		const pybind11::object& GetPyObject() const
 		{
 			return m_self;
 		}
@@ -92,7 +92,7 @@ namespace FishEngine
 		
 	protected:
 		std::string			m_name;
-		pybind11::handle	m_self;
+		pybind11::object	m_self;
 
 	private:
 		int					m_classID = 0;

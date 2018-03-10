@@ -8,6 +8,7 @@ from typing import List
 class Script(Component):
     __slots__ = ()
     __scripts = defaultdict(weakref.WeakSet)
+    ClassID = FishEngineInternal.ScriptClassID()
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateScript()

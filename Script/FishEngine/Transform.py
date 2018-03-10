@@ -19,12 +19,13 @@ class Space(Enum):
 
 class Transform(Component):
     __slots__ = ('__parent', '__children', 'm_RootOrder')
-    def __init__(self):
+    def __init__(self, cppObj: FishEngineInternal.Transform):
         super().__init__()
         # self.m_CachedPtr = FishEngineInternal.Transform()
         # self.m_CachedPtr.name = "Transform"
-        self.__parent:'Transform' = None
-        self.__children = []
+        assert(cppObj.__class__ is FishEngineInternal.Transform)
+        self.m_CachedPtr = cppObj
+        cppObj.SetPyObject(self)
         self.m_RootOrder:int = 0
 
     # def __del__(self):
@@ -40,26 +41,22 @@ class Transform(Component):
 
     @property
     def parent(self):
-        return self.__parent
+        p = self.m_CachedPtr.GetParent()
+        return None if p is None else p.GetPyObject()
     @parent.setter
     def parent(self, parent):
         # parent: Transform or None
         self.SetParent(parent)
 
     def SetParent(self, parent: 'Transform', worldPositionStays:bool=True):
-        if self.__parent == parent:
-            return
-        if self.__parent is not None:
-            self.__parent.__children.remove(self)
-        if parent is not None:
-            parent.__children.append(self)
-        self.__parent = parent
         t = None if parent is None else parent.m_CachedPtr
         self.m_CachedPtr.SetParent(t, worldPositionStays)
 
     @property
     def children(self):
-        return self.__children
+        ret = []
+        FishEngineInternal.Transform_GetChildren(self.cpp, ret)
+        return ret
 
     @property
     def localPosition(self) -> Vector3:

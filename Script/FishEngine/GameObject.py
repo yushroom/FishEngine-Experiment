@@ -23,24 +23,12 @@ class GameObject(Object):
     def __init__(self, name='GameObject'):
         from . import Transform, Prefab
         super().__init__()
-        self.__components = []
         self.m_CachedPtr = FishEngineInternal.CreateGameObject()
         self.m_CachedPtr.name = name
-        self.__transform = Transform()
-        # if useRectTransform:
-        #     self.m_CachedPtr = FishEngineInternal.GameObject.CreateWithTransform(name)
-        #     self.__transform = Transform()
-        # else:
-        #     self.m_CachedPtr = FishEngineInternal.GameObject.CreateWithRectTransform(name)
-        #     self.__transform = RectTransform()
-        self.__transform.m_CachedPtr = self.m_CachedPtr.GetTransform()
-        self.__transform.gameObject = self  # also add transform to __components
-        # self.__scene:Scene = Scene.SceneManager.GetActiveScene()
-        # self.__scene.gameObjects.append(self)
+        transform = Transform(self.m_CachedPtr.GetTransform())
         self.m_IsActive = True
         self.m_PrefabInternal:Prefab = None
         self.m_CachedPtr.SetPyObject(self)
-        self.__transform.m_CachedPtr.SetPyObject( self.m_CachedPtr.GetTransform() )
 
     # @staticmethod
     # def CreateWithTransform(name:str="GameObject"):
@@ -50,7 +38,6 @@ class GameObject(Object):
     def CreateWithRectTransform(name:str="GameObject"):
         from . import RectTransform
         go = GameObject(name)
-        # go.__components.pop()   # pop transform
         go.AddComponent(RectTransform())
         return go
 
@@ -60,24 +47,14 @@ class GameObject(Object):
 
     def Clean(self):
         # print('GameObject.Clean()')
-        # manually break ref cycle
-        for comp in self.__components:
-            comp.gameObject = None
-        # import sys
-        # print(sys.getrefcount(self.m_CachedPtr))
-        # self.m_CachedPtr = None
-        # self.__components.clear()
-        # self.__scene.gameObjects.remove(self)
-        # if self.transform.parent is None:
-        #     self.__scene.m_rootGameObjects.remove(self)
         if self.m_PrefabInternal is not None:
             # self.m_PrefabInternal.m_RootGameObject = None
             self.m_PrefabInternal.Clean()
-        self.__transform.Clean()
 
     @property
     def transform(self)->'Transform':
-        return self.__transform
+        # return self.__transform
+        return self.m_CachedPtr.GetTransform().GetPyObject()
 
     @property
     def scene(self):
@@ -87,33 +64,18 @@ class GameObject(Object):
     def scene2(self):
         return self.m_CachedPtr.GetScene()
 
-    @property
-    def components(self):
-        return self.__components
+    # @property
+    # def components(self):
+    #     return self.__components
 
     def GetComponent(self, type):
-        for comp in self.__components:
-            if isinstance(comp, type):
-                return comp
-        return None
+        from . import Component
+        assert(issubclass(type, Component))
+        return FishEngineInternal.GameObject_GetComopnent(self.m_CachedPtr, type.ClassID)
 
-    # component: Component
     def AddComponent(self, component:'Component')->'Component':
         from . import Component
         assert(isinstance(component, Component))
-        # if isinstance(component, RectTransform):
-        #     old = self.__transform
-        #     new = component
-        #     if old.parent is not None:
-        #         old.parent.children[old.m_RootOrder] = new
-        #     new.m_RootOrder = old.m_RootOrder
-        #     new.__parent = old.__parent
-        #     old.parent[]
-        #     new.m_CachedPtr = old.m_CachedPtr
-        #     old.__parent =
-        #     self.__transform = component
-        component.gameObject = self
-        assert(component.m_CachedPtr is not None)
         self.m_CachedPtr.AddComponent(component.m_CachedPtr)
         return component
 

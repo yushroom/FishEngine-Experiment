@@ -38,7 +38,7 @@ using namespace FishEngine;
 namespace py = pybind11;
 
 
-py::handle FindObjectOfType(int classID)
+py::object FindObjectOfType(int classID)
 {
 	auto& objs = Object::FindObjectsOfType(classID);
 	if (objs.size() == 0)
@@ -46,7 +46,7 @@ py::handle FindObjectOfType(int classID)
 	return (*objs.begin())->GetPyObject();
 }
 
-py::object FindObjectsOfType(int classID)
+py::list FindObjectsOfType(int classID)
 {
 	auto& objs = Object::FindObjectsOfType(classID);
 	py::list ret;
@@ -57,6 +57,25 @@ py::object FindObjectsOfType(int classID)
 		ret.append(self);
 	}
 	return ret;
+}
+
+py::object GameObject_GetComopnent(GameObject* go, int classID)
+{
+	assert(go != nullptr);
+	auto c = go->GetComponent(classID);
+	if (c == nullptr)
+		return py::none();
+	else
+		return c->GetPyObject();
+}
+
+void Transform_GetChildren(Transform* t, py::list& outChildren)
+{
+	assert(t != nullptr);
+	for (auto c : t->GetChildren())
+	{
+		outChildren.append(c->GetPyObject());
+	}
 }
 
 
@@ -128,6 +147,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_property("name", &Object::GetName, &Object::SetName, return_value_policy::copy)
 		.def_property_readonly("instanceID", &Object::GetInstanceID)
 		.def("SetPyObject", &Object::SetPyObject)
+		.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
 		;
 
 	// Scene
@@ -159,6 +179,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("GetScene", &GameObject::GetScene, return_value_policy::reference)
 	;
 
+	m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
+
 	class_<Component, Object>(m, "Component")
 		.def("GetGameObject", &Component::GetGameObject);
 	;
@@ -189,6 +211,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("worldToLocalMatrix", &Transform::GetWorldToLocalMatrix)
 		.def("RotateAround", &Transform::RotateAround)
 		;
+
+	m.def("Transform_GetChildren", &Transform_GetChildren);
 
 	DefineFunc(RectTransform);
 	class_<RectTransform, Component>(m, "RectTransform")
