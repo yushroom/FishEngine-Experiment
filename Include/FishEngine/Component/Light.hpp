@@ -74,6 +74,8 @@ namespace FishEngine
 
 		static void ResizeShadowMaps();
 
+		virtual Light* Clone() const override;
+
 	private:
 		friend class Scene;
 		//friend class FishEditor::EditorRenderSystem;

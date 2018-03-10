@@ -138,6 +138,8 @@ namespace FishEngine
 
 		static void OnWindowSizeChanged(const int width, const int height);
 
+		virtual Camera* Clone() const override;
+
 //		static Camera*
 //		Create(
 //			float       fov             = 60,

@@ -69,8 +69,9 @@ namespace FishEngine
 	void Clean()
 	{
 		ScriptSystem::GetInstance().Clean();
-		
 		Material::StaticClean();
+
+		SceneManager::StaticClean();
 		
 		// check memory leak
 		int a = Object::GetInstanceCounter();

@@ -2,6 +2,7 @@
 #include "Object.hpp"
 #include <vector>
 #include <list>
+#include <map>
 #include "GameObject.hpp"
 #include "Transform.hpp"
 
@@ -14,7 +15,9 @@ namespace FishEngine
 	{
 	public:
 		
-		Scene() = default;
+		Scene();
+		~Scene();
+
 		Scene(Scene&) = delete;
 		Scene& operator=(Scene&) = delete;
 		
@@ -70,12 +73,17 @@ namespace FishEngine
 	private:
 		friend class Transform;
 		friend class GameObject;
+		friend class SceneManager;
+
 		std::vector<Transform*> m_rootTransforms;
 		
+		int m_Handle = 0;	// 0 is invalid
 		std::string m_name;
 		
 		// relative path of the scene. Like: "Assets/MyScenes/MyScene.unity".
 		std::string m_path;
+
+		static int s_counter;
 	};
 	
 	
@@ -94,10 +102,39 @@ namespace FishEngine
 			}
 			return s_activeScene;
 		}
+
+		static void SetActiveScene(Scene* scene)
+		{
+			s_activeScene = scene;
+		}
+
+		static Scene* GetSceneByHandle(int handle)
+		{
+			return s_handeToScene[handle];
+		}
+
+		static void StaticClean()
+		{
+			std::vector<Scene*> scenes;
+			for (auto&& p : s_handeToScene)
+			{
+				auto scene = p.second;
+				scene->Clean();
+				scenes.push_back(scene);
+				// ~Scene will modified s_handleToScene
+				//delete scene;	
+			}
+			for (auto s : scenes)
+			{
+				delete s;
+			}
+			s_handeToScene.clear();
+		}
 		
 	private:
 		friend class Scene;
-		static std::list<Scene*> s_scenes;
+		static std::map<int, Scene*> s_handeToScene;
+		//static std::list<Scene*> s_scenes;
 		static Scene* s_activeScene;
 	};
 }

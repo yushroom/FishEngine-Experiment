@@ -25,6 +25,8 @@ namespace FishEngine
 			return m_gameObject;
 		}
 
+		virtual Component* Clone() const = 0;
+
 	protected:
 		friend class GameObject;
 		GameObject* m_gameObject = nullptr;

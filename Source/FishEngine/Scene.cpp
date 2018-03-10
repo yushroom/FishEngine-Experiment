@@ -5,6 +5,21 @@
 namespace FishEngine
 {
 	Scene* SceneManager::s_activeScene = nullptr;
+
+	int Scene::s_counter = 0;
+
+	Scene::Scene()
+	{
+		s_counter++;
+		m_Handle = s_counter;
+		SceneManager::s_handeToScene[m_Handle] = this;
+	}
+
+	Scene::~Scene()
+	{
+		auto& m = SceneManager::s_handeToScene;
+		m.erase(m.find(m_Handle));
+	}
 	
 //	std::vector<GameObject*> Scene::GetRootGameObjects()
 //	{
@@ -68,6 +83,11 @@ namespace FishEngine
 //		{
 //			delete t;
 //		}
+		//m_rootTransforms.clear();
+		for (auto t : m_rootTransforms)
+		{
+			delete t->GetGameObject();
+		}
 		m_rootTransforms.clear();
 	}
 	
@@ -82,9 +102,11 @@ namespace FishEngine
 		for (int i = 0; i < m_rootTransforms.size(); ++i)
 		{
 			auto go = m_rootTransforms[i]->GetGameObject();
-			cloned->m_rootTransforms[i] = go->Clone(this)->GetTransform();
+			go->Clone(cloned);
 		}
 		
 		return cloned;
 	}
+
+	std::map<int, Scene*> SceneManager::s_handeToScene;
 }

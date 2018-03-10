@@ -93,13 +93,19 @@ namespace FishEditor
 //		m_app->Start();
 		m_IsPlaying = true;
 		auto scene = FishEngine::SceneManager::GetActiveScene();
+		m_currentScene = scene;
 		scene = scene->Clone();
+		FishEngine::SceneManager::SetActiveScene(scene);
 	}
 
 	void EditorApplication::Stop()
 	{
 		m_IsPlaying = false;
-		FishEngine::Clean();
+		//FishEngine::Clean();
+		auto scene = FishEngine::SceneManager::GetActiveScene();
+		scene->Clean();
+		delete scene;
+		FishEngine::SceneManager::SetActiveScene(m_currentScene);
 	}
 
 	void EditorApplication::Pause()

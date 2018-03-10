@@ -11,7 +11,7 @@ import sys, gc
 import weakref
 
 from timing import timing
-import demo1, demo2, demo3
+import demo1, demo2
 
 from FishEditor import AssetDataBase
 

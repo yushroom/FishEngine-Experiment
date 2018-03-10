@@ -212,6 +212,8 @@ try
 	});
 
 	FishGUI::Run();
+	FishEngine::Clean();
+	return 0;
 }
 catch (pybind11::error_already_set& e)
 {

@@ -25,9 +25,7 @@ namespace FishEngine
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		
-		
-//		auto camera = Object::FindObjectOfType<Camera>();
-//		auto light = Object::FindObjectOfType<Light>();
+
 		auto scene = SceneManager::GetActiveScene();
 		auto camera = scene->FindComponent<Camera>();
 		auto light = scene->FindComponent<Light>();
@@ -37,7 +35,7 @@ namespace FishEngine
 			return;
 		}
 		
-		auto& mfs = Object::FindObjectsOfType<MeshFilter>();
+		auto& mfs = scene->FindComponents<MeshFilter>();
 //		auto& mrs = Object::FindObjectsOfType<MeshRenderer>();
 		std::vector<GameObject*> intersection;
 		for (auto mf : mfs)

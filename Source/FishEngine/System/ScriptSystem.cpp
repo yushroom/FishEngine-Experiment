@@ -114,6 +114,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		//		.add_property("eulerAngles", &Quaternion::GetEulerAngles, &Quaternion::SetEulerAngles)
 		;
 
+	// Matrix4x4
 	class_<Matrix4x4>(m, "Matrix4x4")
 		.def("__str__", &Matrix4x4::ToString)
 		.def(self*Matrix4x4())
@@ -129,26 +130,34 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("SetPyObject", &Object::SetPyObject)
 		;
 
+	// Scene
 	class_<Scene>(m, "Scene")
-		.def("Clean", &Scene::Clean);
+		.def("Clean", &Scene::Clean)
+		//.def_static("GetRootGameObjects", [](const py::object&, int handle) { SceneManager::GetSceneByHandle(handle)->re})
+	;
 
 	class_<SceneManager>(m, "SceneManager");
 
+#define DefineFunc(classname) \
+	m.def("Create" #classname, []() { return new classname(); }, return_value_policy::reference); \
+	m.def(#classname "ClassID", []() ->int { return classname::ClassID; })
 
-	m.def("CreateGameObject", []() { return new GameObject(); }, return_value_policy::reference);
-	m.def("GameObjectClassID", []() ->int { return GameObject::ClassID; });
+	//m.def("CreateGameObject", []() { return new GameObject(); }, return_value_policy::reference);
+	//m.def("GameObjectClassID", []() ->int { return GameObject::ClassID; });
 
 	m.def("CreateScript", []() { return new Script(); }, return_value_policy::reference);
 
 
 	// GameObject
+	DefineFunc(GameObject);
 	class_<GameObject, Object>(m, "GameObject")
-		.def(init<>())
-		.def(init<const std::string&>())
-		.def_property_readonly_static("ClassID", [](py::object) { return (int)GameObject::ClassID; })
+		//.def(init<>())
+		//.def(init<const std::string&>())
+		.def_property_readonly_static("ClassID", [](const py::object&) { return (int)GameObject::ClassID; })
 		.def("GetTransform", &GameObject::GetTransform, return_value_policy::reference)
 		.def("AddComponent", &GameObject::AddComponent)
-		;
+		.def("GetScene", &GameObject::GetScene, return_value_policy::reference)
+	;
 
 	class_<Component, Object>(m, "Component")
 		.def("GetGameObject", &Component::GetGameObject);
@@ -181,8 +190,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("RotateAround", &Transform::RotateAround)
 		;
 
+	DefineFunc(RectTransform);
 	class_<RectTransform, Component>(m, "RectTransform")
-		.def(init<>())
+		//.def(init<>())
 		.def_readwrite("m_AnchorMin", &RectTransform::m_AnchorMin)
 		.def_readwrite("m_AnchorMax", &RectTransform::m_AnchorMax)
 		.def_readwrite("m_AnchoredPosition", &RectTransform::m_AnchoredPosition)
@@ -190,8 +200,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_readwrite("m_Pivot", &RectTransform::m_Pivot)
 		;
 
+	DefineFunc(Script);
 	class_<Script, Component>(m, "Script")
-		.def(init<>())
+		//.def(init<>())
 	;
 
 	class_<Mesh, Object>(m, "Mesh")
@@ -202,21 +213,24 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_static("FromString", &Shader::FromString, return_value_policy::take_ownership)
 		;
 
+	//DefineFunc(Material);
 	class_<Material, Object>(m, "Material")
 		.def(init<>())
 		.def_property("shader", &Material::GetShader, &Material::SetShader, return_value_policy::reference)
 		.def_static("GetErrorMaterial", &Material::GetErrorMaterial, return_value_policy::reference)
 		;
 
+	DefineFunc(MeshFilter);
 	class_<MeshFilter, Component>(m, "MeshFilter")
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshFilter::ClassID; })
-		.def(init<>())
+		//.def(init<>())
 		.def_readwrite("mesh", &MeshFilter::m_mesh)
 		;
 
+	DefineFunc(MeshRenderer);
 	class_<MeshRenderer, Component>(m, "MeshRenderer")
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshRenderer::ClassID; })
-		.def(init<>())
+		//.def(init<>())
 		.def_readwrite("material", &MeshRenderer::m_material)
 		;
 
@@ -224,9 +238,10 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_static("DrawMesh", &Graphics::DrawMesh)
 		;
 
+	DefineFunc(Camera);
 	class_<Camera, Component>(m, "Camera")
 		.def_property_readonly_static("ClassID", [](py::object){ return (int)Camera::ClassID; })
-		.def(init<>())
+		//.def(init<>())
 		.def_property("fieldOfView", &Camera::GetFieldOfView, &Camera::SetFieldOfView)
 		.def_property_readonly("aspect", &Camera::GetAspect)
 		.def_property("orthographic", &Camera::GetOrthographic, &Camera::SetOrthographic)
@@ -243,8 +258,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_static("SetResolution", &Screen::SetResolution)
 		;
 
+	DefineFunc(Light);
 	class_<Light, Component>(m, "Light")
-		.def(init<>())
+		//.def(init<>())
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)Light::ClassID; })
 	;
 }

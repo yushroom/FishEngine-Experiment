@@ -10,7 +10,7 @@ class Script(Component):
     __scripts = defaultdict(weakref.WeakSet)
     def __init__(self):
         super().__init__()
-        self.m_CachedPtr = FishEngineInternal.Script()
+        self.m_CachedPtr = FishEngineInternal.CreateScript()
         self.m_CachedPtr.SetPyObject(self)
         Script.__scripts[type(self)].add(self)
 
@@ -46,8 +46,13 @@ class Script(Component):
 
         # __speed -> _Rotator__speed
         hidden_prefix = '_' + self.__class__.__name__ + '__'
-        return [x for x in a if x not in b and not x.startswith(hidden_prefix)]
+        return [x for x in a if x in diff and not x.startswith(hidden_prefix)]
         # ret = [x for x in a and x not in b]
         # return ret
 
+    # for c++
+    def Clone(self)->'Script':
+        print("Clone:", self)
+        from copy import copy
+        return copy(self)
 # Script = FishEngineInternal.Script

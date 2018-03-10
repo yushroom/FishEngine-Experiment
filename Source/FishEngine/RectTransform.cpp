@@ -39,4 +39,15 @@ namespace FishEngine
 			childRT->Update();
 		}
 	}
+
+	RectTransform* RectTransform::Clone() const
+	{
+		auto cloned = new RectTransform();
+		cloned->m_AnchoredPosition = m_AnchoredPosition;
+		cloned->m_AnchorMax = m_AnchorMax;
+		cloned->m_AnchorMin = m_AnchorMin;
+		cloned->m_Pivot = m_Pivot;
+		cloned->m_SizeDelta = m_SizeDelta;
+		return cloned;
+	}
 }

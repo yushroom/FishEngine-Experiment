@@ -19,6 +19,8 @@ namespace FishEngine
 		{
 		}
 		
+		virtual MeshRenderer* Clone() const override;
+
 //	private:
 		Material* m_material = nullptr;
 	};

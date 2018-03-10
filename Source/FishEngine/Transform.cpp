@@ -8,16 +8,16 @@ namespace FishEngine
 	Transform::~Transform()
 	{
 		LOGF;
-//		if (!m_children.empty())
-//		{
-//			for (auto c : m_children)
-//			{
-//				delete c->GetGameObject();
-//			}
-//		}
+		if (!m_children.empty())
+		{
+			for (auto c : m_children)
+			{
+				delete c->GetGameObject();
+			}
+		}
 //		m_children.clear();
 		// TODO
-//		SetParent(nullptr); // remove from parent
+		SetParent(nullptr); // remove from parent
 	}
 	
 	void Transform::SetRootOrder(int index)
@@ -160,5 +160,6 @@ namespace FishEngine
 		cloned->m_localRotation = this->m_localRotation;
 		cloned->m_localScale = this->m_localScale;
 		cloned->m_isDirty = true;
+		return cloned;
 	}
 }

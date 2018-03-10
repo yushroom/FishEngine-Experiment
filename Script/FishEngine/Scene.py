@@ -1,34 +1,37 @@
 from . import Object
 from typing import List
 
-class Scene(Object):
+import FishEngineInternal 
+
+class Scene:
+    __slot__ = ('m_Handle')
     def __init__(self):
-        super().__init__()
-        self.__gameObjects = []
+        self.m_Handle:int = 0
+        # self.__gameObjects = []
         self.__systems = [] # list of System
-        # self.buildIndex
-        # self.isDirty
-        # self.isLoaded
-        # self.name
-        # self.path
-        self.m_rootGameObjects = []
+        # self.m_rootGameObjects = []
 
     # interal
     @property
     def gameObjects(self):
-        return self.__gameObjects
+        # return self.__gameObjects
+        raise NotImplementedError
 
     def Clean(self):
-        self.__gameObjects.clear()
-        self.m_rootGameObjects.clear()
+        # self.__gameObjects.clear()
+        # self.m_rootGameObjects.clear()
+        # raise NotImplementedError
+        pass
 
     @property
     def rootCount(self):
-        return len(self.GetRootGameObjects())
+        # return len(self.GetRootGameObjects())
+        raise NotImplementedError
 
     def GetRootGameObjects(self):
         # return [o for o in self.__gameObjects if o.transform.parent is None]
-        return self.m_rootGameObjects
+        # return self.m_rootGameObjects
+        raise NotImplementedError
 
     @property
     def systems(self):

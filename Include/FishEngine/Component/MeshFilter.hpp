@@ -23,6 +23,8 @@ namespace FishEngine
 		{
 			return m_mesh;
 		}
+
+		virtual MeshFilter* Clone() const override;
 		
 //	private:
 		Mesh* m_mesh = nullptr;

@@ -96,6 +96,9 @@ void DrawScript(Script* s)
 	FishGUI::Group(scriptName + "(Script)");
 	FishGUI::Text("Script", scriptName);
 
+	auto instanceID_str = std::to_string(s->GetInstanceID());
+	FishGUI::Text("Instance ID", instanceID_str);
+
 	auto attributes = handle.attr("GetVisiableAttributes")();		// list of str
 	for (const auto& a : attributes)
 	{

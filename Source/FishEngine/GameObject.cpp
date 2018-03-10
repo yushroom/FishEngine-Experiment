@@ -1,8 +1,10 @@
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/RectTransform.hpp>
-//#include <FishEngine/Script.hpp>
+#include <FishEngine/Script.hpp>
 #include <FishEngine/Scene.hpp>
+
+#include <pybind11/embed.h>
 
 namespace FishEngine
 {
@@ -54,14 +56,23 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 		LOGF;
-		//for (auto comp : m_components)
-		//{
-		//	delete comp;
-		//}
-		delete m_transform;
-		m_transform = nullptr;
+		for (auto comp : m_components)
+		{
+			delete comp;
+		}
+		//delete m_transform;
+		//m_transform = nullptr;
 	}
 
+	void GameObject::AddComponent(Component* comp)
+	{
+		m_components.push_back(comp);
+		comp->m_gameObject = this;
+		//if (comp->GetClassID() == Script::ClassID)
+		//{
+		//	comp->m_self.attr
+		//}
+	}
 
 	
 //	void GameObject::AddRectTransform(RectTransform* t)
@@ -93,18 +104,27 @@ namespace FishEngine
 			scene = this->m_scene;
 		auto cloned = new GameObject(this->m_name, GameObjectConstructionFlag::Empty);
 		cloned->m_scene = scene;
+		//auto module = pybind11::module::import("FishEngine");
+		//cloned->m_self = module.attr("GameObject")();
 		auto cloned_t = m_transform->Clone();
 		cloned->m_transform = cloned_t;
 		cloned->m_components.push_back(cloned_t);
-		cloned_t->m_gameObject = this;
+		cloned_t->m_gameObject = cloned;
 		cloned->m_scene->AddRootTransform(cloned_t);
-//		cloned->m_components.resize( m_components.size() );
+
+		auto it = m_components.begin();
+		it++;
+		for (; it != m_components.end(); ++it)
+		{
+			auto c = *it;
+			cloned->AddComponent(c->Clone());
+		}
 		
 		cloned->m_transform->m_children.reserve(this->m_transform->m_children.size());
 		for (auto child : this->m_transform->m_children)
 		{
-			auto cloned_child = child->GetGameObject()->Clone();
-			cloned_child->m_transform->SetParent(cloned_child->m_transform);
+			auto cloned_child = child->GetGameObject()->Clone(scene);
+			cloned_child->m_transform->SetParent(cloned->m_transform, false);
 //			cloned->m_transform->m_children.push_back(cloned_child->m_transform);
 		}
 		

@@ -8,7 +8,7 @@ class MeshRenderer(Component):
     ClassID = FishEngineInternal.MeshRenderer.ClassID
     def __init__(self):
         super().__init__()
-        self.m_CachedPtr = FishEngineInternal.MeshRenderer()
+        self.m_CachedPtr = FishEngineInternal.CreateMeshRenderer()
         self.__material:Material = None
         self.m_CachedPtr.SetPyObject(self)
 

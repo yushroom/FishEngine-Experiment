@@ -81,21 +81,17 @@ find_package(PythonInterp 3 REQUIRED)
 find_package(PythonLibs 3 REQUIRED)
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR})
 
-# add_definitions(-DBOOST_ALL_NO_LIB=1)
-# if (WIN32)
-#     SET(BOOST_ROOT "D:\\library\\boost_1_64_0")
-# endif()
-# SET(Boost_USE_STATIC_LIBS ON)
-# SET(Boost_USE_MULTITHREADED ON)
-# # SET(Boost_USE_STATIC_RUNTIME OFF)
-FIND_PACKAGE(Boost REQUIRED COMPONENTS filesystem)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+if (APPLE)
+	find_package(Boost REQUIRED COMPONENTS filesystem)
+	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+	find_package(folly REQUIRED)
+	include_directories(${FOLLY_INCLUDE_DIR})
+endif()
 
 add_subdirectory(./ThirdParty/pybind11)
 include_directories(./ThirdParty/pybind11/include)
-
-find_package(folly REQUIRED)
-include_directories(${FOLLY_INCLUDE_DIR})
 
 
 # glm

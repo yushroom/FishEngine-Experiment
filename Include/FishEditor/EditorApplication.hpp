@@ -2,6 +2,11 @@
 
 class EditorInternalApp;
 
+namespace FishEngine
+{
+	class Scene;
+}
+
 namespace FishEditor
 {
 	class EditorApplication final
@@ -32,5 +37,7 @@ namespace FishEditor
 
 		EditorInternalApp * m_app;
 		bool m_IsPlaying = false;
+
+		FishEngine::Scene * m_currentScene;	// scene in editor
 	};
 }

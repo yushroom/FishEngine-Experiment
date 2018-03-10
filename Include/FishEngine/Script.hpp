@@ -22,14 +22,16 @@ namespace FishEngine
 			LOGF;
 		}
 
-		Func(Awake)
-		Func(Start)
-		Func(Update)
-		Func(FixedUpdate)
-		Func(LateUpdate)
-		Func(OnGUI)
-		Func(OnDisable)
-		Func(OnEnable)
+		Func(Awake);
+		Func(Start);
+		Func(Update);
+		Func(FixedUpdate);
+		Func(LateUpdate);
+		Func(OnGUI);
+		Func(OnDisable);
+		Func(OnEnable);
+
+		virtual Script* Clone() const override;
 	};
 }
 

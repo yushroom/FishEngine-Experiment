@@ -129,10 +129,4 @@ namespace FishEngine
 		Transform*				m_transform = nullptr;
 		std::list<Component*>	m_components;
 	};
-
-	inline void GameObject::AddComponent(Component* comp)
-	{
-		m_components.push_back(comp);
-		comp->m_gameObject = this;
-	}
 }

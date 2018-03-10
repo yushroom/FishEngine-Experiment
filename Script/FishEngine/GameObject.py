@@ -24,7 +24,8 @@ class GameObject(Object):
         from . import Transform, Prefab
         super().__init__()
         self.__components = []
-        self.m_CachedPtr = FishEngineInternal.GameObject(name)
+        self.m_CachedPtr = FishEngineInternal.CreateGameObject()
+        self.m_CachedPtr.name = name
         self.__transform = Transform()
         # if useRectTransform:
         #     self.m_CachedPtr = FishEngineInternal.GameObject.CreateWithTransform(name)
@@ -34,8 +35,8 @@ class GameObject(Object):
         #     self.__transform = RectTransform()
         self.__transform.m_CachedPtr = self.m_CachedPtr.GetTransform()
         self.__transform.gameObject = self  # also add transform to __components
-        self.__scene:Scene = Scene.SceneManager.GetActiveScene()
-        self.__scene.gameObjects.append(self)
+        # self.__scene:Scene = Scene.SceneManager.GetActiveScene()
+        # self.__scene.gameObjects.append(self)
         self.m_IsActive = True
         self.m_PrefabInternal:Prefab = None
         self.m_CachedPtr.SetPyObject(self)
@@ -81,6 +82,10 @@ class GameObject(Object):
     @property
     def scene(self):
         return self.__scene
+
+    @property
+    def scene2(self):
+        return self.m_CachedPtr.GetScene()
 
     @property
     def components(self):
@@ -132,3 +137,11 @@ class GameObject(Object):
     @staticmethod
     def FindWithComponents(*componentTypes)->Set['Component']:
         return set.intersection(*[GameObject.FindWithComponent(t) for t in componentTypes])
+
+    @staticmethod
+    def Clone(go:'GameObject'):
+        cloned = GameObject(go.name)
+        cloned.__transform.localPosition = go.__transform.localPosition
+        cloned.__transform.localRotation = go.__transform.localRotation
+        cloned.__transform.local
+        
