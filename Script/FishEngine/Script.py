@@ -10,6 +10,7 @@ class Script(Component):
     __scripts = defaultdict(weakref.WeakSet)
     ClassID = FishEngineInternal.ScriptClassID()
     def __init__(self):
+        print('Script.__init__')
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateScript()
         self.m_CachedPtr.SetPyObject(self)
@@ -53,7 +54,12 @@ class Script(Component):
 
     # for c++
     def Clone(self)->'Script':
-        print("Clone:", self)
-        from copy import copy
-        return copy(self)
-# Script = FishEngineInternal.Script
+        print("Script.Clone:", self)
+        from copy import deepcopy
+        # memo = {}
+        # memo[self.m_CachedPtr] = self.m_CachedPtr
+        cpp = self.m_CachedPtr
+        self.m_CachedPtr = None
+        cloned = deepcopy(self)
+        self.m_CachedPtr = cpp
+        return cloned

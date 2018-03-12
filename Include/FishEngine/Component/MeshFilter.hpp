@@ -19,14 +19,12 @@ namespace FishEngine
 		{
 		}
 
-		Mesh* GetMesh() const
-		{
-			return m_mesh;
-		}
+		Mesh* GetMesh() const { return m_mesh; }
+		void SetMesh(Mesh* mesh) { m_mesh = mesh; }
 
 		virtual MeshFilter* Clone() const override;
 		
-//	private:
+	private:
 		Mesh* m_mesh = nullptr;
 	};
 }

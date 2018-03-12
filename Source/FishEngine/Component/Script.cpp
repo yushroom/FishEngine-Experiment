@@ -12,8 +12,8 @@ namespace FishEngine
 		//return self.attr("m_CachedPtr").cast<Script*>();
 
 		auto cloned = new Script();
-		cloned->m_self = m_self;
-		m_self.attr("m_CachedPtr") = cloned;
+		cloned->m_self = m_self.attr("Clone")();
+		cloned->m_self.attr("m_CachedPtr") = cloned;
 		return cloned;
 	}
 }

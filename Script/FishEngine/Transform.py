@@ -42,6 +42,7 @@ class Transform(Component):
     @property
     def parent(self):
         p = self.m_CachedPtr.GetParent()
+        print(p, p.GetPyObject())
         return None if p is None else p.GetPyObject()
     @parent.setter
     def parent(self, parent):

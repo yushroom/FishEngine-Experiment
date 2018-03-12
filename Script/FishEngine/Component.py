@@ -14,20 +14,24 @@ class Component(Object):
 
     @property
     def gameObject(self)->"GameObject":
-        return self.m_CachedPtr.GetGameObject().GetPyObject()
+        cppGO = self.cpp.GetGameObject()
+        # print(cppGO.name, cppGO.__class__)
+        if cppGO.GetPyObject() is None:
+            from . import GameObject
+            return GameObject("", cppGO)
+        return None if cppGO is None else cppGO.GetPyObject()
     @gameObject.setter
     def gameObject(self, go:"GameObject"):
-        assert(self.gameObject is None)
         from . import GameObject
+        assert(self.gameObject is None)
         assert(isinstance(go, GameObject))
         go.AddComopnent(self)
 
     @property
-    def transform(self):
+    def transform(self)->'Transform':
         go = self.gameObject
-        if go is None:
-            return None
-        return go.transform
+        print(go, go.transform)
+        return None if go is None else go.transform
 
     @staticmethod
     def FindByType(componentType:Type('Component'))->List['Component']:

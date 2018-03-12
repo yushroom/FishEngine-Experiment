@@ -49,13 +49,12 @@ class Camera(Component):
         return self.m_CachedPtr.orthographicSize
     @orthographicSize.setter
     def orthographicSize(self, value:float):
-        # print('Camera.orthographicSize.setter')
         self.m_CachedPtr.orthographicSize = value
 
     @property
     def projectionMatrix(self):
-        return self.m_CachedPtr.projectionMatrix()
+        return self.m_CachedPtr.GetProjectionMatrix()
 
     @property
     def worldToCameraMatrix(self):
-        return self.m_CachedPtr.worldToCameraMatrix()
+        return self.m_CachedPtr.GetWorldToCameraMatrix()

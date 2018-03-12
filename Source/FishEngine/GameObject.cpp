@@ -55,7 +55,8 @@ namespace FishEngine
 	
 	GameObject::~GameObject()
 	{
-		LOGF;
+//		LOGF;
+		printf("~GameObjectL %s\n", m_name.c_str());
 		for (auto comp : m_components)
 		{
 			delete comp;
@@ -66,6 +67,7 @@ namespace FishEngine
 
 	void GameObject::AddComponent(Component* comp)
 	{
+		assert(comp->m_gameObject == nullptr);
 		m_components.push_back(comp);
 		comp->m_gameObject = this;
 		//if (comp->GetClassID() == Script::ClassID)
@@ -102,7 +104,7 @@ namespace FishEngine
 	{
 		if (scene == nullptr)
 			scene = this->m_scene;
-		auto cloned = new GameObject(this->m_name, GameObjectConstructionFlag::Empty);
+		auto cloned = new GameObject(this->m_name+"-cloned", GameObjectConstructionFlag::Empty);
 		cloned->m_scene = scene;
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();
@@ -129,5 +131,17 @@ namespace FishEngine
 		}
 		
 		return cloned;
+	}
+	
+	bool GameObject::IsActiveInHierarchy() const
+	{
+		if (!m_IsActive)
+			return false;
+		
+		if (m_transform->GetParent() != nullptr)
+		{
+			return m_transform->GetParent()->GetGameObject()->IsActiveInHierarchy();
+		}
+		return true;
 	}
 }

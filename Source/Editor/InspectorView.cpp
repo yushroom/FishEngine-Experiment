@@ -14,6 +14,7 @@ using namespace FishEditor;
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
 #include <FishEngine/Script.hpp>
+#include <FishEngine/Render/Material.hpp>
 
 void DrawTransform(Transform* t)
 {
@@ -56,7 +57,9 @@ void DrawLight(Light* l)
 
 void DrawMeshRenderer(MeshRenderer* mr)
 {
-
+	Material* mat = mr->GetMaterial();
+	std::string name = (mat == nullptr ? "None" : mat->GetName());
+	FishGUI::InputText("Material", name);
 }
 
 void DrawMeshFilter(MeshFilter* mf)
@@ -122,6 +125,11 @@ void DrawScript(Script* s)
 			{
 				value = std::to_string(attribute.cast<int>());
 				FishGUI::Text(name.c_str(), value);
+			}
+			else if (typeName == "FishEngineInternal.Vector3")
+			{
+				auto vec = attribute.cast<FishEngine::Vector3>();
+				FishGUI::Float3(name, vec.x, vec.y, vec.z);
 			}
 			else
 			{

@@ -117,6 +117,17 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def(self*float())
 		.def(float()*self)
 		.def_static("Dot", &Vector3::Dot)
+	.def(py::pickle(
+					[](const Vector3 & v) { // __getstate__
+						return py::make_tuple(v.x, v.y, v.z);
+					},
+					[](py::tuple t) {
+						if (t.size() != 3)
+							throw std::runtime_error("Invalid state!");
+						Vector3 v(t[0].cast<float>(), t[1].cast<float>(), t[2].cast<float>());
+						return v;
+					}
+					))
 		;
 
 
@@ -177,12 +188,15 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("GetTransform", &GameObject::GetTransform, return_value_policy::reference)
 		.def("AddComponent", &GameObject::AddComponent)
 		.def("GetScene", &GameObject::GetScene, return_value_policy::reference)
+		.def("IsActive", &GameObject::IsActive)
+		.def("SetActive", &GameObject::SetActive)
+		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
 	;
 
 	m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
 
 	class_<Component, Object>(m, "Component")
-		.def("GetGameObject", &Component::GetGameObject);
+		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference);
 	;
 
 	//m.def("CreateTransform", []() { return new Transform(); }, return_value_policy::reference);
@@ -248,15 +262,17 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<MeshFilter, Component>(m, "MeshFilter")
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshFilter::ClassID; })
 		//.def(init<>())
-		.def_readwrite("mesh", &MeshFilter::m_mesh)
-		;
+		.def("GetMesh", &MeshFilter::GetMesh)
+		.def("SetMesh", &MeshFilter::SetMesh)
+	;
 
 	DefineFunc(MeshRenderer);
 	class_<MeshRenderer, Component>(m, "MeshRenderer")
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshRenderer::ClassID; })
 		//.def(init<>())
-		.def_readwrite("material", &MeshRenderer::m_material)
-		;
+		.def("GetMaterial", &MeshRenderer::GetMaterial)
+		.def("SetMaterial", &MeshRenderer::SetMaterial)
+	;
 
 	class_<Graphics>(m, "Graphics")
 		.def_static("DrawMesh", &Graphics::DrawMesh)
@@ -272,8 +288,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_property("nearClipPlane", &Camera::GetNearClipPlane, &Camera::SetNearClipPlane)
 		.def_property("farClipPlane", &Camera::GetFarClipPlane, &Camera::SetFarClipPlane)
 		.def_property("orthographicSize", &Camera::GetOrthographicSize, &Camera::SetOrthographicSize)
-		.def("projectionMatrix", &Camera::GetProjectionMatrix, return_value_policy::reference)
-		.def("worldToCameraMatrix", &Camera::GetWorldToCameraMatrix)
+		.def("GetProjectionMatrix", &Camera::GetProjectionMatrix, return_value_policy::reference)
+		.def("GetWorldToCameraMatrix", &Camera::GetWorldToCameraMatrix)
 		;
 
 	class_<Screen>(m, "Screen")

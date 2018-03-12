@@ -85,7 +85,7 @@ def MakeGameObject(d:dict, fileID2Dict:dict, fileID2Object:dict)->GameObject:
         print(tdict)
         return None
 
-    go.m_IsActive = (d['m_IsActive']==1)
+    go.SetActive(d['m_IsActive']==1)
     go.transform.localRotation = MakeQuat(t['m_LocalRotation'])
     go.transform.localPosition = MakeVec3(t['m_LocalPosition'])
     go.transform.localScale = MakeVec3(t['m_LocalScale'])

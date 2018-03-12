@@ -1,15 +1,5 @@
 from FishEngine import *
 
-def printT(t):
-    print(t.name)
-    print('  .localPosition:', t.localPosition)
-    print('  .localEulerAngles:', t.localEulerAngles)
-    print('  .localScale:', t.localScale)
-    print('  .position:', t.position)
-    print('  .eulerAngles:', t.eulerAngles)
-    # print('  .localPosition:', t.localPosition)
-
-
 class Rotator2(Script):
     # __slots__ = ('speed', '__hidden')
     def __init__(self):
@@ -17,15 +7,17 @@ class Rotator2(Script):
         self.speed = 1.0
         self.__hidden = True    # test
 
-    def SystemUpdate(self):
+    # def SystemUpdate(self):
+    def Update(self):
+        print(self.cpp.GetGameObject().name)
         self.transform.RotateAround(self.transform.parent.position, Vector3.up(), self.speed)
         # print(self.name, self.transform.localPosition, self.transform.position)
         # printT(self.transform)
 
-class Rotator2System(System):
-    def Update(self):
-        for go in GameObject.FindWithComponent(Rotator2):
-            go.GetComponent(Rotator2).SystemUpdate()
+# class Rotator2System(System):
+#     def Update(self):
+#         for go in GameObject.FindWithComponent(Rotator2):
+#             go.GetComponent(Rotator2).SystemUpdate()
 
 class Rotator3(Script):
     def __init__(self):
@@ -49,43 +41,30 @@ def Start():
     cameraGO = GameObject("Camera")
     camera = cameraGO.AddComponent(Camera())
     cameraGO.transform.position = Vector3(0, 1, -10)
-    print(Screen.width, Screen.height)
     cameraGO.transform.position = Vector3(0, 5, -5)
     cameraGO.transform.LookAt(Vector3.zero())
-    # cameraGO.transform.eulerAngles = Vector3(45, 0, 0)
-    # print(camera.projectionMatrix)
-    # print(camera.worldToCameraMatrix)
-    # print(camera.transform.rotation)
-    # print(camera.transform.eulerAngles)
+
+    assert(cameraGO.cpp.GetPyObject() is cameraGO)
 
     lightGO = GameObject('Directional Light')
     lightGO.transform.localPosition = Vector3(0, 3, 0)
     lightGO.transform.localEulerAngles = Vector3(50, -30, 0)
     lightGO.AddComponent(Light())
 
-    # print(Shader.__dict__)
-    # m = Material.defaultMaterial()
     sun = GameObject.CreatePrimitive(PrimitiveType.Sphere)
     earth = GameObject.CreatePrimitive(PrimitiveType.Sphere)
     moon = GameObject.CreatePrimitive(PrimitiveType.Sphere)
     sun.name = 'Sun'
     earth.name = 'Earth'
     moon.name = 'Moon'
-    # sun.AddComponent(LogMaterial())
-    # earth = GameObject("Earth")
+
     earth.transform.position = Vector3(4, 0, 0)
     earth.transform.localScale = Vector3(0.5, 0.5, 0.5)
-    # moon = GameObject("Moon")
     moon.transform.localScale = Vector3(0.2, 0.2, 0.2)
     moon.transform.localPosition = Vector3(4.5, 0, 0)
 
     earth.transform.parent = sun.transform
     moon.transform.parent = earth.transform
-    assert(earth.transform.parent == sun.transform)
-    assert(moon.transform.parent == earth.transform)
-
-    printT(earth.transform)
-    printT(moon.transform)
 
     r:Rotator2 = earth.AddComponent(Rotator2())
     r.speed = 1
@@ -94,16 +73,11 @@ def Start():
     print(r.GetVisiableAttributes())
 
     plane = GameObject.CreatePrimitive(PrimitiveType.Plane)
-    # cube = GameObject.CreatePrimitive(PrimitiveType.Cube)
-    # print(len(Object.FindObjectsOfType(GameObject)))
 
     cameraGO.AddComponent(Rotator3())
-    print(cameraGO)
 
-    scene = SceneManager.GetActiveScene()
-    scene.AddSystem(Rotator2System())
-    # scene.AddSystem(Rotator3System())
+    # scene = SceneManager.GetActiveScene()
+    # scene.AddSystem(Rotator2System())
 
-    print(GameObject.ClassID)
-    objs = FishEngineInternal.FindObjectsOfType(GameObject.ClassID)
+    objs = Object.FindObjectsOfType(GameObject)
     print(objs)

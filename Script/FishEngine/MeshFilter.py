@@ -18,4 +18,4 @@ class MeshFilter(Component):
     @mesh.setter
     def mesh(self, value:Mesh):
         self.__mesh = value
-        self.m_CachedPtr.mesh = value.m_CachedPtr
+        self.cpp.SetMesh( value.cpp )

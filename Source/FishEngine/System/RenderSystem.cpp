@@ -35,12 +35,14 @@ namespace FishEngine
 			return;
 		}
 		
-		auto& mfs = scene->FindComponents<MeshFilter>();
+		auto mfs = scene->FindComponents<MeshFilter>();
 //		auto& mrs = Object::FindObjectsOfType<MeshRenderer>();
 		std::vector<GameObject*> intersection;
 		for (auto mf : mfs)
 		{
 			auto go = ((MeshRenderer*)mf)->GetGameObject();
+			if (!go->IsActiveInHierarchy())
+				continue;
 //			auto mr = GetComponent<MeshRenderer>(go);
 			auto mr = go->GetComponent<MeshRenderer>();
 			if (mr != nullptr)
@@ -50,10 +52,10 @@ namespace FishEngine
 		}
 		for (auto go : intersection)
 		{
-			auto mesh = go->GetComponent<MeshFilter>()->m_mesh;
+			auto mesh = go->GetComponent<MeshFilter>()->GetMesh();
 			if (mesh != nullptr)
 			{
-				auto material = go->GetComponent<MeshRenderer>()->m_material;
+				auto material = go->GetComponent<MeshRenderer>()->GetMaterial();
 				if (material == nullptr)
 					material = Material::GetErrorMaterial();
 				auto& model = go->GetTransform()->GetLocalToWorldMatrix();

@@ -73,6 +73,7 @@ class Material(Object):
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.Material()
+        self.m_CachedPtr.SetPyObject(self)
         self.__shader:Shader = None
 
     @staticmethod
@@ -88,8 +89,10 @@ class Material(Object):
     def StaticClean():
         # del Material.defaultMaterial
         # del Material.errorMaterial
-        Material.__defaultMaterial = None
-        Material.__errorMaterial = None
+        if Material.__defaultMaterial is not None:
+            Material.__defaultMaterial.cpp.SetPyObject(None)
+        if Material.__errorMaterial is not None:
+            Material.__errorMaterial.cpp.SetPyObject(None)
 
     @property
     def shader(self)->Shader:
@@ -104,12 +107,14 @@ class Material(Object):
         # print('defaultMaterial')
         if Material.__defaultMaterial is None:
             Material.__defaultMaterial = Material.CreateMaterial(_vs, _fs)
+            Material.__defaultMaterial.name = 'Default-Material'
         return Material.__defaultMaterial
     
     @staticmethod
     def errorMaterial()->'Material':
         if Material.__errorMaterial is None:
             Material.__errorMaterial = Material.CreateMaterial(_vs2, _fs2)
+            Material.__errorMaterial.name = 'Error'
         return Material.__errorMaterial
 
 

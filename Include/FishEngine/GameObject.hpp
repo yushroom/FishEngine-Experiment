@@ -123,10 +123,18 @@ namespace FishEngine
 		}
 		
 		GameObject* Clone(Scene* scene = nullptr);
+		
+		// The local active state of this GameObject.
+		bool IsActive() const { return m_IsActive; }
+		void SetActive(bool active) { m_IsActive = active; }
+		
+		// Is the GameObject active in the scene?
+		bool IsActiveInHierarchy() const;
 
 	protected:
 		Scene*					m_scene = nullptr;
 		Transform*				m_transform = nullptr;
 		std::list<Component*>	m_components;
+		bool					m_IsActive = true;	// activeSelf
 	};
 }

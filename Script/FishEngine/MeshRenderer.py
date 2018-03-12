@@ -19,4 +19,4 @@ class MeshRenderer(Component):
     @material.setter
     def material(self, value:Material):
         self.__material = value
-        self.m_CachedPtr.material = value.m_CachedPtr
+        self.cpp.SetMaterial( value.cpp )

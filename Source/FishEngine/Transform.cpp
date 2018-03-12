@@ -8,12 +8,10 @@ namespace FishEngine
 	Transform::~Transform()
 	{
 		LOGF;
-		if (!m_children.empty())
+//		for (auto c : m_children)
+		for (int i = m_children.size()-1; i >= 0; --i)
 		{
-			for (auto c : m_children)
-			{
-				delete c->GetGameObject();
-			}
+			delete m_children[i]->GetGameObject();
 		}
 //		m_children.clear();
 		// TODO

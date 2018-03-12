@@ -84,8 +84,10 @@ namespace FishEngine
 //			delete t;
 //		}
 		//m_rootTransforms.clear();
-		for (auto t : m_rootTransforms)
+//		for (auto t : m_rootTransforms)
+		for (int i = m_rootTransforms.size()-1; i >= 0; --i)
 		{
+			auto t = m_rootTransforms[i];
 			delete t->GetGameObject();
 		}
 		m_rootTransforms.clear();

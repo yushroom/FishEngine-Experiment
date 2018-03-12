@@ -16,17 +16,20 @@ class PrimitiveType(Enum):
 
 class GameObject(Object):
 
-    __slots__ = ('__transform', '__components', '__scene', 'm_IsActive', 'm_PrefabInternal')
+    __slots__ = ('__transform', 'm_PrefabInternal')
     ClassID = FishEngineInternal.GameObject.ClassID
 
     # CreateWithTransform
-    def __init__(self, name='GameObject'):
+    def __init__(self, name='GameObject', cppObject=None):
         from . import Transform, Prefab
         super().__init__()
-        self.m_CachedPtr = FishEngineInternal.CreateGameObject()
-        self.m_CachedPtr.name = name
-        transform = Transform(self.m_CachedPtr.GetTransform())
-        self.m_IsActive = True
+        if cppObject is None:
+            self.m_CachedPtr = FishEngineInternal.CreateGameObject()
+            self.m_CachedPtr.name = name
+        else:
+            assert(isinstance(cppObject, FishEngineInternal.GameObject))
+            self.m_CachedPtr = cppObject
+        self.__transform = Transform(self.m_CachedPtr.GetTransform())   # cache
         self.m_PrefabInternal:Prefab = None
         self.m_CachedPtr.SetPyObject(self)
 
@@ -53,12 +56,31 @@ class GameObject(Object):
 
     @property
     def transform(self)->'Transform':
-        # return self.__transform
-        return self.m_CachedPtr.GetTransform().GetPyObject()
+        return self.__transform
+        # return self.m_CachedPtr.GetTransform().GetPyObject()
 
     @property
     def scene(self):
         return self.__scene
+
+    @property
+    def activeSelf(self) -> bool:
+        '''The local active state of this GameObject. (Read Only) \n
+        This returns the local active state of this GameObject, which is set using GameObject.SetActive. Note that a GameObject may be inactive because a parent is not active, even if this returns true. This state will then be used once all parents are active. Use GameObject.activeInHierarchy if you want to check if the GameObject is actually treated as active in the scene.
+        '''
+        return self.cpp.IsActive()
+    
+    @property
+    def activeInHierarchy(self) -> bool:
+        '''Is the GameObject active in the scene? \n
+        This lets you know if a gameObject is active in the game. That is the case if its GameObject.activeSelf property is enabled, as well as that of all it's parents.
+        '''
+        return self.cpp.IsActiveInHierarchy()
+
+    def SetActive(self, active: bool):
+        '''Activates/Deactivates the GameObject.
+        '''
+        self.cpp.SetActive(active)
 
     @property
     def scene2(self):
