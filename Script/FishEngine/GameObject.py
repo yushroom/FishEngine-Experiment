@@ -20,7 +20,7 @@ class GameObject(Object):
     ClassID = FishEngineInternal.GameObject.ClassID
 
     # CreateWithTransform
-    def __init__(self, name='GameObject', cppObject=None):
+    def __init__(self, name='GameObject', *, cppObject=None):
         from . import Transform, Prefab
         super().__init__()
         if cppObject is None:
@@ -86,9 +86,9 @@ class GameObject(Object):
     def scene2(self):
         return self.m_CachedPtr.GetScene()
 
-    # @property
-    # def components(self):
-    #     return self.__components
+    @property
+    def components(self):
+        return [c.GetPyObject() for c in FishEngineInternal.GameObject_GetAllComponents(self.cpp)]
 
     def GetComponent(self, type):
         from . import Component
@@ -121,11 +121,25 @@ class GameObject(Object):
     @staticmethod
     def FindWithComponents(*componentTypes)->Set['Component']:
         return set.intersection(*[GameObject.FindWithComponent(t) for t in componentTypes])
-
-    @staticmethod
-    def Clone(go:'GameObject'):
-        cloned = GameObject(go.name)
-        cloned.__transform.localPosition = go.__transform.localPosition
-        cloned.__transform.localRotation = go.__transform.localRotation
-        cloned.__transform.local
         
+    def Serialize(self, dumper):
+        super(GameObject, self).Serialize(dumper)
+        # dumper.d('m_Component', self.components)
+        dumper.d('m_Component', [{'component': c} for c in self.components ])
+        dumper.d('m_Name', self.name)
+        dumper.d('m_IsActive', self.activeSelf)
+
+    def Deserialize(self, loader):
+        for comp in loader.d['m_Component']:
+            self.AddComponent(comp)
+        self.name = loader.d['m_Name']
+        self.SetActive(loader.d['m_IsActive'])
+
+    def Clone(self)->'GameObject':
+        from . import Component
+        cloned = GameObject(self.name)
+        for c in FishEngineInternal.GameObject_GetAllComponents(cloned.cpp):
+            Component.WrapCPP(c)
+        for child in cloned.transform.children:
+            pass
+        return cloned

@@ -56,7 +56,7 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 //		LOGF;
-		printf("~GameObjectL %s\n", m_name.c_str());
+		printf("~GameObject %s\n", m_name.c_str());
 		for (auto comp : m_components)
 		{
 			delete comp;
@@ -100,12 +100,9 @@ namespace FishEngine
 //
 //	}
 	
-	GameObject* GameObject::Clone(Scene* scene)
+	GameObject* GameObject::Clone()
 	{
-		if (scene == nullptr)
-			scene = this->m_scene;
 		auto cloned = new GameObject(this->m_name+"-cloned", GameObjectConstructionFlag::Empty);
-		cloned->m_scene = scene;
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();
 		auto cloned_t = m_transform->Clone();
@@ -125,7 +122,7 @@ namespace FishEngine
 		cloned->m_transform->m_children.reserve(this->m_transform->m_children.size());
 		for (auto child : this->m_transform->m_children)
 		{
-			auto cloned_child = child->GetGameObject()->Clone(scene);
+			auto cloned_child = child->GetGameObject()->Clone();
 			cloned_child->m_transform->SetParent(cloned->m_transform, false);
 //			cloned->m_transform->m_children.push_back(cloned_child->m_transform);
 		}

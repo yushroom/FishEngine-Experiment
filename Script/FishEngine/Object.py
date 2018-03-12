@@ -103,8 +103,12 @@ class Object():
 
 
     @staticmethod
-    def Instantiate():
-        pass
+    def Instantiate(original: 'Object', parent: 'Transform' = None, instantiateInWorldSpace: bool = False):
+        from . import GameObject
+        if isinstance(original, GameObject):
+            return original.Clone()
+        return None
+
 
     @property
     def name(self):
@@ -113,5 +117,6 @@ class Object():
     def name(self, name):
         self.m_CachedPtr.name = name
 
-# Object = FishEngineInternal.Object
-# Object.FindObjectsOfType = __Object.FindObjectsOfType
+    def Serialize(self, dumper):
+        # dumper.d('name', self.name)
+        pass

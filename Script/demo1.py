@@ -1,4 +1,6 @@
 from FishEngine import *
+import yaml
+from collections import OrderedDict
 
 class Rotator2(Script):
     # __slots__ = ('speed', '__hidden')
@@ -9,7 +11,7 @@ class Rotator2(Script):
 
     # def SystemUpdate(self):
     def Update(self):
-        print(self.cpp.GetGameObject().name)
+        # print(self.cpp.GetGameObject().name)
         self.transform.RotateAround(self.transform.parent.position, Vector3.up(), self.speed)
         # print(self.name, self.transform.localPosition, self.transform.position)
         # printT(self.transform)
@@ -36,17 +38,98 @@ class Rotator3System(System):
             go.transform.RotateAround(r.target, Vector3.up(), r.speed)
             go.transform.LookAt(r.target)
 
+def Vector3_representer(dumper, v:Vector3):
+    return dumper.represent_dict(OrderedDict(x=v.x, y=v.y, z=v.z))
+
+def Quaternion_representer(dumper, q:Quaternion):
+    return dumper.represent_dict(OrderedDict(x=q.x, y=q.y, z=q.z, w=q.w))
+
+def OrderedDict_representer(dumper, data):
+    return dumper.represent_dict(data.items())
+
+class SceneDumper:
+    def __init__(self):
+        self.todo = []
+        self.done = set()
+        self.dict = None
+        # self.file = open(outputFilePath, 'w')
+
+    # begin doc
+    def begin(self):
+        self.dict = OrderedDict()
+    
+    # end doc
+    def end(self):
+        # yaml.dump(self.dict, self.file)
+        # self.dict = None
+        pass
+
+    def __pre(self, data):
+        if data is None:
+            return {'fileID': 0}
+        if data.__class__ is list:
+            return [self.__pre(x) for x in data]
+        if data.__class__ is dict:
+            return {a: self.__pre(b) for a, b in data.items()}
+        if isinstance(data, Object):
+            self.__AddObject(data)
+            return {'fileID': data.instanceID}
+        return data
+
+    def d(self, label:str, data):
+        assert(isinstance(label, str))
+        self.dict[label] = self.__pre(data)
+
+    def Dump(self, objs):
+        with open('FishEngine_demo1.unity', 'w') as f:
+            f.writelines([
+                '%YAML 1.1\n',
+                '%TAG !u! tag:unity3d.com,2011:\n'
+            ])
+            self.todo = objs[:]
+            self.done = set(self.todo)
+            
+            while len(self.todo) > 0:
+                o = self.todo.pop()
+                self.begin()
+                o.Serialize(self)
+                self.end()
+                f.write('--- !u!{} &{}\n'.format(o.ClassID, o.instanceID))
+                yaml.dump({o.__class__.__name__: self.dict}, f)
+                # yaml.dump({o.__class__.__name__: o.ToDict(self)}, f)
+    
+    def __AddObject(self, obj):
+        assert(isinstance(obj, Object))
+        if obj not in self.done:
+            self.todo.append(obj)
+            self.done.add(obj)
+
+
+class SceneLoader:
+    def __init__(self):
+        pass
+    
+    def Load(self, path):
+        with open(path, 'r') as f:
+            pass
 
 def Start():
-    cameraGO = GameObject("Camera")
+    cameraGO = GameObject(name="Camera")
     camera = cameraGO.AddComponent(Camera())
     cameraGO.transform.position = Vector3(0, 1, -10)
     cameraGO.transform.position = Vector3(0, 5, -5)
     cameraGO.transform.LookAt(Vector3.zero())
 
-    assert(cameraGO.cpp.GetPyObject() is cameraGO)
+    # Object.Instantiate(cameraGO)
 
-    lightGO = GameObject('Directional Light')
+    assert(cameraGO.cpp.GetPyObject() is cameraGO)
+    yaml.add_representer(OrderedDict, OrderedDict_representer)
+    # yaml.add_representer(GameObject, GameObject_representer)
+    # yaml.add_representer(Transform, Transform_representer)
+    yaml.add_representer(Vector3, Vector3_representer)
+    yaml.add_representer(Quaternion, Quaternion_representer)
+
+    lightGO = GameObject(name='Directional Light')
     lightGO.transform.localPosition = Vector3(0, 3, 0)
     lightGO.transform.localEulerAngles = Vector3(50, -30, 0)
     lightGO.AddComponent(Light())
@@ -81,3 +164,6 @@ def Start():
 
     objs = Object.FindObjectsOfType(GameObject)
     print(objs)
+
+    dumper = SceneDumper()
+    dumper.Dump(objs)

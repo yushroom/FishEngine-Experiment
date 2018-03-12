@@ -6,7 +6,7 @@ from collections import defaultdict
 from typing import List
 
 class Script(Component):
-    __slots__ = ()
+    # __slots__ = ()
     __scripts = defaultdict(weakref.WeakSet)
     ClassID = FishEngineInternal.ScriptClassID()
     def __init__(self):
@@ -43,7 +43,8 @@ class Script(Component):
     # for c++
     def GetVisiableAttributes(self)->List[str]:
         a = dir(self)
-        b = dir(self.__class__)
+        # b = dir(self.__class__)
+        b = dir(Script)
         diff = set(a) - set(b)
 
         # __speed -> _Rotator__speed
@@ -63,3 +64,8 @@ class Script(Component):
         cloned = deepcopy(self)
         self.m_CachedPtr = cpp
         return cloned
+
+    def Serialize(self, dumper):
+        super(Script, self).Serialize(dumper)
+        for a in self.GetVisiableAttributes():
+            dumper.d(a, getattr(self, a))

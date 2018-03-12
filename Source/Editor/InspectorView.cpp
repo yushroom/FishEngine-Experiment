@@ -16,8 +16,15 @@ using namespace FishEditor;
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Render/Material.hpp>
 
+void DrawObject(Object* o)
+{
+	auto instanceID_str = std::to_string(o->GetInstanceID());
+	FishGUI::Text("Instance ID", instanceID_str);
+}
+
 void DrawTransform(Transform* t)
 {
+	DrawObject(t);
 	auto p = t->GetLocalPosition();
 	auto r = t->GetLocalEulerAngles();
 	auto s = t->GetLocalScale();
@@ -31,6 +38,7 @@ void DrawTransform(Transform* t)
 
 void DrawCamera(Camera* c)
 {
+	DrawObject(c);
 	float znear = c->GetNearClipPlane();
 	float zfar = c->GetFarClipPlane();
 	float fov = c->GetFieldOfView();
@@ -53,10 +61,12 @@ void DrawCamera(Camera* c)
 
 void DrawLight(Light* l)
 {
+	DrawObject(l);
 }
 
 void DrawMeshRenderer(MeshRenderer* mr)
 {
+	DrawObject(mr);
 	Material* mat = mr->GetMaterial();
 	std::string name = (mat == nullptr ? "None" : mat->GetName());
 	FishGUI::InputText("Material", name);
@@ -64,6 +74,7 @@ void DrawMeshRenderer(MeshRenderer* mr)
 
 void DrawMeshFilter(MeshFilter* mf)
 {
+	DrawObject(mf);
 	auto meshName = mf->GetMesh()->GetName();
 	FishGUI::InputText("Mesh", meshName);
 }
@@ -93,14 +104,12 @@ bool StartsWith(const std::string& a, const std::string& b)
 
 void DrawScript(Script* s)
 {
+	DrawObject(s);
 	auto handle = s->GetPyObject();
 	std::string scriptName = handle.ptr()->ob_type->tp_name;
 	//std::string scriptName = (std::string) pybind11::str(handle.get_type());
 	FishGUI::Group(scriptName + "(Script)");
 	FishGUI::Text("Script", scriptName);
-
-	auto instanceID_str = std::to_string(s->GetInstanceID());
-	FishGUI::Text("Instance ID", instanceID_str);
 
 	auto attributes = handle.attr("GetVisiableAttributes")();		// list of str
 	for (const auto& a : attributes)

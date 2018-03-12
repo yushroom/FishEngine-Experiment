@@ -122,7 +122,7 @@ namespace FishEngine
 			return m_scene;
 		}
 		
-		GameObject* Clone(Scene* scene = nullptr);
+		GameObject* Clone();
 		
 		// The local active state of this GameObject.
 		bool IsActive() const { return m_IsActive; }

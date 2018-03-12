@@ -1,6 +1,7 @@
 from . import Object
 import FishEngineInternal
 from typing import Type, List, Set
+import sys
 
 class Component(Object):
     __slots__ = ('__gameObject')
@@ -14,11 +15,13 @@ class Component(Object):
 
     @property
     def gameObject(self)->"GameObject":
+        # cppGO = self.cpp.GetGameObject()
+        # # print(cppGO.name, cppGO.__class__)
+        # if cppGO.GetPyObject() is None:
+        #     from . import GameObject
+        #     return GameObject("", cppGO)
+        # return None if cppGO is None else cppGO.GetPyObject()
         cppGO = self.cpp.GetGameObject()
-        # print(cppGO.name, cppGO.__class__)
-        if cppGO.GetPyObject() is None:
-            from . import GameObject
-            return GameObject("", cppGO)
         return None if cppGO is None else cppGO.GetPyObject()
     @gameObject.setter
     def gameObject(self, go:"GameObject"):
@@ -30,7 +33,6 @@ class Component(Object):
     @property
     def transform(self)->'Transform':
         go = self.gameObject
-        print(go, go.transform)
         return None if go is None else go.transform
 
     @staticmethod
@@ -40,3 +42,15 @@ class Component(Object):
     @staticmethod
     def FindByTypes(*componentTypes)->Set['Component']:
         return set.intersection(*[Component.FindByType(t) for t in componentTypes])
+
+    def Serialize(self, dumper):
+        super(Component, self).Serialize(dumper)
+        dumper.d('m_GameObject', self.gameObject)
+
+    @staticmethod
+    def WrapCPP(cppComp):
+        assert(isinstance(cppComp, FishEngineInternal.Component))
+        name = cppComp.__class__.__name__
+        wrap = getattr(sys.modules['FishEngine'], name)()
+        wrap.m_CachedPtr = cppComp
+        cppComp.SetPyObject(wrap)

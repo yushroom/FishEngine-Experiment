@@ -58,3 +58,28 @@ class Camera(Component):
     @property
     def worldToCameraMatrix(self):
         return self.m_CachedPtr.GetWorldToCameraMatrix()
+
+    # @staticmethod
+    # def splitCamelCase(s:str):
+    #     ' '.join( re.sub('([a-z])([A-Z])', r'\1 \2', s).split() )
+
+    # @staticmechod
+
+    @staticmethod
+    def SerializeAttr():
+        return [
+            ('near clip plane', 'nearClipPlane'),
+            ('far clip plane', 'farClipPlane'),
+            ('field of view', 'fieldOfView'),
+            ('orthographic', 'orthographic'),
+            ('orthographic size', 'orthographicSize'),
+        ]
+
+    def Serialize(self, dumper):
+        super().Serialize(dumper)
+        for name, attr in Camera.SerializeAttr():
+            dumper.d(name, getattr(self, attr))
+
+    def Deserialize(self, loader):
+        for name, attr in Camera.SerializeAttr():
+            setattr(self, attr, loader[name])

@@ -24,10 +24,7 @@ def MakeComponent(ctype:str, d:int):
     comp = None
     if ctype == 'Camera':
         comp = Camera()
-        comp.orthographic = (d['orthographic']==1)
-        comp.orthographicSize = d['orthographic size']
-        comp.nearClipPlane = d['near clip plane']
-        comp.farClipPlane = d['far clip plane']
+        comp.Deserialize(d)
     elif ctype == 'Light':
         comp = Light()
     elif ctype == 'MeshRenderer':

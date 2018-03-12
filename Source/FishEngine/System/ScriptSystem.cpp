@@ -69,6 +69,17 @@ py::object GameObject_GetComopnent(GameObject* go, int classID)
 		return c->GetPyObject();
 }
 
+py::list GameObject_GetAllComponents(GameObject* go)
+{
+	assert(go != nullptr);
+	py::list ret;
+	for (auto comp : go->GetAllComponents())
+	{
+		ret.append(comp);
+	}
+	return ret;
+}
+
 void Transform_GetChildren(Transform* t, py::list& outChildren)
 {
 	assert(t != nullptr);
@@ -191,9 +202,12 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("IsActive", &GameObject::IsActive)
 		.def("SetActive", &GameObject::SetActive)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
+		.def("Clone", &GameObject::Clone)
 	;
 
 	m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
+	m.def("GameObject_GetAllComponents", &GameObject_GetAllComponents);
+
 
 	class_<Component, Object>(m, "Component")
 		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference);

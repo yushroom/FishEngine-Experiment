@@ -96,7 +96,7 @@ namespace FishEngine
 	Scene* Scene::Clone()
 	{
 		Scene* cloned = new Scene;
-		SceneManager::s_activeScene = cloned;
+		SceneManager::SetActiveScene(cloned);
 		cloned->m_name = this->m_name + "-cloned";
 		cloned->m_path = this->m_path;
 		cloned->m_rootTransforms.reserve(this->m_rootTransforms.size());
@@ -104,7 +104,7 @@ namespace FishEngine
 		for (int i = 0; i < m_rootTransforms.size(); ++i)
 		{
 			auto go = m_rootTransforms[i]->GetGameObject();
-			go->Clone(cloned);
+			go->Clone();
 		}
 		
 		return cloned;

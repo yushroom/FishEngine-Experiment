@@ -18,22 +18,24 @@ class Space(Enum):
     Self = auto()
 
 class Transform(Component):
-    __slots__ = ('__parent', '__children', 'm_RootOrder')
-    def __init__(self, cppObj: FishEngineInternal.Transform):
+    __slots__ = ('m_RootOrder')
+    ClassID = FishEngineInternal.Transform.ClassID
+
+    # DO NOT USE IT directly !!!
+    def __init__(self, cppObj: FishEngineInternal.Transform = None):
         super().__init__()
-        # self.m_CachedPtr = FishEngineInternal.Transform()
-        # self.m_CachedPtr.name = "Transform"
-        assert(cppObj.__class__ is FishEngineInternal.Transform)
-        self.m_CachedPtr = cppObj
-        cppObj.SetPyObject(self)
+        if cppObj is not None:
+            assert(cppObj.__class__ is FishEngineInternal.Transform)
+            self.m_CachedPtr = cppObj
+            cppObj.SetPyObject(self)
         self.m_RootOrder:int = 0
 
     # def __del__(self):
     #     print('Transform.__del__')
 
-    def Clean(self):
-        # manually break ref cycle
-        del self.__children
+    # def Clean(self):
+    #     # manually break ref cycle
+    #     del self.__children
 
     @property
     def name(self):
@@ -42,10 +44,9 @@ class Transform(Component):
     @property
     def parent(self):
         p = self.m_CachedPtr.GetParent()
-        print(p, p.GetPyObject())
         return None if p is None else p.GetPyObject()
     @parent.setter
-    def parent(self, parent):
+    def parent(self, parent: 'Transform'):
         # parent: Transform or None
         self.SetParent(parent)
 
@@ -214,3 +215,12 @@ class Transform(Component):
     
     def GetSiblingIndex(self)->int:
         return self.m_CachedPtr.m_RootOrder
+
+    def Serialize(self, dumper):
+        super(Transform, self).Serialize(dumper)
+        dumper.d('m_LocalRotation', self.localRotation)
+        dumper.d('m_LocalPosition', self.localPosition)
+        dumper.d('m_LocalScale', self.localScale)
+        dumper.d('m_Children', self.children)
+        dumper.d('m_Father', self.parent)
+        dumper.d('m_RootOrder', self.m_RootOrder)
