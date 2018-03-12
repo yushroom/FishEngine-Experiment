@@ -27,13 +27,19 @@ def MakeComponent(ctype:str, d:int):
         comp.Deserialize(d)
     elif ctype == 'Light':
         comp = Light()
+        comp.Deserialize(d)
     elif ctype == 'MeshRenderer':
         # print('Add Meshrenderer')
         comp = MeshRenderer()
         m_Materials = d['m_Materials']
-        if len(m_Materials) > 1:
+        if len(m_Materials) == 0:
+            # do not have materials
+            print('TODO: m_Materials')
+            comp.material = Material.defaultMaterial()
+            pass
+        elif len(m_Materials) > 1:
             print("materials > 1")
-        if m_Materials[0]['fileID'] == 0:
+        elif m_Materials[0]['fileID'] == 0:
             # do not have materials
             pass
         else:
@@ -41,19 +47,24 @@ def MakeComponent(ctype:str, d:int):
     elif ctype == 'MeshFilter':
         comp = MeshFilter()
         mesh_d = d['m_Mesh']
-        guid = mesh_d['guid']
-        if guid == '0000000000000000e000000000000000':
-            id2mesh = {10202:'Cube', 10206:'Cylinder', 10207:'Sphere', 10208:'Capsule', 10209:'Plane', 10210:'Quad'}
-            comp.mesh = Mesh.GetInternalMesh(id2mesh[mesh_d['fileID']])
-        else:
-            importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
-            nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
-            comp.mesh = importer.GetMeshByName(nodeName)
+        if mesh_d['fileID'] != 0:
+            guid = mesh_d['guid']
+            if guid == '0000000000000000e000000000000000':
+                id2mesh = {10202:'Cube', 10206:'Cylinder', 10207:'Sphere', 10208:'Capsule', 10209:'Plane', 10210:'Quad'}
+                comp.mesh = Mesh.GetInternalMesh(id2mesh[mesh_d['fileID']])
+            else:
+                importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
+                nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
+                comp.mesh = importer.GetMeshByName(nodeName)
     elif ctype == 'MonoBehaviour':
         if d['m_Script']['guid'] == 'f70555f144d8491a825f0804e09c671c' and d['m_Script']['fileID'] == 708705254:
             # print("Add Text")
             comp = FishEngine.UI.Text()
             comp.text = d['m_Text']
+    elif ctype == 'Rotator2':
+        import sys
+        comp = getattr(sys.modules[ctype], ctype)()
+        comp.Deserialize(d)
     else:
         # print('Unkown component type:', ctype)
         pass
@@ -213,10 +224,15 @@ class UnityPrefabImporter:
                         print(m)
         return rootGO
 
+from FishEngine import Scene
+
 class UnitySceneImporter:
-    @timing
     def __init__(self, path:str):
-        f, fileID2Index = YAMLUtils.removeUnityTagAlias(path)
+        self.path = path
+    
+    @timing
+    def Import(self):
+        f, fileID2Index = YAMLUtils.removeUnityTagAlias(self.path)
         data = list(yaml.load_all(f))
         for fileID, line in fileID2Index.items():
             d = data[line]
@@ -316,14 +332,13 @@ class UnitySceneImporter:
             assert(rootOrders == sorted(rootOrders))    # TODO
             # print([t.m_RootOrder for t in t.children])
 
-        gos = Object.FindObjectsOfType(GameObject)
-        gos = [go for go in gos if go.transform.parent is None]
-        gos = sorted(gos, key=lambda go: go.transform.m_RootOrder)
-        print([go.name for go in gos])
-        scene = SceneManager.GetActiveScene()
-        scene.m_rootGameObjects = gos
+        print("TODO: m_RootOrder")
+        # gos = Object.FindObjectsOfType(GameObject)
+        # gos = [go for go in gos if go.transform.parent is None]
+        # gos = sorted(gos, key=lambda go: go.transform.m_RootOrder)
+        # print([go.name for go in gos])
+        # scene = SceneManager.GetActiveScene()
+        # scene.m_rootGameObjects = gos
 
-
-        # PrintHierarchy([go.transform for go in scene.GetRootGameObjects()])
-        gos = Object.FindObjectsOfType(GameObject)
-        print("# of GameObjects:", len(gos))
+        # gos = Object.FindObjectsOfType(GameObject)
+        # print("# of GameObjects:", len(gos))

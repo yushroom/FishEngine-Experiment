@@ -20,3 +20,8 @@ class MeshRenderer(Component):
     def material(self, value:Material):
         self.__material = value
         self.cpp.SetMaterial( value.cpp )
+
+
+    def Serialize(self, dumper):
+        super().Serialize(dumper)
+        dumper.d('m_Materials', [])

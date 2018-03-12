@@ -56,7 +56,7 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 //		LOGF;
-		printf("~GameObject %s\n", m_name.c_str());
+//		printf("~GameObject %s\n", m_name.c_str());
 		for (auto comp : m_components)
 		{
 			delete comp;

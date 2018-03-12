@@ -1,25 +1,8 @@
 from FishEngine import *
 import yaml
 from collections import OrderedDict
-
-class Rotator2(Script):
-    # __slots__ = ('speed', '__hidden')
-    def __init__(self):
-        super().__init__()
-        self.speed = 1.0
-        self.__hidden = True    # test
-
-    # def SystemUpdate(self):
-    def Update(self):
-        # print(self.cpp.GetGameObject().name)
-        self.transform.RotateAround(self.transform.parent.position, Vector3.up(), self.speed)
-        # print(self.name, self.transform.localPosition, self.transform.position)
-        # printT(self.transform)
-
-# class Rotator2System(System):
-#     def Update(self):
-#         for go in GameObject.FindWithComponent(Rotator2):
-#             go.GetComponent(Rotator2).SystemUpdate()
+from FishEditor import AssetDataBase
+from Rotator2 import Rotator2
 
 class Rotator3(Script):
     def __init__(self):
@@ -71,6 +54,10 @@ class SceneDumper:
             return [self.__pre(x) for x in data]
         if data.__class__ is dict:
             return {a: self.__pre(b) for a, b in data.items()}
+        if isinstance(data, Mesh):
+            guid = '0000000000000000e000000000000000'
+            name2fileID = {'Cube':10202, 'Cylinder':10206, 'Sphere':10207, 'Capsule':10208, 'Plane':10209, 'Quad':10210}
+            return {'fileID': name2fileID[data.name], 'guid':guid}
         if isinstance(data, Object):
             self.__AddObject(data)
             return {'fileID': data.instanceID}
@@ -121,11 +108,7 @@ def Start():
     cameraGO.transform.LookAt(Vector3.zero())
 
     # Object.Instantiate(cameraGO)
-
-    assert(cameraGO.cpp.GetPyObject() is cameraGO)
     yaml.add_representer(OrderedDict, OrderedDict_representer)
-    # yaml.add_representer(GameObject, GameObject_representer)
-    # yaml.add_representer(Transform, Transform_representer)
     yaml.add_representer(Vector3, Vector3_representer)
     yaml.add_representer(Quaternion, Quaternion_representer)
 
@@ -153,17 +136,31 @@ def Start():
     r.speed = 1
     moon.AddComponent(Rotator2()).speed = 2
 
-    print(r.GetVisiableAttributes())
-
     plane = GameObject.CreatePrimitive(PrimitiveType.Plane)
 
     cameraGO.AddComponent(Rotator3())
 
-    # scene = SceneManager.GetActiveScene()
-    # scene.AddSystem(Rotator2System())
+
+old_scene = None
+
+from FishEditor import UnitySceneImporter
+
+def Save():
+    global old_scene
+    old_scene = SceneManager.GetActiveScene()
 
     objs = Object.FindObjectsOfType(GameObject)
-    print(objs)
-
     dumper = SceneDumper()
     dumper.Dump(objs)
+
+    scene = SceneManager.CreateScene("RuntimeScene")
+    SceneManager.SetActiveScene(scene)
+    scene_path = '/Users/yushroom/program/FishEngine-Experiment/build/Debug/FishEngine_demo1.unity'
+    sceneImporter = UnitySceneImporter(scene_path)
+    sceneImporter.Import()
+
+def Restore():
+    global old_scene
+    scene = SceneManager.GetActiveScene()
+    scene.Clean()
+    SceneManager.SetActiveScene(old_scene)

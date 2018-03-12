@@ -130,6 +130,7 @@ class GameObject(Object):
         dumper.d('m_IsActive', self.activeSelf)
 
     def Deserialize(self, loader):
+        super().Deserialize(loader)
         for comp in loader.d['m_Component']:
             self.AddComponent(comp)
         self.name = loader.d['m_Name']

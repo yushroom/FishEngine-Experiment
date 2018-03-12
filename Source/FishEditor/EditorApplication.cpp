@@ -9,6 +9,11 @@
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/Scene.hpp>
 
+#include <FishEditor/Selection.hpp>
+
+#include <pybind11/embed.h>
+namespace py = pybind11;
+
 class EditorInternalApp : public FishEngine::AbstractGameApp
 {
 public:
@@ -92,32 +97,37 @@ namespace FishEditor
 	{
 //		m_app->Start();
 		m_IsPlaying = true;
-		auto scene = FishEngine::SceneManager::GetActiveScene();
-		m_currentScene = scene;
-		scene = scene->Clone();
-		FishEngine::SceneManager::SetActiveScene(scene);
+		auto app = py::module::import("demo1");
+		app.attr("Save")();
+//		auto scene = FishEngine::SceneManager::GetActiveScene();
+//		m_currentScene = scene;
+//		scene = scene->Clone();
+//		FishEngine::SceneManager::SetActiveScene(scene);
+		
+		Selection::SetActiveTransform(nullptr);
 	}
 
 	void EditorApplication::Stop()
 	{
 		m_IsPlaying = false;
 		//FishEngine::Clean();
-		auto scene = FishEngine::SceneManager::GetActiveScene();
-		scene->Clean();
-		delete scene;
-		FishEngine::SceneManager::SetActiveScene(m_currentScene);
+//		auto scene = FishEngine::SceneManager::GetActiveScene();
+//		scene->Clean();
+//		delete scene;
+//		FishEngine::SceneManager::SetActiveScene(m_currentScene);
+		auto app = py::module::import("demo1");
+		app.attr("Restore")();
+		
+		Selection::SetActiveTransform(nullptr);
 	}
 
 	void EditorApplication::Pause()
 	{
+		m_IsPlaying = false;
 	}
 	
 	void EditorApplication::Resume()
 	{
-		
-	}
-
-	void EditorApplication::NextFrame()
-	{
+		m_IsPlaying = true;
 	}
 }

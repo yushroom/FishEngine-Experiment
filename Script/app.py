@@ -5,19 +5,29 @@ import demo1, demo2
 
 from FishEditor import AssetDataBase
 
+import sys
+
 def Start():
+    scene = SceneManager.CreateScene("DefaultScene")
+    SceneManager.SetActiveScene(scene)
     demo1.Start()
-    # demo2.Start()
 
 # @timing
 def Update():
-    scene = SceneManager.GetActiveScene()
-    for s in scene.systems:
-        s.Update()
+    # scene = SceneManager.GetActiveScene()
+    # for s in scene.systems:
+    #     s.Update()
+    pass
+
+def Backup():
+    pass
+
+def Restore():
+    pass
     
 def Clean():
-    SceneManager.GetActiveScene().Clean()
-    SceneManager.StaticClean()
+    # SceneManager.GetActiveScene().Clean()
+    # SceneManager.StaticClean()
     Material.StaticClean()
     Mesh.StaticClean()
     AssetDataBase.StaticClean()

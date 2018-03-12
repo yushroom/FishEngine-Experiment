@@ -10,7 +10,6 @@ class Script(Component):
     __scripts = defaultdict(weakref.WeakSet)
     ClassID = FishEngineInternal.ScriptClassID()
     def __init__(self):
-        print('Script.__init__')
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateScript()
         self.m_CachedPtr.SetPyObject(self)
@@ -55,7 +54,6 @@ class Script(Component):
 
     # for c++
     def Clone(self)->'Script':
-        print("Script.Clone:", self)
         from copy import deepcopy
         # memo = {}
         # memo[self.m_CachedPtr] = self.m_CachedPtr
@@ -69,3 +67,8 @@ class Script(Component):
         super(Script, self).Serialize(dumper)
         for a in self.GetVisiableAttributes():
             dumper.d(a, getattr(self, a))
+
+    def Deserialize(self, loader):
+        # super(script)
+        for attr in self.GetVisiableAttributes():
+            setattr(self, attr, loader[attr])

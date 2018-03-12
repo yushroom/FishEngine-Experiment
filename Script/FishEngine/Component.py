@@ -47,6 +47,10 @@ class Component(Object):
         super(Component, self).Serialize(dumper)
         dumper.d('m_GameObject', self.gameObject)
 
+    def Deserialize(self, loader):
+        super().Deserialize(loader)
+        self.gameObject = loader['m_GameObject']
+
     @staticmethod
     def WrapCPP(cppComp):
         assert(isinstance(cppComp, FishEngineInternal.Component))

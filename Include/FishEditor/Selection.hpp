@@ -24,6 +24,11 @@ namespace FishEditor
 			return nullptr;
 		}
 		
+		static void SetActiveTransform(FishEngine::Transform* t)
+		{
+			s_activeObject = t;
+		}
+		
 		static boost::signals2::signal<void(void)> selectionChanged;
 
 	private:

@@ -119,4 +119,9 @@ class Object():
 
     def Serialize(self, dumper):
         # dumper.d('name', self.name)
+        dumper.d('m_PrefabParentObject', None)
+        dumper.d('m_PrefabInternal', None)
+        pass
+
+    def Deserialize(self, loader):
         pass

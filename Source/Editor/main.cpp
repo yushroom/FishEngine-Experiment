@@ -203,9 +203,9 @@ try
 		editorApp.Resume();
 	});
 	
-	toolBar->OnNextFrame.connect([&editorApp]{
-		editorApp.NextFrame();
-	});
+//	toolBar->OnNextFrame.connect([&editorApp]{
+//		editorApp.NextFrame();
+//	});
 
 	win->SetOverlayDraw([&editorApp]() {
 		editorApp.Update();

@@ -27,7 +27,6 @@ namespace FishEditor
 		void Stop();
 		void Pause();
 		void Resume();
-		void NextFrame();
 
 	private:
 

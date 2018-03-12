@@ -12,13 +12,15 @@ namespace FishEngine
 	{
 		s_counter++;
 		m_Handle = s_counter;
-		SceneManager::s_handeToScene[m_Handle] = this;
+		SceneManager::s_handleToScene[m_Handle] = this;
 	}
 
 	Scene::~Scene()
 	{
-		auto& m = SceneManager::s_handeToScene;
+		auto& m = SceneManager::s_handleToScene;
 		m.erase(m.find(m_Handle));
+		if (SceneManager::s_activeScene == this)
+			SceneManager::SetActiveScene(nullptr);
 	}
 	
 //	std::vector<GameObject*> Scene::GetRootGameObjects()
@@ -110,5 +112,5 @@ namespace FishEngine
 		return cloned;
 	}
 
-	std::map<int, Scene*> SceneManager::s_handeToScene;
+	std::map<int, Scene*> SceneManager::s_handleToScene;
 }

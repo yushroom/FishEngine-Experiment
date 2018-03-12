@@ -19,3 +19,7 @@ class MeshFilter(Component):
     def mesh(self, value:Mesh):
         self.__mesh = value
         self.cpp.SetMesh( value.cpp )
+
+    def Serialize(self, dumper):
+        super().Serialize(dumper)
+        dumper.d('m_Mesh', self.__mesh)

@@ -175,10 +175,14 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	// Scene
 	class_<Scene>(m, "Scene")
 		.def("Clean", &Scene::Clean)
+		.def("GetHandle", &Scene::GetHandle)
 		//.def_static("GetRootGameObjects", [](const py::object&, int handle) { SceneManager::GetSceneByHandle(handle)->re})
 	;
 
-	class_<SceneManager>(m, "SceneManager");
+	class_<SceneManager>(m, "SceneManager")
+		.def_static("CreateScene", &SceneManager::CreateScene, return_value_policy::reference)
+		.def_static("GetActiveScene", &SceneManager::GetActiveScene, return_value_policy::reference)
+		.def_static("SetActiveScene", &SceneManager::SetActiveScene);
 
 #define DefineFunc(classname) \
 	m.def("Create" #classname, []() { return new classname(); }, return_value_policy::reference); \

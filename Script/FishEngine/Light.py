@@ -8,3 +8,9 @@ class Light(Component):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateLight()
         self.m_CachedPtr.SetPyObject(self)
+
+    def Serialize(self, dumper):
+        super().Serialize(dumper)
+        
+    def Deserialize(self, loader):
+        pass

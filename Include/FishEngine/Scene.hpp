@@ -15,7 +15,7 @@ namespace FishEngine
 	{
 	public:
 		
-		Scene();
+//		Scene();
 		~Scene();
 
 		Scene(Scene&) = delete;
@@ -65,8 +65,20 @@ namespace FishEngine
 			}
 			return components;
 		}
+		
+		int GetHandle() const
+		{
+			return m_Handle;
+		}
+		
+		const std::string& GetName() const
+		{
+			return m_name;
+		}
 	
 	private:
+		Scene();
+		
 		void AddRootTransform(Transform* t);
 		void RemoveRootTransform(Transform* t);
 		
@@ -92,14 +104,21 @@ namespace FishEngine
 	public:
 		SceneManager() = delete;
 		
+		static Scene* CreateScene(const std::string& name)
+		{
+			auto scene = new Scene();
+			scene->m_name = name;
+			return scene;
+		}
+		
 		static Scene* GetActiveScene()
 		{
-//			assert(s_activeScene != nullptr);
-			if (s_activeScene == nullptr)
-			{
-				// TODO: delete
-				s_activeScene = new Scene();
-			}
+			assert(s_activeScene != nullptr);
+//			if (s_activeScene == nullptr)
+//			{
+//				// TODO: delete
+//				s_activeScene = new Scene();
+//			}
 			return s_activeScene;
 		}
 
@@ -110,13 +129,13 @@ namespace FishEngine
 
 		static Scene* GetSceneByHandle(int handle)
 		{
-			return s_handeToScene[handle];
+			return s_handleToScene[handle];
 		}
 
 		static void StaticClean()
 		{
 			std::vector<Scene*> scenes;
-			for (auto&& p : s_handeToScene)
+			for (auto&& p : s_handleToScene)
 			{
 				auto scene = p.second;
 				scene->Clean();
@@ -128,12 +147,12 @@ namespace FishEngine
 			{
 				delete s;
 			}
-			s_handeToScene.clear();
+			s_handleToScene.clear();
 		}
 		
 	private:
 		friend class Scene;
-		static std::map<int, Scene*> s_handeToScene;
+		static std::map<int, Scene*> s_handleToScene;
 		//static std::list<Scene*> s_scenes;
 		static Scene* s_activeScene;
 	};

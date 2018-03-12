@@ -13,6 +13,7 @@ class AssetDataBase:
     s_assetPathTOGUID = {}
     s_GUIDToAssetPath = {}
     s_GUIDToImporter = {}
+    s_InstanceIDToAssetPath = {}
 
     @staticmethod
     def AssetPathToGUID(path:str)->str:
@@ -34,13 +35,17 @@ class AssetDataBase:
             print("imporing fbx:", fullpath)
             importer = FBXImporter()
             print("[TODO] FBXImporter.globalScale")
-            importer.globalScale = 1
+            importer.globalScale = 100
             importer.Import(fullpath)
         elif ext == 'prefab':
             print("imporing prefab:", fullpath)
             importer = UnityPrefabImporter(fullpath)
         AssetDataBase.s_GUIDToImporter[guid] = importer
         return importer
+
+    @staticmethod
+    def GetAssetPath(instanceID: int)->str:
+        return AssetDataBase.s_InstanceIDToAssetPath[instanceID]
 
     @staticmethod
     def StaticClean():

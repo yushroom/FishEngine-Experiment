@@ -68,14 +68,15 @@ void DrawMeshRenderer(MeshRenderer* mr)
 {
 	DrawObject(mr);
 	Material* mat = mr->GetMaterial();
-	std::string name = (mat == nullptr ? "None" : mat->GetName());
+	std::string name = (mat == nullptr ? "None(Material)" : mat->GetName());
 	FishGUI::InputText("Material", name);
 }
 
 void DrawMeshFilter(MeshFilter* mf)
 {
 	DrawObject(mf);
-	auto meshName = mf->GetMesh()->GetName();
+	auto mesh = mf->GetMesh();
+	std::string meshName = (mesh == nullptr ? "None(Mesh)" : mesh->GetName());
 	FishGUI::InputText("Mesh", meshName);
 }
 
@@ -104,12 +105,13 @@ bool StartsWith(const std::string& a, const std::string& b)
 
 void DrawScript(Script* s)
 {
-	DrawObject(s);
 	auto handle = s->GetPyObject();
 	std::string scriptName = handle.ptr()->ob_type->tp_name;
 	//std::string scriptName = (std::string) pybind11::str(handle.get_type());
 	FishGUI::Group(scriptName + "(Script)");
 	FishGUI::Text("Script", scriptName);
+	
+	DrawObject(s);
 
 	auto attributes = handle.attr("GetVisiableAttributes")();		// list of str
 	for (const auto& a : attributes)
@@ -201,4 +203,5 @@ void InspectorView::DrawImpl()
 	{
 		Dispatch(c);
 	}
+	FishGUI::Button("Add Component");
 }

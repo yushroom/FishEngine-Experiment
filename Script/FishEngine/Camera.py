@@ -81,5 +81,6 @@ class Camera(Component):
             dumper.d(name, getattr(self, attr))
 
     def Deserialize(self, loader):
+        # super().Deserialize(loader)
         for name, attr in Camera.SerializeAttr():
             setattr(self, attr, loader[name])
