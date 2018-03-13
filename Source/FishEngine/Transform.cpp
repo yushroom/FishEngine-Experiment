@@ -9,7 +9,7 @@ namespace FishEngine
 	{
 		LOGF;
 //		for (auto c : m_children)
-		for (int i = m_children.size()-1; i >= 0; --i)
+		for (int i = (int)m_children.size()-1; i >= 0; --i)
 		{
 			delete m_children[i]->GetGameObject();
 		}
@@ -122,7 +122,7 @@ namespace FishEngine
 		if (parent != nullptr)
 		{
 			parent->m_children.push_back(this);
-			m_RootOrder = parent->m_children.size()-1;
+			m_RootOrder = (int)parent->m_children.size()-1;
 		}
 		
 		if ( worldPositionStays )

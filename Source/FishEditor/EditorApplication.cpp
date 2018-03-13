@@ -1,3 +1,4 @@
+
 #include <FishEditor/EditorApplication.hpp>
 
 #include <FishEditor/GameView.hpp>
@@ -7,6 +8,7 @@
 #include <FishEngine/Render/GLEnvironment.hpp>
 #include <FishEngine/System/RenderSystem.hpp>
 #include <FishEngine/System/UISystem.hpp>
+#include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/Scene.hpp>
 
 #include <FishEditor/Selection.hpp>
@@ -55,7 +57,7 @@ public:
 		FishEngine::UISystem::GetInstance().Update();
 		FishEngine::UISystem::GetInstance().AfterDraw();
 	}
-
+	 
 	//virtual void Resize(int width, int height) override
 	//{
 	//	FishEngine::Screen::SetResolution(width, height, false);
@@ -97,26 +99,32 @@ namespace FishEditor
 	{
 //		m_app->Start();
 		m_IsPlaying = true;
-		auto app = py::module::import("demo1");
+		auto scene = FishEngine::SceneManager::GetActiveScene();
+		m_currentScene = scene;
+
+		auto app = py::module::import("app");
 		app.attr("Save")();
-//		auto scene = FishEngine::SceneManager::GetActiveScene();
-//		m_currentScene = scene;
 //		scene = scene->Clone();
 //		FishEngine::SceneManager::SetActiveScene(scene);
 		
 		Selection::SetActiveTransform(nullptr);
+		FishEngine::PhysicsSystem::GetInstance().Init();
+		FishEngine::PhysicsSystem::GetInstance().Start();
 	}
 
 	void EditorApplication::Stop()
 	{
+		FishEngine::PhysicsSystem::GetInstance().Clean();
+
 		m_IsPlaying = false;
-		//FishEngine::Clean();
-//		auto scene = FishEngine::SceneManager::GetActiveScene();
-//		scene->Clean();
-//		delete scene;
-//		FishEngine::SceneManager::SetActiveScene(m_currentScene);
-		auto app = py::module::import("demo1");
-		app.attr("Restore")();
+		auto scene = FishEngine::SceneManager::GetActiveScene();
+		scene->Clean();
+		delete scene;
+		FishEngine::SceneManager::SetActiveScene(m_currentScene);
+		scene = FishEngine::SceneManager::GetActiveScene();
+
+		//auto app = py::module::import("app");
+		//app.attr("Restore")();
 		
 		Selection::SetActiveTransform(nullptr);
 	}

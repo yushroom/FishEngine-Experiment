@@ -45,7 +45,7 @@ namespace FishEngine
 //		std::remove(m_rootTransforms.begin(), m_rootTransforms.end(), t);
 //		assert(oldsize-1 == m_rootTransforms.size());
 
-		int oldsize = m_rootTransforms.size();
+		int oldsize = (int)m_rootTransforms.size();
 		for (auto it = m_rootTransforms.begin(); it != m_rootTransforms.end(); ++it)
 		{
 			if (t == *it)
@@ -87,7 +87,7 @@ namespace FishEngine
 //		}
 		//m_rootTransforms.clear();
 //		for (auto t : m_rootTransforms)
-		for (int i = m_rootTransforms.size()-1; i >= 0; --i)
+		for (int i = (int)m_rootTransforms.size()-1; i >= 0; --i)
 		{
 			auto t = m_rootTransforms[i];
 			delete t->GetGameObject();

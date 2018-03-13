@@ -1,5 +1,5 @@
 #include <FishEditor/FishEditorInternal.hpp>
-#include "FBXImporter.cpp"
+#include <FishEditor/FBXImporter.hpp>
 
 #include <pybind11/embed.h>
 

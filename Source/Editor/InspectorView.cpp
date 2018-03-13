@@ -15,6 +15,8 @@ using namespace FishEditor;
 #include <FishEngine/Component/MeshRenderer.hpp>
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Render/Material.hpp>
+#include <FishEngine/Component/BoxCollider.hpp>
+#include <FishEngine/Component/Rigidbody.hpp>
 
 void DrawObject(Object* o)
 {
@@ -154,6 +156,10 @@ void DrawScript(Script* s)
 	FishGUI::EndGroup();
 }
 
+void DrawBoxCollider(BoxCollider* c)
+{
+
+}
 
 void Dispatch(Component* c)
 {
@@ -185,6 +191,18 @@ void Dispatch(Component* c)
 	{
 		FishGUI::Group("MeshRenderer");
 		DrawMeshRenderer((MeshRenderer*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == BoxCollider::ClassID)
+	{
+		FishGUI::Group("BoxCollider");
+		DrawBoxCollider((BoxCollider*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == Rigidbody::ClassID)
+	{
+		FishGUI::Group("Rigidbody");
+		//DrawRigidbody((Rigidbody*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == Script::ClassID)

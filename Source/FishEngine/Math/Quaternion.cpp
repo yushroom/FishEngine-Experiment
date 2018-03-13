@@ -170,7 +170,8 @@ namespace FishEngine {
 				return qx * qz * qy;
 			case RotationOrder::ZXY:
 				return qy * qx * qz;
-			case RotationOrder::ZYX:
+			default:
+			//case RotationOrder::ZYX:
 				return qx * qy * qz;
 		}
 	}

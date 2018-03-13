@@ -9,34 +9,39 @@ import FishEngineInternal
 # FishEngineInternal.Camera.__getattribute__ = __getattr
 
 from FishEngine.TypeCheck import accepts, returns
-from FishEngine.Debug import Debug
-from FishEngine.Vector2 import Vector2
-from FishEngine.Vector3 import Vector3
-from FishEngine.Quaternion import Quaternion
-from FishEngine.Matrix4x4 import Matrix4x4
+from .Debug import Debug
+from .Vector2 import Vector2
+from .Vector3 import Vector3
+from .Quaternion import Quaternion
+from .Matrix4x4 import Matrix4x4
+from .Color import Color
 
-from FishEngine.Object import Object
-from FishEngine.Prefab import Prefab
-from FishEngine.Component import Component
-from FishEngine.Transform import Transform
-from FishEngine.RectTransform import RectTransform
-from FishEngine.GameObject import GameObject, PrimitiveType
-from FishEngine.Script import Script
+from .Object import Object, HideFlags
+from .Prefab import Prefab
+from .Component import Component
+from .Transform import Transform
+from .RectTransform import RectTransform
+from .GameObject import GameObject, PrimitiveType
+from .Script import Script
 
-from FishEngine.Screen import Screen
-from FishEngine.Camera import Camera
-from FishEngine.Light import Light
+from .Screen import Screen
+from .Camera import Camera
+from .Light import Light
 
-from FishEngine.Mesh import Mesh
-from FishEngine.MeshFilter import MeshFilter
-from FishEngine.Shader import Shader
-from FishEngine.Material import Material
-from FishEngine.MeshRenderer import MeshRenderer
-from FishEngine.Graphics import Graphics
+from .Mesh import Mesh
+from .MeshFilter import MeshFilter
+from .Shader import Shader
+from .Material import Material
+from .MeshRenderer import MeshRenderer
+from .Graphics import Graphics
 
-from FishEngine.Scene import Scene, SceneManager
+from .Rigidbody import Rigidbody
+from .Collider import Collider
+from .BoxCollider import BoxCollider
+
+from .Scene import Scene, SceneManager
 
 # ESC
-from FishEngine.System import System
+from .System import System
 
 import FishEngine.UI

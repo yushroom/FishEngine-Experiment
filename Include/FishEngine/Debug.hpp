@@ -41,7 +41,9 @@ namespace FishEngine
 }
 
 #if defined(_MSC_VER)
-#define __PRETTY_FUNCTION__ __FUNCTION__
+#	ifndef __PRETTY_FUNCTION__
+#		define __PRETTY_FUNCTION__ __FUNCTION__
+#	endif
 #endif
 
 #define LogInfo(message) FishEngine::Debug::Log(FishEngine::LogType::Log, (message), __FILE__, __LINE__, __PRETTY_FUNCTION__)

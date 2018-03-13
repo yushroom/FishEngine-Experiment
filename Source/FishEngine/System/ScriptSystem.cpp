@@ -26,6 +26,9 @@ namespace py = pybind11;
 #include <FishEngine/Component/MeshRenderer.hpp>
 #include <FishEngine/Component/Camera.hpp>
 #include <FishEngine/Component/Light.hpp>
+#include <FishEngine/Component/Collider.hpp>
+#include <FishEngine/Component/BoxCollider.hpp>
+#include <FishEngine/Component/Rigidbody.hpp>
 
 #include <FishEngine/Render/Graphics.hpp>
 #include <FishEngine/Screen.hpp>
@@ -33,6 +36,8 @@ namespace py = pybind11;
 
 #include <pybind11/embed.h>
 #include <pybind11/operators.h>
+
+
 
 using namespace FishEngine;
 namespace py = pybind11;
@@ -163,6 +168,10 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_static("LookAt", &Matrix4x4::LookAt)
 		.def("MultiplyPoint", &Matrix4x4::MultiplyPoint)
 		;
+
+	enum_<HideFlags>(m, "HideFlags")
+		.value("None", HideFlags::None)
+	;
 
 	// Object
 	class_<Object>(m, "Object")
@@ -321,6 +330,14 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		//.def(init<>())
 		.def_property_readonly_static("ClassID", [](py::object) { return (int)Light::ClassID; })
 	;
+
+	class_<Collider, Component>(m, "Collider");
+
+	DefineFunc(BoxCollider);
+	class_<BoxCollider, Collider>(m, "BoxCollider");
+
+	DefineFunc(Rigidbody);
+	class_<Rigidbody, Component>(m, "Rigidbody");
 }
 
 

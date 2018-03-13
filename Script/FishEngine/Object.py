@@ -4,6 +4,18 @@ import FishEngineInternal
 # import gc
 # from collections import defaultdict
 from typing import Type, List
+from enum import Enum
+
+class HideFlags(Enum):
+    eNone = 0
+    HideInHierarchy = 1
+    HideInInspector = 2
+    DontSaveInEditor = 4
+    NotEditable = 8
+    DontSaveInBuild = 0x10
+    DontUnloadUnusedAsset = 0x20
+    DontSave = 0x34
+    HideAndDontSave = 0x3D
 
 class Object():
 

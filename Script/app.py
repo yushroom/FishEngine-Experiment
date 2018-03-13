@@ -1,28 +1,33 @@
 import FishEngineInternal
-from FishEngine import SceneManager, Material, Mesh
+from FishEngine import SceneManager, Material, Mesh, Vector3, Quaternion
 from timing import timing
 import demo1, demo2
+from collections import OrderedDict
 
 from FishEditor import AssetDataBase
 
-import sys
+import sys, yaml
+
+def Vector3_representer(dumper, v:Vector3):
+    return dumper.represent_dict(OrderedDict(x=v.x, y=v.y, z=v.z))
+
+def Quaternion_representer(dumper, q:Quaternion):
+    return dumper.represent_dict(OrderedDict(x=q.x, y=q.y, z=q.z, w=q.w))
+
+def OrderedDict_representer(dumper, data):
+    return dumper.represent_dict(data.items())
 
 def Start():
+    yaml.add_representer(OrderedDict, OrderedDict_representer)
+    yaml.add_representer(Vector3, Vector3_representer)
+    yaml.add_representer(Quaternion, Quaternion_representer)
+
     scene = SceneManager.CreateScene("DefaultScene")
     SceneManager.SetActiveScene(scene)
-    demo1.Start()
+    demo2.Start()
 
 # @timing
 def Update():
-    # scene = SceneManager.GetActiveScene()
-    # for s in scene.systems:
-    #     s.Update()
-    pass
-
-def Backup():
-    pass
-
-def Restore():
     pass
     
 def Clean():
@@ -37,3 +42,17 @@ def Reload():
     import importlib, FishEngine
     importlib.reload(FishEngine)
     importlib.reload(demo2)
+
+from FishEditor import UnitySceneImporter, SceneDumper
+from FishEngine import GameObject, Object
+
+def Save():
+    objs = Object.FindObjectsOfType(GameObject)
+    dumper = SceneDumper()
+    dumper.Dump(objs)
+
+    scene = SceneManager.CreateScene("RuntimeScene")
+    SceneManager.SetActiveScene(scene)
+    scene_path = 'FishEngine_demo1.unity'
+    sceneImporter = UnitySceneImporter(scene_path)
+    sceneImporter.Import()

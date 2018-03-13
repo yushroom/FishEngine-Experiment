@@ -1,7 +1,9 @@
 # from . import AssetImporter
 
 from . import FBXImporter, AssetDataBase
-from FishEngine import Vector2, Vector3, Quaternion, GameObject, Transform, RectTransform, Camera, Light, MeshRenderer, MeshFilter, Material, Mesh, Debug, Prefab, Object, SceneManager
+from FishEngine import Vector2, Vector3, Quaternion
+from FishEngine import GameObject, Transform, RectTransform, Camera, Light, BoxCollider, Rigidbody
+from FishEngine import MeshRenderer, MeshFilter, Material, Mesh, Debug, Prefab, Object, SceneManager
 # from FishEngine.UI import Text
 import FishEngine
 import os
@@ -56,6 +58,10 @@ def MakeComponent(ctype:str, d:int):
                 importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
                 nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
                 comp.mesh = importer.GetMeshByName(nodeName)
+    elif ctype == 'BoxCollider':
+        comp = BoxCollider()
+    elif ctype == 'Rigidbody':
+        comp = Rigidbody()
     elif ctype == 'MonoBehaviour':
         if d['m_Script']['guid'] == 'f70555f144d8491a825f0804e09c671c' and d['m_Script']['fileID'] == 708705254:
             # print("Add Text")

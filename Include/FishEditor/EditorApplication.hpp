@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class EditorInternalApp;
 
 namespace FishEngine
@@ -19,6 +21,8 @@ namespace FishEditor
 			return instance;
 		}
 
+		static void OpenProject(const std::string& projectPath);
+
 		void Init();
 
 		void Update();
@@ -37,6 +41,6 @@ namespace FishEditor
 		EditorInternalApp * m_app;
 		bool m_IsPlaying = false;
 
-		FishEngine::Scene * m_currentScene;	// scene in editor
+		FishEngine::Scene * m_currentScene = nullptr;	// scene in editor
 	};
 }

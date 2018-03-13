@@ -18,8 +18,8 @@ namespace FishEngine
 				Vector2 anchor;
 				anchor.x = parentRect.m_Width * m_AnchorMin.x;
 				anchor.y = parentRect.m_Height * m_AnchorMin.y;
-				int width = m_SizeDelta.x;
-				int height = m_SizeDelta.y;
+				float width = m_SizeDelta.x;
+				float height = m_SizeDelta.y;
 				auto pivot = m_Pivot;
 				pivot.x *= width;
 				pivot.y *= height;

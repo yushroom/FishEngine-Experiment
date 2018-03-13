@@ -110,7 +110,7 @@ namespace FishEngine
 			
 			
 			constexpr int targetFPS = 60;
-			constexpr float targetTimePreFrame = 1000.0 / targetFPS;
+			constexpr float targetTimePreFrame = 1000.0f / targetFPS;
 			auto now = glfwGetTime();
 			auto interval = now - lastTimeStamp;
 			lastTimeStamp = now;

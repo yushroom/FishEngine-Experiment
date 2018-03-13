@@ -1,7 +1,7 @@
 from FishEngine import *
 import yaml
 from collections import OrderedDict
-from FishEditor import AssetDataBase
+from FishEditor import AssetDataBase, SceneDumper
 from Rotator2 import Rotator2
 
 class Rotator3(Script):
@@ -21,76 +21,6 @@ class Rotator3System(System):
             go.transform.RotateAround(r.target, Vector3.up(), r.speed)
             go.transform.LookAt(r.target)
 
-def Vector3_representer(dumper, v:Vector3):
-    return dumper.represent_dict(OrderedDict(x=v.x, y=v.y, z=v.z))
-
-def Quaternion_representer(dumper, q:Quaternion):
-    return dumper.represent_dict(OrderedDict(x=q.x, y=q.y, z=q.z, w=q.w))
-
-def OrderedDict_representer(dumper, data):
-    return dumper.represent_dict(data.items())
-
-class SceneDumper:
-    def __init__(self):
-        self.todo = []
-        self.done = set()
-        self.dict = None
-        # self.file = open(outputFilePath, 'w')
-
-    # begin doc
-    def begin(self):
-        self.dict = OrderedDict()
-    
-    # end doc
-    def end(self):
-        # yaml.dump(self.dict, self.file)
-        # self.dict = None
-        pass
-
-    def __pre(self, data):
-        if data is None:
-            return {'fileID': 0}
-        if data.__class__ is list:
-            return [self.__pre(x) for x in data]
-        if data.__class__ is dict:
-            return {a: self.__pre(b) for a, b in data.items()}
-        if isinstance(data, Mesh):
-            guid = '0000000000000000e000000000000000'
-            name2fileID = {'Cube':10202, 'Cylinder':10206, 'Sphere':10207, 'Capsule':10208, 'Plane':10209, 'Quad':10210}
-            return {'fileID': name2fileID[data.name], 'guid':guid}
-        if isinstance(data, Object):
-            self.__AddObject(data)
-            return {'fileID': data.instanceID}
-        return data
-
-    def d(self, label:str, data):
-        assert(isinstance(label, str))
-        self.dict[label] = self.__pre(data)
-
-    def Dump(self, objs):
-        with open('FishEngine_demo1.unity', 'w') as f:
-            f.writelines([
-                '%YAML 1.1\n',
-                '%TAG !u! tag:unity3d.com,2011:\n'
-            ])
-            self.todo = objs[:]
-            self.done = set(self.todo)
-            
-            while len(self.todo) > 0:
-                o = self.todo.pop()
-                self.begin()
-                o.Serialize(self)
-                self.end()
-                f.write('--- !u!{} &{}\n'.format(o.ClassID, o.instanceID))
-                yaml.dump({o.__class__.__name__: self.dict}, f)
-                # yaml.dump({o.__class__.__name__: o.ToDict(self)}, f)
-    
-    def __AddObject(self, obj):
-        assert(isinstance(obj, Object))
-        if obj not in self.done:
-            self.todo.append(obj)
-            self.done.add(obj)
-
 
 class SceneLoader:
     def __init__(self):
@@ -106,11 +36,7 @@ def Start():
     cameraGO.transform.position = Vector3(0, 1, -10)
     cameraGO.transform.position = Vector3(0, 5, -5)
     cameraGO.transform.LookAt(Vector3.zero())
-
     # Object.Instantiate(cameraGO)
-    yaml.add_representer(OrderedDict, OrderedDict_representer)
-    yaml.add_representer(Vector3, Vector3_representer)
-    yaml.add_representer(Quaternion, Quaternion_representer)
 
     lightGO = GameObject(name='Directional Light')
     lightGO.transform.localPosition = Vector3(0, 3, 0)
@@ -139,28 +65,3 @@ def Start():
     plane = GameObject.CreatePrimitive(PrimitiveType.Plane)
 
     cameraGO.AddComponent(Rotator3())
-
-
-old_scene = None
-
-from FishEditor import UnitySceneImporter
-
-def Save():
-    global old_scene
-    old_scene = SceneManager.GetActiveScene()
-
-    objs = Object.FindObjectsOfType(GameObject)
-    dumper = SceneDumper()
-    dumper.Dump(objs)
-
-    scene = SceneManager.CreateScene("RuntimeScene")
-    SceneManager.SetActiveScene(scene)
-    scene_path = '/Users/yushroom/program/FishEngine-Experiment/build/Debug/FishEngine_demo1.unity'
-    sceneImporter = UnitySceneImporter(scene_path)
-    sceneImporter.Import()
-
-def Restore():
-    global old_scene
-    scene = SceneManager.GetActiveScene()
-    scene.Clean()
-    SceneManager.SetActiveScene(old_scene)

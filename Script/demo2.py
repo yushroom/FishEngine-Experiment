@@ -21,8 +21,13 @@ def Start():
     # Screen.SetResolution(640//2, 1136//2, False)
     Screen.SetResolution(1136, 640, False)
     # project_path = '/Users/yushroom/program/Unity/MonumentVally/Assets'
-    project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
+    # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
+    project_path = r'D:\workspace\unity\FishEngine\Assets'
+    # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
     projectImporter = UnityProjectImporter(project_path)
 
-    scene_path = os.path.join(project_path, "polygons.unity")
+    # scene_path = os.path.join(project_path, 'scene', "01.unity")
+    scene_path = os.path.join(project_path, 'TestPhysics.unity')
+    # scene_path = r'D:\program\FishEngine-Experiment\Script\FishEngine_demo1.unity'
     sceneImporter = UnitySceneImporter(scene_path)
+    sceneImporter.Import()

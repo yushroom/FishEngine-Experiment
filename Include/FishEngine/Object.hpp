@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "FishEngine.hpp"
+#include "HideFlags.hpp"
 
 #include <pybind11/pybind11.h>
 //#include <functional>	// hash
@@ -51,6 +52,9 @@ namespace FishEngine
 			return m_self;
 		}
 
+		HideFlags GetHideFlags() const { return m_ObjectHideFlags; }
+		void SetHideFlags(HideFlags flags) { m_ObjectHideFlags = flags; }
+
 		
 	public:
 		static int GetInstanceCounter()
@@ -93,6 +97,7 @@ namespace FishEngine
 	protected:
 		std::string			m_name;
 		pybind11::object	m_self = pybind11::none();
+		HideFlags			m_ObjectHideFlags = HideFlags::None;
 
 	private:
 		int					m_classID = 0;

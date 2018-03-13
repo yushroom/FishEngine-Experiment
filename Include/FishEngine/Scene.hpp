@@ -23,7 +23,7 @@ namespace FishEngine
 		
 		int GetRootCount()
 		{
-			return m_rootTransforms.size();
+			return static_cast<int>( m_rootTransforms.size() );
 		}
 		
 		const std::vector<Transform*>& GetRootTransforms()
