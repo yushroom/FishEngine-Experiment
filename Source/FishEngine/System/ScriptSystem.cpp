@@ -133,17 +133,17 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def(self*float())
 		.def(float()*self)
 		.def_static("Dot", &Vector3::Dot)
-	.def(py::pickle(
-					[](const Vector3 & v) { // __getstate__
-						return py::make_tuple(v.x, v.y, v.z);
-					},
-					[](py::tuple t) {
-						if (t.size() != 3)
-							throw std::runtime_error("Invalid state!");
-						Vector3 v(t[0].cast<float>(), t[1].cast<float>(), t[2].cast<float>());
-						return v;
-					}
-					))
+//		.def(py::pickle(
+//					[](const Vector3 & v) { // __getstate__
+//						return py::make_tuple(v.x, v.y, v.z);
+//					},
+//					[](py::tuple t) {
+//						if (t.size() != 3)
+//							throw std::runtime_error("Invalid state!");
+//						Vector3 v(t[0].cast<float>(), t[1].cast<float>(), t[2].cast<float>());
+//						return v;
+//					}
+//					))
 		;
 
 
@@ -287,16 +287,12 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	DefineFunc(MeshFilter);
 	class_<MeshFilter, Component>(m, "MeshFilter")
-		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshFilter::ClassID; })
-		//.def(init<>())
 		.def("GetMesh", &MeshFilter::GetMesh)
 		.def("SetMesh", &MeshFilter::SetMesh)
 	;
 
 	DefineFunc(MeshRenderer);
 	class_<MeshRenderer, Component>(m, "MeshRenderer")
-		.def_property_readonly_static("ClassID", [](py::object) { return (int)MeshRenderer::ClassID; })
-		//.def(init<>())
 		.def("GetMaterial", &MeshRenderer::GetMaterial)
 		.def("SetMaterial", &MeshRenderer::SetMaterial)
 	;
@@ -307,14 +303,16 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	DefineFunc(Camera);
 	class_<Camera, Component>(m, "Camera")
-		.def_property_readonly_static("ClassID", [](py::object){ return (int)Camera::ClassID; })
-		//.def(init<>())
-		.def_property("fieldOfView", &Camera::GetFieldOfView, &Camera::SetFieldOfView)
-		.def_property_readonly("aspect", &Camera::GetAspect)
-		.def_property("orthographic", &Camera::GetOrthographic, &Camera::SetOrthographic)
-		.def_property("nearClipPlane", &Camera::GetNearClipPlane, &Camera::SetNearClipPlane)
-		.def_property("farClipPlane", &Camera::GetFarClipPlane, &Camera::SetFarClipPlane)
-		.def_property("orthographicSize", &Camera::GetOrthographicSize, &Camera::SetOrthographicSize)
+		.def("GetFarClipPlane", &Camera::GetFarClipPlane)
+		.def("SetFarClipPlane", &Camera::SetFarClipPlane)
+		.def("GetNearClipPlane", &Camera::GetNearClipPlane)
+		.def("SetNearClipPlane", &Camera::SetNearClipPlane)
+		.def("GetFieldOfView", &Camera::GetFieldOfView)
+		.def("SetFieldOfView", &Camera::SetFieldOfView)
+		.def("GetOrthographic", &Camera::GetOrthographic)
+		.def("SetOrthographic", &Camera::SetOrthographic)
+		.def("GetOrthographicSize", &Camera::GetOrthographicSize)
+		.def("SetOrthographicSize", &Camera::SetOrthographicSize)
 		.def("GetProjectionMatrix", &Camera::GetProjectionMatrix, return_value_policy::reference)
 		.def("GetWorldToCameraMatrix", &Camera::GetWorldToCameraMatrix)
 		;
@@ -327,17 +325,31 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	DefineFunc(Light);
 	class_<Light, Component>(m, "Light")
-		//.def(init<>())
-		.def_property_readonly_static("ClassID", [](py::object) { return (int)Light::ClassID; })
 	;
 
 	class_<Collider, Component>(m, "Collider");
 
 	DefineFunc(BoxCollider);
-	class_<BoxCollider, Collider>(m, "BoxCollider");
+	class_<BoxCollider, Collider>(m, "BoxCollider")
+		.def("GetCenter", &BoxCollider::GetCenter)
+		.def("SetCenter", &BoxCollider::SetCenter)
+		.def("GetSize", &BoxCollider::GetSize)
+		.def("SetSize", &BoxCollider::SetSize)
+	;
 
 	DefineFunc(Rigidbody);
-	class_<Rigidbody, Component>(m, "Rigidbody");
+	class_<Rigidbody, Component>(m, "Rigidbody")
+		.def("GetMass", &Rigidbody::GetMass)
+		.def("SetMass", &Rigidbody::SetMass)
+		.def("GetDrag", &Rigidbody::GetDrag)
+		.def("SetDrag", &Rigidbody::SetDrag)
+		.def("GetAngularDrag", &Rigidbody::GetAngularDrag)
+		.def("SetAngularDrag", &Rigidbody::SetAngularDrag)
+		.def("GetUseGravity", &Rigidbody::GetUseGravity)
+		.def("SetUseGravity", &Rigidbody::SetUseGravity)
+		.def("GetIsKinematic", &Rigidbody::GetIsKinematic)
+		.def("SetIsKinematic", &Rigidbody::SetIsKinematic)
+	;
 }
 
 

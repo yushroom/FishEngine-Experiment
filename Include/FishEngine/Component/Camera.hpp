@@ -38,71 +38,29 @@ namespace FishEngine
 			return Screen::GetAspect();
 		}
 
-		float GetFieldOfView() const
-		{
-			return m_fieldOfView;
-		}
-
-		float GetOrthographicSize() const
-		{
-			return m_orthographicSize;
-		}
+		float GetFarClipPlane() const { return m_FarClipPlane; }
+		void SetFarClipPlane(float value) { m_FarClipPlane = value; }
 		
-		void SetOrthographicSize(float size)
-		{
-			m_orthographicSize = size;
-			m_isDirty = true;
-		}
+		
+		float GetNearClipPlane() const { return m_NearClipPlane; }
+		void SetNearClipPlane(float value) { m_NearClipPlane = value; }
+		
+		
+		float GetFieldOfView() const { return m_FieldOfView; }
+		void SetFieldOfView(float value) { m_FieldOfView = value; }
+		
+		
+		bool GetOrthographic() const { return m_Orthographic; }
+		void SetOrthographic(bool value) { m_Orthographic = value; }
+		
+		
+		float GetOrthographicSize() const { return m_OrthographicSize; }
+		void SetOrthographicSize(float value) { m_OrthographicSize = value; }
 
-		bool GetOrthographic() const
-		{
-			return m_orthographic;
-		}
-
-		void SetOrthographic(bool value)
-		{
-			m_orthographic = value;
-			m_isDirty = true;
-		}
-
-//		void setAspect(float aspect)
-//		{
-//			m_aspect = aspect;
-//			m_isDirty = true;
-//			m_isAspectSet = true;
-//		}
-
-		void SetFieldOfView(float fieldOfView)
-		{
-			m_fieldOfView = fieldOfView;
-			m_isDirty = true;
-		}
-
-		float GetNearClipPlane() const
-		{
-			return m_nearClipPlane;
-		}
-
-		void SetNearClipPlane(const float nearClipPlane)
-		{
-			m_nearClipPlane = nearClipPlane;
-			m_isDirty = true;
-		}
-
-		float GetFarClipPlane() const
-		{
-			return m_farClipPlane;
-		}
-
-		void SetFarClipPlane(const float farClipPlane)
-		{
-			m_farClipPlane = farClipPlane;
-			m_isDirty = true;
-		}
 		
 		Frustum GetFrustum() const
 		{
-			return {m_fieldOfView, m_farClipPlane, m_nearClipPlane, this->GetAspect()};
+			return {m_FieldOfView, m_FarClipPlane, m_NearClipPlane, this->GetAspect()};
 		}
 
 		// Matrix that transforms from world to camera space (i.e. view matrix).
@@ -149,23 +107,24 @@ namespace FishEngine
 
 	private:
 //		friend class RenderSystem;
-
-		float m_fieldOfView         = 60.f;
-
-		// Projection's half-size(vertical) when in orthographic mode.
-		float m_orthographicSize    = 5.f;
-
 		// The aspect ratio (width divided by height).
-		mutable float m_aspect              = 0;
+//		mutable float m_aspect              = 0;
 //		bool m_isAspectSet         = false;
 
-		float m_farClipPlane        = 1000.f;
-		float m_nearClipPlane       = 0.3f;
+		float m_FarClipPlane        = 1000.f;
+		float m_NearClipPlane       = 0.3f;
+		float m_FieldOfView         = 60.f;
+		bool  m_Orthographic = false;
+		// Projection's half-size(vertical) when in orthographic mode.
+		float m_OrthographicSize    = 5.f;
+		
+		
+		
 		Vector4 m_viewport{ 0, 0, 1, 1 };
 		mutable bool m_isDirty = true;
 
 		CameraType  m_cameraType = CameraType::Game;
-		bool        m_orthographic = false;
+		
 
 //		Meta(NonSerializable)
 		mutable Matrix4x4 m_projectMatrix;

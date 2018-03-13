@@ -48,18 +48,18 @@ namespace FishEngine
 	const Matrix4x4& Camera::GetProjectionMatrix() const
 	{
 		float aspect = Screen::GetAspect();
-		if (m_aspect != aspect)
-		{
-			m_isDirty = true;
-			m_aspect = aspect;
-		}
+//		if (m_aspect != aspect)
+//		{
+//			m_isDirty = true;
+//			m_aspect = aspect;
+//		}
 		if (m_isDirty) {
-			if (m_orthographic) {
-				float w = Screen::GetAspect() * m_orthographicSize;
-				m_projectMatrix = Matrix4x4::Ortho(-w, w, -m_orthographicSize, m_orthographicSize, m_nearClipPlane, m_farClipPlane);
+			if (m_Orthographic) {
+				float w = aspect * m_OrthographicSize;
+				m_projectMatrix = Matrix4x4::Ortho(-w, w, -m_OrthographicSize, m_OrthographicSize, m_NearClipPlane, m_FarClipPlane);
 			}
 			else {
-				m_projectMatrix = Matrix4x4::Perspective(m_fieldOfView, Screen::GetAspect(), m_nearClipPlane, m_farClipPlane);
+				m_projectMatrix = Matrix4x4::Perspective(m_FieldOfView, aspect, m_NearClipPlane, m_FarClipPlane);
 			}
 			m_isDirty = false;
 		}
@@ -141,13 +141,14 @@ namespace FishEngine
 
 	Camera* Camera::Clone() const
 	{
-		auto cloned = new Camera();
-		cloned->m_cameraType = m_cameraType;
-		cloned->m_farClipPlane = m_farClipPlane;
-		cloned->m_nearClipPlane = m_nearClipPlane;
-		cloned->m_fieldOfView = m_fieldOfView;
-		cloned->m_orthographic = m_orthographic;
-		cloned->m_orthographicSize = m_orthographicSize;
-		return cloned;
+		abort();
+//		auto cloned = new Camera();
+//		cloned->m_cameraType = m_cameraType;
+//		cloned->m_farClipPlane = m_farClipPlane;
+//		cloned->m_nearClipPlane = m_nearClipPlane;
+//		cloned->m_fieldOfView = m_fieldOfView;
+//		cloned->m_orthographic = m_orthographic;
+//		cloned->m_orthographicSize = m_orthographicSize;
+//		return cloned;
 	}
 }

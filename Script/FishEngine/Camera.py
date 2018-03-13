@@ -5,7 +5,7 @@ import FishEngineInternal
 
 class Camera(Component):
     __slots__ = ()
-    ClassID = FishEngineInternal.Camera.ClassID
+    ClassID = FishEngineInternal.CameraClassID()
     def __init__(self):
         """A Camera is a device through which the player views the world.
         """
@@ -13,43 +13,40 @@ class Camera(Component):
         self.m_CachedPtr = FishEngineInternal.CreateCamera()
         self.m_CachedPtr.SetPyObject(self)
 
-    # fieldOfView = FishEngineInternal.Camera.fieldOfView
     @property
-    def fieldOfView(self)->float:
-        return self.m_CachedPtr.fieldOfView
-    @fieldOfView.setter
-    def fieldOfView(self, fov: float):
-        self.m_CachedPtr.fieldOfView = fov
+    def farClipPlane(self)->float:
+        return self.cpp.GetFarClipPlane()
+    @farClipPlane.setter
+    def farClipPlane(self, value:float):
+        self.cpp.SetFarClipPlane(value)
 
     @property
     def nearClipPlane(self)->float:
-        return self.m_CachedPtr.nearClipPlane
+        return self.cpp.GetNearClipPlane()
     @nearClipPlane.setter
-    def nearClipPlane(self, znear:float):
-        self.m_CachedPtr.nearClipPlane = znear
-    
+    def nearClipPlane(self, value:float):
+        self.cpp.SetNearClipPlane(value)
+
     @property
-    def farClipPlane(self)->float:
-        return self.m_CachedPtr.farClipPlane
-    @farClipPlane.setter
-    def farClipPlane(self, zfar:float):
-        self.m_CachedPtr.farClipPlane = zfar
+    def fieldOfView(self)->float:
+        return self.cpp.GetFieldOfView()
+    @fieldOfView.setter
+    def fieldOfView(self, value:float):
+        self.cpp.SetFieldOfView(value)
 
     @property
     def orthographic(self)->bool:
-        """Is the camera orthographic (true) or perspective (false)?
-        """
-        return self.m_CachedPtr.orthographic
+        return self.cpp.GetOrthographic()
     @orthographic.setter
     def orthographic(self, value:bool):
-        self.m_CachedPtr.orthographic = value
+        self.cpp.SetOrthographic(value)
 
     @property
     def orthographicSize(self)->float:
-        return self.m_CachedPtr.orthographicSize
+        return self.cpp.GetOrthographicSize()
     @orthographicSize.setter
     def orthographicSize(self, value:float):
-        self.m_CachedPtr.orthographicSize = value
+        self.cpp.SetOrthographicSize(value)
 
     @property
     def projectionMatrix(self):

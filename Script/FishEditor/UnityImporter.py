@@ -60,6 +60,9 @@ def MakeComponent(ctype:str, d:int):
                 comp.mesh = importer.GetMeshByName(nodeName)
     elif ctype == 'BoxCollider':
         comp = BoxCollider()
+        # comp.Deserialize(d)
+        comp.center = MakeVec3(d['m_Center'])
+        comp.size = MakeVec3(d['m_Size'])
     elif ctype == 'Rigidbody':
         comp = Rigidbody()
     elif ctype == 'MonoBehaviour':

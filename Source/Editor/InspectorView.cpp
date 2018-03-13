@@ -82,6 +82,15 @@ void DrawMeshFilter(MeshFilter* mf)
 	FishGUI::InputText("Mesh", meshName);
 }
 
+void DrawBoxCollider(BoxCollider* boxCollider)
+{
+	DrawObject(boxCollider);
+	auto c = boxCollider->GetCenter();
+	auto s = boxCollider->GetSize();
+	FishGUI::Float3("center", c.x, c.y, c.z);
+	FishGUI::Float3("size", s.x, s.y, s.z);
+}
+
 /// @brief callable() support for Boost.Python objects.
 bool IsCallable(pybind11::handle object)
 {
@@ -156,10 +165,6 @@ void DrawScript(Script* s)
 	FishGUI::EndGroup();
 }
 
-void DrawBoxCollider(BoxCollider* c)
-{
-
-}
 
 void Dispatch(Component* c)
 {

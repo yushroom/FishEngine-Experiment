@@ -24,16 +24,6 @@ namespace FishEngine
 		void Update();
 		void OnDestroy();
 
-		void setUseGravity(bool value)
-		{
-			m_useGravity = value;
-		}
-
-		bool useGravity() const
-		{
-			return m_useGravity;
-		}
-
 		bool IsInitialized() const;
 		void Initialize(physx::PxShape* shape);
 
@@ -41,14 +31,29 @@ namespace FishEngine
 		{
 			abort();
 		}
-
+		
+		float GetMass() const { return m_Mass; }
+		void SetMass(float value) { m_Mass = value; }
+		
+		float GetDrag() const { return m_Drag; }
+		void SetDrag(float value) { m_Drag = value; }
+		
+		float GetAngularDrag() const { return m_AngularDrag; }
+		void SetAngularDrag(float value) { m_AngularDrag = value; }
+		
+		bool GetUseGravity() const { return m_UseGravity; }
+		void SetUseGravity(bool value) { m_UseGravity = value; }
+		
+		bool GetIsKinematic() const { return m_IsKinematic; }
+		void SetIsKinematic(bool value) { m_IsKinematic = value; }
+		
 	private:
 		friend class Rigidbody;
-		float m_mass = 2;
-		float m_drag = 0;
-		float m_angularDrag = 0.05f;
-		bool m_useGravity = true;
-		bool m_isKinematic = false;
+		float m_Mass = 2;
+		float m_Drag = 0;
+		float m_AngularDrag = 0.05f;
+		bool m_UseGravity = true;
+		bool m_IsKinematic = false;
 
 		Vector3 m_velocity{ 0, 0, 0 };
 

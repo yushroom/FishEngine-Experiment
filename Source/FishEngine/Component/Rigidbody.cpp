@@ -3,6 +3,7 @@
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
 
+#define _DEBUG 1
 #include <PxPhysicsAPI.h>
 
 using namespace physx;
@@ -44,7 +45,7 @@ namespace FishEngine
 		const auto& q = t->GetRotation();
 		m_physxRigidDynamic->setGlobalPose(PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)));
 		PxRigidBodyExt::updateMassAndInertia(*m_physxRigidDynamic, 10.0f);
-		m_physxRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_useGravity);
+		m_physxRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_UseGravity);
 		gScene->addActor(*m_physxRigidDynamic);
 	}
 

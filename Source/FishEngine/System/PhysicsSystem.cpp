@@ -1,6 +1,9 @@
 #include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/Debug.hpp>
+#include <FishEngine/Scene.hpp>
+#include <FishEngine/Component/BoxCollider.hpp>
 
+#define _DEBUG 1
 #include <PxPhysicsAPI.h>
 //#include <pvd/PxPvd.h>
 
@@ -62,16 +65,30 @@ namespace FishEngine
 
 	void PhysicsSystem::Start()
 	{
-		auto & rbs = Object::FindObjectsOfType<Rigidbody>();
+		auto scene = SceneManager::GetActiveScene();
+		
+		auto colliders = scene->FindComponents<BoxCollider>();
+		for (auto c : colliders)
+		{
+			c->Start();
+		}
+		
+		auto rbs = scene->FindComponents<Rigidbody>();
 		for (auto o : rbs)
 		{
-			auto rb = (Rigidbody*)o;
-			rb->Start();
+			o->Start();
 		}
 	}
 
 	void PhysicsSystem::FixedUpdate()
 	{
+		auto scene = SceneManager::GetActiveScene();
+		auto rbs = scene->FindComponents<Rigidbody>();
+		for (auto o : rbs)
+		{
+			o->Update();
+		}
+		
 		gScene->simulate(1.0f / 30.f);
 		gScene->fetchResults(true);
 	}

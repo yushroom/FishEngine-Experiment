@@ -18,6 +18,7 @@
 #include <FishEngine/System/ScriptSystem.hpp>
 #include <FishEngine/System/RenderSystem.hpp>
 #include <FishEngine/System/InputSystem.hpp>
+#include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/KeyCode.hpp>
 
 #include <thread>
@@ -70,6 +71,7 @@ namespace FishEngine
 		Screen::s_pixelsPerPoint = static_cast<float>(Screen::s_width) / m_windowWidth;
 		
 		FishEngine::Init();
+		PhysicsSystem::GetInstance().Init();
 		FishEngine::Start();
 		Init();
 		
@@ -80,6 +82,8 @@ namespace FishEngine
 		
 		auto lastTimeStamp = glfwGetTime();
 		auto& input = InputSystem::GetInstance();
+		
+		PhysicsSystem::GetInstance().Start();
 		
 		while (!glfwWindowShouldClose(m_window))
 		{

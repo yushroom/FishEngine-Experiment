@@ -4,6 +4,7 @@
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/ScriptSystem.hpp>
 #include <FishEngine/System/InputSystem.hpp>
+#include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Scene.hpp>
 
@@ -73,6 +74,8 @@ namespace FishEngine
 		{
 			UpdateRecursively(t->GetGameObject());
 		}
+		
+		PhysicsSystem::GetInstance().FixedUpdate();
 	}
 	
 #define PAIR(classname) \

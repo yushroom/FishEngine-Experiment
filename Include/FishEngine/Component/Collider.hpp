@@ -20,6 +20,8 @@ namespace FishEngine
 		{
 			abort();
 		}
+		
+		void Start();
 
 		physx::PxShape* GetPhysicsShape() { return m_physxShape; }
 		virtual void CreatePhysicsShape() = 0;

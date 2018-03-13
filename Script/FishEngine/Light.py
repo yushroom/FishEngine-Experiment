@@ -3,7 +3,7 @@ import FishEngineInternal
 
 class Light(Component):
     __slots__ = ()
-    ClassID = FishEngineInternal.Light.ClassID
+    ClassID = FishEngineInternal.LightClassID()
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateLight()

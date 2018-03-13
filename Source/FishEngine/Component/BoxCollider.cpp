@@ -1,6 +1,7 @@
 #include <FishEngine/Component/BoxCollider.hpp>
 #include <FishEngine/Transform.hpp>
 
+#define _DEBUG 1
 #include <PxPhysicsAPI.h>
 
 using namespace physx;
@@ -22,8 +23,7 @@ namespace FishEngine
 	void FishEngine::BoxCollider::CreatePhysicsShape()
 	{
 		//if (m_physxShape == nullptr) {
-		//const auto& s = GetTransform()->lossyScale();
-		Vector3 s{ 1, 1, 1 };
+		auto s = GetTransform()->GetLossyScale();
 		m_physxShape = gPhysics->createShape(PxBoxGeometry(s.x*m_size.x*0.5f, s.y*m_size.y*0.5f, s.z*m_size.z*0.5f), *gMaterial);
 		m_physxShape->setLocalPose(PxTransform(m_center.x, m_center.y, m_center.z));
 		//}

@@ -5,7 +5,7 @@ import FishEngineInternal
 
 class MeshRenderer(Component):
     __slots__ = ('__material')
-    ClassID = FishEngineInternal.MeshRenderer.ClassID
+    ClassID = FishEngineInternal.MeshRendererClassID()
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEngineInternal.CreateMeshRenderer()

@@ -5,7 +5,7 @@ import FishEngineInternal
 
 class MeshFilter(Component):
     __slots__ = ('__mesh')
-    ClassID = FishEngineInternal.MeshFilter.ClassID
+    ClassID = FishEngineInternal.MeshFilterClassID()
     def __init__(self):
         super().__init__()
         self.__mesh:Mesh = None

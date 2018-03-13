@@ -160,6 +160,15 @@ namespace FishEngine
 			m_localScale.x = m_localScale.y = m_localScale.z = scale;
 			MakeDirty();
 		}
+		
+		// The global scale of the object(Read Only).
+		Vector3 GetLossyScale()
+		{
+			auto p = GetParent();
+			if (p != nullptr)
+				return m_localScale * p->GetLossyScale();
+			return m_localScale;
+		}
 
 		// direction (1, 0, 0) in world space.
 		Vector3 GetRight() const
