@@ -160,4 +160,61 @@ namespace FishEngine
 		cloned->m_isDirty = true;
 		return cloned;
 	}
+	
+	void Transform::SetSiblingIndex(float index)
+	{
+		auto parent = GetParent();
+		auto & children = parent != nullptr ?
+			parent->m_children :
+			m_gameObject->GetScene()->m_rootTransforms;
+		
+		assert(index >= 0 && index < children.size());
+		
+		auto pos = std::find(children.begin(), children.end(), this);
+		int old_index = std::distance(children.begin(), pos);
+//		int old_index = GetSiblingIndex();
+		if (old_index < index)
+		{
+			// [old_index ... index] -> [old_index+1 ... index, old_index]
+//			auto b = children.begin();
+//			std::rotate(b+old_index, b+(old_index+1), b+index);
+			
+			for (int i = index-1; i >= old_index; --i)
+			{
+				children[i] = children[i+1];
+			}
+			children[index] = this;
+		}
+		else if (old_index > index)
+		{
+			// [index ... old_index] -> [old_index, index ... old_index-1]
+			for (int i = old_index; i > index; --i)
+			{
+				children[i] = children[i-1];
+			}
+			children[index] = this;
+		}
+		m_RootOrder = index;
+	}
+	
+	
+	int Transform::GetSiblingIndex() const
+	{
+		auto parent = GetParent();
+		auto & children = parent != nullptr ?
+			parent->GetChildren() :
+			m_gameObject->GetScene()->GetRootTransforms();
+//		std::sort(children.begin(), children.end(), [](Transform* a, Transform* b) {
+//			return a->m_RootOrder < b->m_RootOrder;
+//		});
+//
+//		for (int i = 0; i < children.size(); ++i)
+//		{
+//			auto t = children[i];
+//			t->m_RootOrder = i;
+//		}
+//		return m_RootOrder;
+		auto pos = std::find(children.begin(), children.end(), this);
+		return std::distance(children.begin(), pos);
+	}
 }

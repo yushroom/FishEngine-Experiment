@@ -94,6 +94,14 @@ void Transform_GetChildren(Transform* t, py::list& outChildren)
 	}
 }
 
+void Scene_GetRootGameObjects(Scene* scene, py::list& out)
+{
+	for (auto t : scene->GetRootTransforms())
+	{
+		out.append(t->GetGameObject()->GetPyObject());
+	}
+}
+
 
 #define DefObject(classname) \
 	m.def("Create"##classname, [](){ return new classname();}, return_value_policy::reference); \
@@ -181,6 +189,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
 		;
 
+	m.def("Scene_GetRootGameObjects", Scene_GetRootGameObjects);
+	
 	// Scene
 	class_<Scene>(m, "Scene")
 		.def("Clean", &Scene::Clean)
@@ -251,7 +261,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("localToWorldMatrix", &Transform::GetLocalToWorldMatrix, return_value_policy::copy)
 		.def("worldToLocalMatrix", &Transform::GetWorldToLocalMatrix)
 		.def("RotateAround", &Transform::RotateAround)
-		;
+		.def("GetSiblingIndex", &Transform::GetSiblingIndex)
+		.def("SetSiblingIndex", &Transform::SetSiblingIndex)
+	;
 
 	m.def("Transform_GetChildren", &Transform_GetChildren);
 

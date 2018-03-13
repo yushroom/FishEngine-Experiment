@@ -322,18 +322,21 @@ class UnitySceneImporter:
                 t.SetParent(fileID2Object[p_fileID], False)
 
         # update rootOrder
-        # for d, fileID in transform_d:
-        #     t:Transform = fileID2Object[fileID]
-        #     if t.m_RootOrder != t.GetSiblingIndex():
-        #         # print(t, t.m_RootOrder)
-        #         if t.parent is None:
-        #             gos = SceneManager.GetActiveScene().GetRootGameObjects()
-        #             children = [go.transform for go in gos]
-        #             print([t.m_RootOrder for t in children])
-        #         else:
-        #             print([t.m_RootOrder for t in t.parent.children])
-        #             print(sorted(t.parent.children, key=lambda t: t.m_RootOrder))
-        #         # t.SetSiblingIndex(t.m_RootOrder)
+        for d, fileID in transform_d:
+            t:Transform = fileID2Object[fileID]
+            if t.m_RootOrder != t.GetSiblingIndex():
+                # print(t, t.m_RootOrder)
+                children = None
+                if t.parent is None:
+                    gos = SceneManager.GetActiveScene().GetRootGameObjects()
+                    children = [go.transform for go in gos]
+                else:
+                    print([t.m_RootOrder for t in t.parent.children])
+                    print(sorted(t.parent.children, key=lambda t: t.m_RootOrder))
+                # print('before', [t.m_RootOrder for t in children])
+                children = sorted(children, key=lambda t: t.m_RootOrder)
+                for t in children:
+                    t.SetSiblingIndex(t.m_RootOrder)
 
         for d, fileID in transform_d:
             t:Transform = fileID2Object[fileID]

@@ -241,6 +241,9 @@ namespace FishEngine
 			return m_children[index];
 		}
 		
+		void SetSiblingIndex(float index);
+		int GetSiblingIndex() const;
+		
 		Transform* Clone() const;
 
 	protected:

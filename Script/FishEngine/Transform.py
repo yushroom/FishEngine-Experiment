@@ -211,10 +211,12 @@ class Transform(Component):
     #     return ret
 
     def SetSiblingIndex(self, index:int):
-        self.m_CachedPtr.m_RootOrder = index
+        # self.m_CachedPtr.m_RootOrder = index
+        self.cpp.SetSiblingIndex(index)
     
     def GetSiblingIndex(self)->int:
-        return self.m_CachedPtr.m_RootOrder
+        # return self.m_CachedPtr.m_RootOrder
+        return self.cpp.GetSiblingIndex()
 
     def Serialize(self, dumper):
         super(Transform, self).Serialize(dumper)

@@ -22,7 +22,9 @@ class Scene:
         raise NotImplementedError
 
     def GetRootGameObjects(self):
-        raise NotImplementedError
+        result = []
+        FishEngineInternal.Scene_GetRootGameObjects(self.cpp, result)
+        return result
 
     def Backup(self):
         pass
