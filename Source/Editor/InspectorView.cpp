@@ -18,24 +18,54 @@ using namespace FishEditor;
 #include <FishEngine/Component/BoxCollider.hpp>
 #include <FishEngine/Component/Rigidbody.hpp>
 
+
+template<class T, class Getter>
+void Float(const char* label, T* o, Getter getter)
+{
+	float v = (o->*getter)();
+	FishGUI::Float(label, v);
+}
+
+template<class T, class Getter, class Setter>
+void Float(const char* label, T* o, Getter getter, Setter setter)
+{
+	float v = (o->*getter)();
+	if (FishGUI::Float(label, v))
+	{
+		(o->*setter)(v);
+	}
+}
+
+template<class T, class Getter>
+void Float3(const char* label, T* o, Getter getter)
+{
+	auto v = (o->*getter)();
+	FishGUI::Float3(label, v.x, v.y, v.z);
+}
+
+template<class T, class Getter, class Setter>
+void Float3(const char* label, T* o, Getter getter, Setter setter)
+{
+	auto v = (o->*getter)();
+	if (FishGUI::Float3(label, v.x, v.y, v.z))
+	{
+		(o->*setter)(v);
+	}
+}
+
+
 void DrawObject(Object* o)
 {
 	auto instanceID_str = std::to_string(o->GetInstanceID());
 	FishGUI::Text("Instance ID", instanceID_str);
 }
 
-void DrawTransform(Transform* t)
+void DrawTransform(Transform* value)
 {
-	DrawObject(t);
-	auto p = t->GetLocalPosition();
-	auto r = t->GetLocalEulerAngles();
-	auto s = t->GetLocalScale();
-
-	//FishGUI::Group("Transform");
-	FishGUI::Float3("Position", p.x, p.y, p.z);
-	FishGUI::Float3("Rotation", r.x, r.y, r.z);
-	FishGUI::Float3("Scale", s.x, s.y, s.z);
-	//FishGUI::EndGroup();
+	DrawObject(value);
+	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
+	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
+	Float3("Scale", value, &Transform::GetLocalScale, &Transform::SetLocalScale);
 }
 
 void DrawCamera(Camera* c)
@@ -57,8 +87,8 @@ void DrawCamera(Camera* c)
 		FishGUI::Combox("Projection", o);
 		FishGUI::Float("Field of View", fov);
 	}
-	FishGUI::Float("Z Near", znear);
-	FishGUI::Float("Z Far", zfar);
+	FishGUI::Float("Near Clip Plane", znear);
+	FishGUI::Float("Far Clip Plane", zfar);
 }
 
 void DrawLight(Light* l)
@@ -82,14 +112,24 @@ void DrawMeshFilter(MeshFilter* mf)
 	FishGUI::InputText("Mesh", meshName);
 }
 
-void DrawBoxCollider(BoxCollider* boxCollider)
+void DrawBoxCollider(BoxCollider* value)
 {
-	DrawObject(boxCollider);
-	auto c = boxCollider->GetCenter();
-	auto s = boxCollider->GetSize();
-	FishGUI::Float3("center", c.x, c.y, c.z);
-	FishGUI::Float3("size", s.x, s.y, s.z);
+	DrawObject(value);
+	Float3("Center", value, &BoxCollider::GetCenter, &BoxCollider::SetCenter);
+	Float3("Size", value, &BoxCollider::GetSize, &BoxCollider::SetSize);
 }
+
+
+void DrawRigidbody(Rigidbody* r)
+{
+	DrawObject(r);
+	Float("Mass", r, &Rigidbody::GetMass, &Rigidbody::SetMass);
+	Float("Drag", r, &Rigidbody::GetDrag, &Rigidbody::SetDrag);
+	Float("Angular Drag", r, &Rigidbody::GetAngularDrag, &Rigidbody::SetAngularDrag);
+	Float("Use Gravity", r, &Rigidbody::GetUseGravity, &Rigidbody::SetUseGravity);
+	Float("Is Kinematic", r, &Rigidbody::GetIsKinematic, &Rigidbody::SetIsKinematic);
+}
+
 
 /// @brief callable() support for Boost.Python objects.
 bool IsCallable(pybind11::handle object)
@@ -207,7 +247,7 @@ void Dispatch(Component* c)
 	else if (c->GetClassID() == Rigidbody::ClassID)
 	{
 		FishGUI::Group("Rigidbody");
-		//DrawRigidbody((Rigidbody*)c);
+		DrawRigidbody((Rigidbody*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == Script::ClassID)
