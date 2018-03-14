@@ -48,18 +48,18 @@ namespace FishEngine
 	const Matrix4x4& Camera::GetProjectionMatrix() const
 	{
 		float aspect = Screen::GetAspect();
-//		if (m_aspect != aspect)
-//		{
-//			m_isDirty = true;
-//			m_aspect = aspect;
-//		}
+		if (m_aspect != aspect)
+		{
+			m_isDirty = true;
+			m_aspect = aspect;
+		}
 		if (m_isDirty) {
 			if (m_Orthographic) {
-				float w = aspect * m_OrthographicSize;
+				float w = m_aspect * m_OrthographicSize;
 				m_projectMatrix = Matrix4x4::Ortho(-w, w, -m_OrthographicSize, m_OrthographicSize, m_NearClipPlane, m_FarClipPlane);
 			}
 			else {
-				m_projectMatrix = Matrix4x4::Perspective(m_FieldOfView, aspect, m_NearClipPlane, m_FarClipPlane);
+				m_projectMatrix = Matrix4x4::Perspective(m_FieldOfView, m_aspect, m_NearClipPlane, m_FarClipPlane);
 			}
 			m_isDirty = false;
 		}

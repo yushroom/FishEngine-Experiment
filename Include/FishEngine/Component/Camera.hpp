@@ -107,9 +107,6 @@ namespace FishEngine
 
 	private:
 //		friend class RenderSystem;
-		// The aspect ratio (width divided by height).
-//		mutable float m_aspect              = 0;
-//		bool m_isAspectSet         = false;
 
 		float m_FarClipPlane        = 1000.f;
 		float m_NearClipPlane       = 0.3f;
@@ -119,12 +116,13 @@ namespace FishEngine
 		float m_OrthographicSize    = 5.f;
 		
 		
-		
+		// The aspect ratio (width divided by height).
+		mutable float m_aspect              = 0;
+//		bool m_isAspectSet         = false;
 		Vector4 m_viewport{ 0, 0, 1, 1 };
 		mutable bool m_isDirty = true;
 
 		CameraType  m_cameraType = CameraType::Game;
-		
 
 //		Meta(NonSerializable)
 		mutable Matrix4x4 m_projectMatrix;
