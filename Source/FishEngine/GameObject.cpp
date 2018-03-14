@@ -12,14 +12,14 @@ namespace FishEngine
     {
         LOGF;
         this->SetName(name);
-		m_scene = SceneManager::GetActiveScene();
+		m_Scene = SceneManager::GetActiveScene();
 		
 		if (flag == GameObjectConstructionFlag::WithTransform)
 		{
-			m_transform = new Transform();
-			m_scene->AddRootTransform(m_transform);
-			m_transform->m_gameObject = this;
-			m_components.push_back(m_transform);
+			m_Transform = new Transform();
+			m_Scene->AddRootTransform(m_Transform);
+			m_Transform->m_GameObject = this;
+			m_Components.push_back(m_Transform);
 		}
 		else if (flag == GameObjectConstructionFlag::WithRectTransform)
 		{
@@ -57,7 +57,7 @@ namespace FishEngine
 	{
 //		LOGF;
 //		printf("~GameObject %s\n", m_name.c_str());
-		for (auto comp : m_components)
+		for (auto comp : m_Components)
 		{
 			delete comp;
 		}
@@ -67,9 +67,9 @@ namespace FishEngine
 
 	void GameObject::AddComponent(Component* comp)
 	{
-		assert(comp->m_gameObject == nullptr);
-		m_components.push_back(comp);
-		comp->m_gameObject = this;
+		assert(comp->m_GameObject == nullptr);
+		m_Components.push_back(comp);
+		comp->m_GameObject = this;
 		//if (comp->GetClassID() == Script::ClassID)
 		//{
 		//	comp->m_self.attr
@@ -102,28 +102,28 @@ namespace FishEngine
 	
 	GameObject* GameObject::Clone()
 	{
-		auto cloned = new GameObject(this->m_name+"-cloned", GameObjectConstructionFlag::Empty);
+		auto cloned = new GameObject(this->m_Name+"-cloned", GameObjectConstructionFlag::Empty);
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();
-		auto cloned_t = m_transform->Clone();
-		cloned->m_transform = cloned_t;
-		cloned->m_components.push_back(cloned_t);
-		cloned_t->m_gameObject = cloned;
-		cloned->m_scene->AddRootTransform(cloned_t);
+		auto cloned_t = m_Transform->Clone();
+		cloned->m_Transform = cloned_t;
+		cloned->m_Components.push_back(cloned_t);
+		cloned_t->m_GameObject = cloned;
+		cloned->m_Scene->AddRootTransform(cloned_t);
 
-		auto it = m_components.begin();
+		auto it = m_Components.begin();
 		it++;
-		for (; it != m_components.end(); ++it)
+		for (; it != m_Components.end(); ++it)
 		{
 			auto c = *it;
 			cloned->AddComponent(c->Clone());
 		}
 		
-		cloned->m_transform->m_children.reserve(this->m_transform->m_children.size());
-		for (auto child : this->m_transform->m_children)
+		cloned->m_Transform->m_Children.reserve(this->m_Transform->m_Children.size());
+		for (auto child : this->m_Transform->m_Children)
 		{
 			auto cloned_child = child->GetGameObject()->Clone();
-			cloned_child->m_transform->SetParent(cloned->m_transform, false);
+			cloned_child->m_Transform->SetParent(cloned->m_Transform, false);
 //			cloned->m_transform->m_children.push_back(cloned_child->m_transform);
 		}
 		
@@ -135,9 +135,9 @@ namespace FishEngine
 		if (!m_IsActive)
 			return false;
 		
-		if (m_transform->GetParent() != nullptr)
+		if (m_Transform->GetParent() != nullptr)
 		{
-			return m_transform->GetParent()->GetGameObject()->IsActiveInHierarchy();
+			return m_Transform->GetParent()->GetGameObject()->IsActiveInHierarchy();
 		}
 		return true;
 	}

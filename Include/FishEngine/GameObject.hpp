@@ -42,12 +42,12 @@ namespace FishEngine
 
 		Transform* GetTransform() const
 		{
-			return m_transform;
+			return m_Transform;
 		}
 
 		const std::list<Component*>& GetAllComponents() const
 		{
-			return m_components;
+			return m_Components;
 		}
 
 		void AddComponent(Component* comp);
@@ -56,7 +56,7 @@ namespace FishEngine
 		T* GetComponent()
 		{
 			static_assert(std::is_base_of<Component, T>::value, "T must be a Component");
-			for (Component* t : m_components)
+			for (Component* t : m_Components)
 			{
 				if (t->GetClassID() == T::ClassID)
 				{
@@ -68,7 +68,7 @@ namespace FishEngine
 		
 		Component* GetComponent(int classID)
 		{
-			for (Component* t : m_components)
+			for (Component* t : m_Components)
 			{
 				if (t->GetClassID() == classID)
 				{
@@ -89,7 +89,7 @@ namespace FishEngine
 				return c;
 				
 			// find children
-			for (auto child : m_transform->GetChildren())
+			for (auto child : m_Transform->GetChildren())
 			{
 				auto ret = child->GetGameObject()->GetComponentInChildren<T>();
 				if (ret != nullptr)
@@ -108,7 +108,7 @@ namespace FishEngine
 				components.push_back(c);
 			
 			// find children
-			for (auto child : m_transform->GetChildren())
+			for (auto child : m_Transform->GetChildren())
 			{
 				child->GetGameObject()->GetComponentsInChildren<T>(components);
 			}
@@ -119,7 +119,7 @@ namespace FishEngine
 
 		Scene* GetScene() const
 		{
-			return m_scene;
+			return m_Scene;
 		}
 		
 		GameObject* Clone();
@@ -132,9 +132,9 @@ namespace FishEngine
 		bool IsActiveInHierarchy() const;
 
 	protected:
-		Scene*					m_scene = nullptr;
-		Transform*				m_transform = nullptr;
-		std::list<Component*>	m_components;
+		Scene*					m_Scene = nullptr;
+		Transform*				m_Transform = nullptr;
+		std::list<Component*>	m_Components;
 		bool					m_IsActive = true;	// activeSelf
 	};
 }

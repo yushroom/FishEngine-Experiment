@@ -67,8 +67,8 @@ namespace FishEngine
 		glfwSetKeyCallback(m_window, GameApp::KeyCallBack);
 		glfwSetFramebufferSizeCallback(m_window, GameApp::FramebufferSizeCallback);
 		
-		glfwGetFramebufferSize(m_window, &Screen::s_width, &Screen::s_height);
-		Screen::s_pixelsPerPoint = static_cast<float>(Screen::s_width) / m_windowWidth;
+		glfwGetFramebufferSize(m_window, &Screen::s_Width, &Screen::s_Height);
+		Screen::s_PixelsPerPoint = static_cast<float>(Screen::s_Width) / m_windowWidth;
 		
 		FishEngine::Init();
 		PhysicsSystem::GetInstance().Init();
@@ -218,11 +218,11 @@ namespace FishEngine
 		app->m_windowHeight = height;
 		int w, h;
 		glfwGetFramebufferSize(window, &w, &h);
-		Screen::s_pixelsPerPoint = static_cast<float>(w) / width;
+		Screen::s_PixelsPerPoint = static_cast<float>(w) / width;
 		if (w != 0 && h != 0)
 		{
-			Screen::s_width = w;
-			Screen::s_height = h;
+			Screen::s_Width = w;
+			Screen::s_Height = h;
 		}
 	}
 	
@@ -230,8 +230,8 @@ namespace FishEngine
 	{
 		auto app = GameApp::GetCurrent();
 		glfwGetWindowSize(window, &app->m_windowWidth, &app->m_windowHeight);
-		Screen::s_pixelsPerPoint = static_cast<float>(width) / width;
-		Screen::s_width = width;
-		Screen::s_height = height;
+		Screen::s_PixelsPerPoint = static_cast<float>(width) / width;
+		Screen::s_Width = width;
+		Screen::s_Height = height;
 	}
 }

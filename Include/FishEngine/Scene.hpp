@@ -23,12 +23,12 @@ namespace FishEngine
 		
 		int GetRootCount()
 		{
-			return static_cast<int>( m_rootTransforms.size() );
+			return static_cast<int>( m_RootTransforms.size() );
 		}
 		
 		const std::vector<Transform*>& GetRootTransforms()
 		{
-			return m_rootTransforms;
+			return m_RootTransforms;
 		}
 		
 		void Clean();
@@ -59,7 +59,7 @@ namespace FishEngine
 		std::vector<T*> FindComponents()
 		{
 			std::vector<T*> components;
-			for (auto t : m_rootTransforms)
+			for (auto t : m_RootTransforms)
 			{
 				t->GetGameObject()->template GetComponentsInChildren<T>(components);
 			}
@@ -73,7 +73,7 @@ namespace FishEngine
 		
 		const std::string& GetName() const
 		{
-			return m_name;
+			return m_Name;
 		}
 	
 	private:
@@ -87,15 +87,15 @@ namespace FishEngine
 		friend class GameObject;
 		friend class SceneManager;
 
-		std::vector<Transform*> m_rootTransforms;
+		std::vector<Transform*> m_RootTransforms;
 		
 		int m_Handle = 0;	// 0 is invalid
-		std::string m_name;
+		std::string m_Name;
 		
 		// relative path of the scene. Like: "Assets/MyScenes/MyScene.unity".
-		std::string m_path;
+		std::string m_Path;
 
-		static int s_counter;
+		static int s_Counter;
 	};
 	
 	
@@ -107,35 +107,35 @@ namespace FishEngine
 		static Scene* CreateScene(const std::string& name)
 		{
 			auto scene = new Scene();
-			scene->m_name = name;
+			scene->m_Name = name;
 			return scene;
 		}
 		
 		static Scene* GetActiveScene()
 		{
-			assert(s_activeScene != nullptr);
+			assert(s_ActiveScene != nullptr);
 //			if (s_activeScene == nullptr)
 //			{
 //				// TODO: delete
 //				s_activeScene = new Scene();
 //			}
-			return s_activeScene;
+			return s_ActiveScene;
 		}
 
 		static void SetActiveScene(Scene* scene)
 		{
-			s_activeScene = scene;
+			s_ActiveScene = scene;
 		}
 
 		static Scene* GetSceneByHandle(int handle)
 		{
-			return s_handleToScene[handle];
+			return s_HandleToScene[handle];
 		}
 
 		static void StaticClean()
 		{
 			std::vector<Scene*> scenes;
-			for (auto&& p : s_handleToScene)
+			for (auto&& p : s_HandleToScene)
 			{
 				auto scene = p.second;
 				scene->Clean();
@@ -147,13 +147,13 @@ namespace FishEngine
 			{
 				delete s;
 			}
-			s_handleToScene.clear();
+			s_HandleToScene.clear();
 		}
 		
 	private:
 		friend class Scene;
-		static std::map<int, Scene*> s_handleToScene;
+		static std::map<int, Scene*> s_HandleToScene;
 		//static std::list<Scene*> s_scenes;
-		static Scene* s_activeScene;
+		static Scene* s_ActiveScene;
 	};
 }

@@ -43,8 +43,17 @@ void Float3(const char* label, T* o, Getter getter)
 	FishGUI::Float3(label, v.x, v.y, v.z);
 }
 
-template<class T, class Getter, class Setter>
-void Float3(const char* label, T* o, Getter getter, Setter setter)
+//template<class T, class Getter, class Setter>
+//void Float3(const char* label, T* o, Getter getter, Setter setter)
+//{
+//	auto v = (o->*getter)();
+//	if (FishGUI::Float3(label, v.x, v.y, v.z))
+//	{
+//		(o->*setter)(v);
+//	}
+//}
+template<class T, class Getter>
+void Float3(const char* label, T* o, Getter getter, void(T::*setter)(const Vector3&))
 {
 	auto v = (o->*getter)();
 	if (FishGUI::Float3(label, v.x, v.y, v.z))
@@ -53,11 +62,18 @@ void Float3(const char* label, T* o, Getter getter, Setter setter)
 	}
 }
 
+template<class T, class Getter>
+void Int(const char* label, T* o, Getter getter)
+{
+	auto int_str = std::to_string((o->*getter)());
+	FishGUI::Text(label, int_str);
+}
+
 
 void DrawObject(Object* o)
 {
-	auto instanceID_str = std::to_string(o->GetInstanceID());
-	FishGUI::Text("Instance ID", instanceID_str);
+	Int("Instance ID", o, &Object::GetInstanceID);
+	Int("Local Identifier In File", o, &Object::GetLocalIdentifierInFile);
 }
 
 void DrawTransform(Transform* value)

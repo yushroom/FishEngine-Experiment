@@ -9,9 +9,9 @@ namespace FishEngine
 	{
 		LOGF;
 //		for (auto c : m_children)
-		for (int i = (int)m_children.size()-1; i >= 0; --i)
+		for (int i = (int)m_Children.size()-1; i >= 0; --i)
 		{
-			delete m_children[i]->GetGameObject();
+			delete m_Children[i]->GetGameObject();
 		}
 //		m_children.clear();
 		// TODO
@@ -21,19 +21,19 @@ namespace FishEngine
 	void Transform::SetRootOrder(int index)
 	{
 		assert(index >= 0);
-		if (m_parent != nullptr)
+		if (m_Father != nullptr)
 		{
 			// rootOrder in .unity file may > total size
 			//				if (index >= m_parent->m_children.size())
 			//					index = m_parent->m_children.size()-1;
-			assert(index <= m_parent->m_children.size());
+			assert(index <= m_Father->m_Children.size());
 		}
 		if (index == m_RootOrder)
 			return;
 		int old = m_RootOrder;
-		auto& c = m_parent == nullptr ?
-		SceneManager::GetActiveScene()->m_rootTransforms :
-		m_parent->m_children;
+		auto& c = m_Father == nullptr ?
+		SceneManager::GetActiveScene()->m_RootTransforms :
+		m_Father->m_Children;
 		c[index]->m_RootOrder = old;
 		std::swap(c[index], c[old]);
 		m_RootOrder = index;
@@ -51,7 +51,7 @@ namespace FishEngine
 		SetPosition(vector);
 		
 		// step2: update rotation
-		m_localRotation = rotation * m_localRotation;
+		m_LocalRotation = rotation * m_LocalRotation;
 		//RotateAroundInternal(axis, angle);
 		MakeDirty();
 	}
@@ -59,30 +59,30 @@ namespace FishEngine
 	
 	void Transform::UpdateMatrix() const
 	{
-		if (!m_isDirty)
+		if (!m_IsDirty)
 			return;
 #if 1
-		m_localToWorldMatrix.SetTRS(m_localPosition, m_localRotation, m_localScale);
-		if (m_parent != nullptr) {
-			m_localToWorldMatrix = m_parent->GetLocalToWorldMatrix() * m_localToWorldMatrix;
+		m_LocalToWorldMatrix.SetTRS(m_LocalPosition, m_LocalRotation, m_LocalScale);
+		if (m_Father != nullptr) {
+			m_LocalToWorldMatrix = m_Father->GetLocalToWorldMatrix() * m_LocalToWorldMatrix;
 		}
 //		m_worldToLocalMatrix = m_localToWorldMatrix.inverse();
 #else
 		// TODO this version is not right, take a look to see where the bug is.
 		// maybe in the TRS
-		Matrix4x4::TRS(m_localPosition, m_localRotation, m_localScale, m_localToWorldMatrix, m_worldToLocalMatrix);
-		if (!m_parent.expired()) {
-			m_localToWorldMatrix = m_parent.lock()->localToWorldMatrix() * m_localToWorldMatrix;
-			m_worldToLocalMatrix = m_worldToLocalMatrix * m_parent.lock()->worldToLocalMatrix();
+		Matrix4x4::TRS(m_LocalPosition, m_LocalRotation, m_LocalScale, m_LocalToWorldMatrix, m_worldToLocalMatrix);
+		if (!m_Father.expired()) {
+			m_LocalToWorldMatrix = m_Father.lock()->localToWorldMatrix() * m_LocalToWorldMatrix;
+			m_worldToLocalMatrix = m_worldToLocalMatrix * m_Father.lock()->worldToLocalMatrix();
 		}
 #endif
-		m_isDirty = false;
+		m_IsDirty = false;
 	}
 	
 	
 	void Transform::SetParent(Transform* parent, bool worldPositionStays)
 	{
-		auto old_parent = m_parent;
+		auto old_parent = m_Father;
 		if (parent == old_parent)
 		{
 			return;
@@ -112,27 +112,27 @@ namespace FishEngine
 			//p->m_children.remove(this);
 			// TODO: remove first, not remove all
 //			old_parent->m_children.erase(old_parent->m_children.begin()+m_RootOrder);
-			std::remove(old_parent->m_children.begin(), old_parent->m_children.end(), this);
+			std::remove(old_parent->m_Children.begin(), old_parent->m_Children.end(), this);
 		}
 		
 		// old_parent.localToWorld * old_localToWorld = new_parent.localToWorld * new_localToWorld
 		// ==> new_localToWorld = new_parent.worldToLocal * old_parent.localToWorld * old_localToWorld
 		
-		m_parent = parent;
+		m_Father = parent;
 		if (parent != nullptr)
 		{
-			parent->m_children.push_back(this);
-			m_RootOrder = (int)parent->m_children.size()-1;
+			parent->m_Children.push_back(this);
+			m_RootOrder = (int)parent->m_Children.size()-1;
 		}
 		
 		if ( worldPositionStays )
 		{
-			Matrix4x4 mat = Matrix4x4::TRS(m_localPosition, m_localRotation, m_localScale);
+			Matrix4x4 mat = Matrix4x4::TRS(m_LocalPosition, m_LocalRotation, m_LocalScale);
 			if (old_parent != nullptr)
 				mat = old_parent->GetLocalToWorldMatrix() * mat;
 			if (parent != nullptr)
 				mat = parent->GetWorldToLocalMatrix() * mat;
-			Matrix4x4::Decompose(mat, &m_localPosition, &m_localRotation, &m_localScale);
+			Matrix4x4::Decompose(mat, &m_LocalPosition, &m_LocalRotation, &m_LocalScale);
 		}
 		//UpdateMatrix();
 		MakeDirty();
@@ -141,23 +141,23 @@ namespace FishEngine
 	
 	void Transform::MakeDirty() const
 	{
-		if (!m_isDirty)
+		if (!m_IsDirty)
 		{
-			for (auto& c : m_children)
+			for (auto& c : m_Children)
 			{
 				c->MakeDirty();
 			}
-			m_isDirty = true;
+			m_IsDirty = true;
 		}
 	}
 	
 	Transform* Transform::Clone() const
 	{
 		auto cloned = new Transform();
-		cloned->m_localPosition = this->m_localPosition;
-		cloned->m_localRotation = this->m_localRotation;
-		cloned->m_localScale = this->m_localScale;
-		cloned->m_isDirty = true;
+		cloned->m_LocalPosition = this->m_LocalPosition;
+		cloned->m_LocalRotation = this->m_LocalRotation;
+		cloned->m_LocalScale = this->m_LocalScale;
+		cloned->m_IsDirty = true;
 		return cloned;
 	}
 	
@@ -165,8 +165,8 @@ namespace FishEngine
 	{
 		auto parent = GetParent();
 		auto & children = parent != nullptr ?
-			parent->m_children :
-			m_gameObject->GetScene()->m_rootTransforms;
+			parent->m_Children :
+			m_GameObject->GetScene()->m_RootTransforms;
 		
 		assert(index >= 0 && index < children.size());
 		
@@ -203,7 +203,7 @@ namespace FishEngine
 		auto parent = GetParent();
 		auto & children = parent != nullptr ?
 			parent->GetChildren() :
-			m_gameObject->GetScene()->GetRootTransforms();
+			m_GameObject->GetScene()->GetRootTransforms();
 //		std::sort(children.begin(), children.end(), [](Transform* a, Transform* b) {
 //			return a->m_RootOrder < b->m_RootOrder;
 //		});

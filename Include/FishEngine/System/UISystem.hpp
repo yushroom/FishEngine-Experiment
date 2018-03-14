@@ -23,6 +23,6 @@ namespace FishEngine
 	private:
 		UISystem() = default;
 		
-		NVGcontext* m_context = nullptr;
+		NVGcontext* m_Context = nullptr;
 	};
 }

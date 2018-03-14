@@ -187,6 +187,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_property_readonly("instanceID", &Object::GetInstanceID)
 		.def("SetPyObject", &Object::SetPyObject)
 		.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
+		.def("GetLocalIdentifierInFile", &Object::GetLocalIdentifierInFile)
+		.def("SetLocalIdentifierInFile", &Object::SetLocalIdentifierInFile)
 		;
 
 	m.def("Scene_GetRootGameObjects", Scene_GetRootGameObjects);
@@ -210,7 +212,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	//m.def("CreateGameObject", []() { return new GameObject(); }, return_value_policy::reference);
 	//m.def("GameObjectClassID", []() ->int { return GameObject::ClassID; });
 
-	m.def("CreateScript", []() { return new Script(); }, return_value_policy::reference);
+	//m.def("CreateScript", []() { return new Script(); }, return_value_policy::reference);
 
 
 	// GameObject
@@ -248,11 +250,11 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("position", &Transform::GetPosition)
 		.def("rotation", &Transform::GetRotation)
 		.def("eulerAngles", &Transform::GetEulerAngles)
-		.def("SetLocalPosition", &Transform::SetLocalPosition)
+		.def("SetLocalPosition", py::overload_cast<const Vector3&>(&Transform::SetLocalPosition))
 		.def("SetLocalRotation", &Transform::SetLocalRotation)
-		.def("SetLocalEulerAngles", &Transform::SetLocalEulerAngles)
-		.def("SetLocalScale", &Transform::SetLocalScale)
-		.def("SetPosition", &Transform::SetPosition)
+		.def("SetLocalEulerAngles", py::overload_cast<const Vector3&>(&Transform::SetLocalEulerAngles))
+		.def("SetLocalScale", py::overload_cast<const Vector3&>(&Transform::SetLocalScale))
+		.def("SetPosition", py::overload_cast<const Vector3&>(&Transform::SetPosition))
 		.def("SetRotation", &Transform::SetRotation)
 		.def("SetEulerAngles", &Transform::SetEulerAngles)
 		.def("GetParent", &Transform::GetParent, return_value_policy::reference)

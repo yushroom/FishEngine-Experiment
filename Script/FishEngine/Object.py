@@ -44,6 +44,13 @@ class Object():
     def cpp(self):
         return self.m_CachedPtr
 
+    @property
+    def localIdentifierInFile(self)->int:
+        return self.cpp.GetLocalIdentifierInFile()
+    @localIdentifierInFile.setter
+    def localIdentifierInFile(self, value:int):
+        self.cpp.SetLocalIdentifierInFile(value)
+
     def __str__(self):
         return '{0}({1})'.format(self.name, self.__class__.__name__)
 

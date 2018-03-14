@@ -22,17 +22,17 @@ void main()
 
 namespace FishEngine
 {
-	Material* Material::s_errorMaterial = nullptr;
+	Material* Material::s_ErrorMaterial = nullptr;
 	
 	void Material::StaticInit()
 	{
-		s_errorMaterial = new Material();
-		s_errorMaterial->m_shader = Shader::FromString(error_vs, error_fs);
+		s_ErrorMaterial = new Material();
+		s_ErrorMaterial->m_Shader = Shader::FromString(error_vs, error_fs);
 	}
 	
 	void Material::StaticClean()
 	{
-		delete s_errorMaterial->m_shader;
-		delete s_errorMaterial;
+		delete s_ErrorMaterial->m_Shader;
+		delete s_ErrorMaterial;
 	}
 }

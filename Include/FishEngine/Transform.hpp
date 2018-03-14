@@ -30,7 +30,7 @@ namespace FishEngine
 		{
 			UpdateMatrix();
 			//return m_localToWorldMatrix.MultiplyPoint(0, 0, 0);
-			auto& l2w = m_localToWorldMatrix;
+			auto& l2w = m_LocalToWorldMatrix;
 			return Vector3(l2w.m[0][3], l2w.m[1][3], l2w.m[2][3]);
 		}
 		
@@ -38,18 +38,18 @@ namespace FishEngine
 		void SetPosition(const Vector3& position)
 		{
 //			printf("Transform::setPosition %f %f %f\n", position.x, position.y, position.z);
-			_setPosition(position.x, position.y, position.z);
+			SetPosition(position.x, position.y, position.z);
 		}
 		
-		void _setPosition(const float x, const float y, const float z)
+		void SetPosition(const float x, const float y, const float z)
 		{
-			if (m_parent != nullptr)
+			if (m_Father != nullptr)
 			{
-				m_localPosition = m_parent->GetWorldToLocalMatrix()._MultiplyPoint(x, y, z);
+				m_LocalPosition = m_Father->GetWorldToLocalMatrix()._MultiplyPoint(x, y, z);
 			}
 			else
 			{
-				m_localPosition.Set(x, y, z);
+				m_LocalPosition.Set(x, y, z);
 			}
 			MakeDirty();
 		}
@@ -58,18 +58,18 @@ namespace FishEngine
 		// Position of the transform relative to the parent transform.
 		Vector3 GetLocalPosition() const
 		{
-			return m_localPosition;
+			return m_LocalPosition;
 		}
 		
 		void SetLocalPosition(const Vector3& position)
 		{
-			m_localPosition = position;
+			m_LocalPosition = position;
 			MakeDirty();
 		}
 		
-		void _setLocalPosition(const float x, const float y, const float z)
+		void SetLocalPosition(const float x, const float y, const float z)
 		{
-			m_localPosition.Set(x, y, z);
+			m_LocalPosition.Set(x, y, z);
 			MakeDirty();
 		}
 		
@@ -89,16 +89,16 @@ namespace FishEngine
 		// The rotation as Euler angles in degrees relative to the parent transform's rotation.
 		Vector3 GetLocalEulerAngles() const
 		{
-			return m_localRotation.eulerAngles();
+			return m_LocalRotation.eulerAngles();
 		}
 		
 		void SetLocalEulerAngles(const Vector3& eulerAngles)
 		{
-			m_localRotation.setEulerAngles(eulerAngles);
+			m_LocalRotation.setEulerAngles(eulerAngles);
 			MakeDirty();
 		}
 		
-		void _setLocalEulerAngles(const float x, const float y, const float z)
+		void SetLocalEulerAngles(const float x, const float y, const float z)
 		{
 			SetLocalEulerAngles(Vector3(x, y, z));
 		}
@@ -108,18 +108,18 @@ namespace FishEngine
 		Quaternion GetRotation() const
 		{
 			UpdateMatrix();
-			return m_localToWorldMatrix.ToRotation();
+			return m_LocalToWorldMatrix.ToRotation();
 		}
 		
 		void SetRotation(const Quaternion& new_rotation)
 		{
-			if (m_parent == nullptr)
+			if (m_Father == nullptr)
 			{
-				m_localRotation = new_rotation;
+				m_LocalRotation = new_rotation;
 			}
 			else
 			{
-				m_localRotation = Quaternion::Inverse(m_parent->GetRotation()) * new_rotation;
+				m_LocalRotation = Quaternion::Inverse(m_Father->GetRotation()) * new_rotation;
 			}
 			MakeDirty();
 		}
@@ -128,36 +128,36 @@ namespace FishEngine
 		// The rotation of the transform relative to the parent transform's rotation.
 		Quaternion GetLocalRotation() const
 		{
-			return m_localRotation;
+			return m_LocalRotation;
 		}
 		
 		void SetLocalRotation(const Quaternion& rotation)
 		{
-			m_localRotation = rotation;
+			m_LocalRotation = rotation;
 			MakeDirty();
 		}
 		
 		// The scale of the transform relative to the parent.
 		Vector3 GetLocalScale() const
 		{
-			return m_localScale;
+			return m_LocalScale;
 		}
 		
 		void SetLocalScale(const Vector3& scale)
 		{
-			m_localScale = scale;
+			m_LocalScale = scale;
 			MakeDirty();
 		}
 		
-		void _setLocalScale(const float x, const float y, const float z)
+		void SetLocalScale(const float x, const float y, const float z)
 		{
-			m_localScale.Set(x, y, z);
+			m_LocalScale.Set(x, y, z);
 			MakeDirty();
 		}
 		
-		void _setLocalScale(const float scale)
+		void SetLocalScale(const float scale)
 		{
-			m_localScale.x = m_localScale.y = m_localScale.z = scale;
+			m_LocalScale.x = m_LocalScale.y = m_LocalScale.z = scale;
 			MakeDirty();
 		}
 		
@@ -166,8 +166,8 @@ namespace FishEngine
 		{
 			auto p = GetParent();
 			if (p != nullptr)
-				return m_localScale * p->GetLossyScale();
-			return m_localScale;
+				return m_LocalScale * p->GetLossyScale();
+			return m_LocalScale;
 		}
 
 		// direction (1, 0, 0) in world space.
@@ -196,7 +196,7 @@ namespace FishEngine
 		
 		Transform* GetParent() const
 		{
-			return m_parent;
+			return m_Father;
 		}
 		
 		// parent: The parent Transform to use.
@@ -208,7 +208,7 @@ namespace FishEngine
 		{
 			UpdateMatrix();
 //			return m_worldToLocalMatrix;
-			return m_localToWorldMatrix.inverse();
+			return m_LocalToWorldMatrix.inverse();
 		}
 		
 		
@@ -216,7 +216,7 @@ namespace FishEngine
 		const Matrix4x4& GetLocalToWorldMatrix() const
 		{
 			UpdateMatrix();
-			return m_localToWorldMatrix;
+			return m_LocalToWorldMatrix;
 		}
 		
 		// Applies a rotation of zAngle degrees around the z axis, xAngle degrees around the x axis, and yAngle degrees around the y axis (in that order)
@@ -233,12 +233,12 @@ namespace FishEngine
 		
 		const std::vector<Transform*>& GetChildren() const
 		{
-			return m_children;
+			return m_Children;
 		}
 
 		Transform* GetChildAt(int index) const
 		{
-			return m_children[index];
+			return m_Children[index];
 		}
 		
 		void SetSiblingIndex(float index);
@@ -250,16 +250,16 @@ namespace FishEngine
 		friend class GameObject;
 		friend class Scene;
 		
-		Quaternion m_localRotation {0, 0, 0, 1};
-		Vector3 m_localPosition {0, 0, 0};
-		Vector3 m_localScale {1, 1, 1};
+		Quaternion m_LocalRotation {0, 0, 0, 1};
+		Vector3 m_LocalPosition {0, 0, 0};
+		Vector3 m_LocalScale {1, 1, 1};
 		
-		std::vector<Transform*> m_children;
-		Transform* m_parent = nullptr;
+		std::vector<Transform*> m_Children;
+		Transform* m_Father = nullptr;
 		int m_RootOrder = 0;
 		
-		mutable bool m_isDirty = true;
-		mutable Matrix4x4 m_localToWorldMatrix;
+		mutable bool m_IsDirty = true;
+		mutable Matrix4x4 m_LocalToWorldMatrix;
 //		mutable Matrix4x4 m_worldToLocalMatrix;
 		
 		void MakeDirty() const;

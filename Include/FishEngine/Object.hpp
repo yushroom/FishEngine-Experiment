@@ -26,51 +26,54 @@ namespace FishEngine
 
 		const std::string& GetName() const
 		{
-			return m_name;
+			return m_Name;
 		}
 		void SetName(const std::string& name)
 		{
-			m_name = name;
+			m_Name = name;
 		}
 
 		int GetInstanceID() const
 		{
-			return m_instanceID;
+			return m_InstanceID;
 		}
 		int GetClassID() const
 		{
-			return m_classID;
+			return m_ClassID;
 		}
 		
 		void SetPyObject(const pybind11::object& obj)
 		{
-			m_self = obj;
+			m_PyObject = obj;
 		}
 		
 		const pybind11::object& GetPyObject() const
 		{
-			return m_self;
+			return m_PyObject;
 		}
 
 		HideFlags GetHideFlags() const { return m_ObjectHideFlags; }
 		void SetHideFlags(HideFlags flags) { m_ObjectHideFlags = flags; }
 
+		int GetLocalIdentifierInFile() const { return m_LocalIdentifierInFile; }
+		void SetLocalIdentifierInFile(int value) { m_LocalIdentifierInFile = value; }
+
 		
 	public:
 		static int GetInstanceCounter()
 		{
-			return s_instanceCounter;
+			return s_InstanceCounter;
 		}
 		
 		static int GetDeleteCounter()
 		{
-			return s_deleteCounter;
+			return s_DeleteCounter;
 		}
 		
 		template<class T>
 		static T* FindObjectOfType()
 		{
-			auto& objs = s_objects[T::ClassID];
+			auto& objs = s_Objects[T::ClassID];
 			if (objs.empty())
 				return nullptr;
 			auto first = *objs.begin();
@@ -81,48 +84,49 @@ namespace FishEngine
 		template<class T>
 		static const std::unordered_set<Object*>& FindObjectsOfType()
 		{
-			return s_objects[T::ClassID];
+			return s_Objects[T::ClassID];
 		}
 		
 		static const std::unordered_set<Object*>& FindObjectsOfType(int classID)
 		{
-			return s_objects[classID];
+			return s_Objects[classID];
 		}
 
 		static const std::unordered_map<int, std::unordered_set<Object*>>& GetAllObjects()
 		{
-			return s_objects;
+			return s_Objects;
 		}
 		
 	protected:
-		std::string			m_name;
-		pybind11::object	m_self = pybind11::none();
+		std::string			m_Name;
+		pybind11::object	m_PyObject = pybind11::none();
 		HideFlags			m_ObjectHideFlags = HideFlags::None;
 
 	private:
-		int					m_classID = 0;
-		int					m_instanceID = 0;
+		int					m_ClassID = 0;
+		int					m_InstanceID = 0;
+		int					m_LocalIdentifierInFile = 0;
 		
 	private:
-		static int s_instanceCounter;
-		static int s_deleteCounter;
-		static std::unordered_map<int, std::unordered_set<Object*>> s_objects;
+		static int s_InstanceCounter;
+		static int s_DeleteCounter;
+		static std::unordered_map<int, std::unordered_set<Object*>> s_Objects;
 	};
 	
-	inline Object::Object(int classID) : m_classID(classID)
+	inline Object::Object(int classID) : m_ClassID(classID)
 	{
-		++s_instanceCounter;
-		m_instanceID = s_instanceCounter;
+		++s_InstanceCounter;
+		m_InstanceID = s_InstanceCounter;
 //		printf("Object::Object() ID=%d\n", instanceID);
-		s_objects[classID].insert(this);
+		s_Objects[classID].insert(this);
 	}
 	
 	inline Object::~Object()
 	{
 //		LOGF;
 //		printf("Object::~Object() ID=%d\n", m_instanceID);
-		++s_deleteCounter;
-		Object::s_objects[m_classID].erase(this);
+		++s_DeleteCounter;
+		Object::s_Objects[m_ClassID].erase(this);
 	}
 
 }

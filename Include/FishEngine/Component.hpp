@@ -22,13 +22,13 @@ namespace FishEngine
 		Transform* GetTransform() const;
 		GameObject* GetGameObject() const
 		{
-			return m_gameObject;
+			return m_GameObject;
 		}
 
 		virtual Component* Clone() const = 0;
 
 	protected:
 		friend class GameObject;
-		GameObject* m_gameObject = nullptr;
+		GameObject* m_GameObject = nullptr;
 	};
 }

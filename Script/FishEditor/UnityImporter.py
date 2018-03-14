@@ -167,6 +167,9 @@ class UnityPrefabImporter:
                 cid = c['fileID']
                 fileID2Object[cid].SetParent(t, False)
 
+        for fileID, obj in fileID2Object.items():
+            obj.localIdentifierInFile = fileID
+
         rootID = data[0]['Prefab']['m_RootGameObject']['fileID']
         rootGO = fileID2Object[rootID]
         prefab = Prefab()
@@ -320,6 +323,9 @@ class UnitySceneImporter:
             t:Transform = fileID2Object[fileID].transform
             if p_fileID != 0 and t.parent is None:
                 t.SetParent(fileID2Object[p_fileID], False)
+
+        for fileID, obj in fileID2Object.items():
+            obj.localIdentifierInFile = fileID
 
         # update rootOrder
         for d, fileID in transform_d:

@@ -6,7 +6,7 @@ namespace FishEngine
 	{
 		auto cloned = new MeshRenderer();
 		cloned->m_material = m_material;
-		cloned->m_name = cloned->m_name;
+		cloned->m_Name = cloned->m_Name;
 		return cloned;
 	}
 }

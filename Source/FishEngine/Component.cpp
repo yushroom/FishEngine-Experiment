@@ -7,6 +7,6 @@ namespace FishEngine
 {
 	Transform* Component::GetTransform() const
 	{
-		return m_gameObject->GetTransform();
+		return m_GameObject->GetTransform();
 	}
 }

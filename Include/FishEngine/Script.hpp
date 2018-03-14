@@ -4,7 +4,7 @@
 
 #include <pybind11/pybind11.h>
 
-#define Func(name) void name() { m_self.attr(#name)(); }
+#define Func(name) void name() { m_PyObject.attr(#name)(); }
 
 namespace FishEngine
 {

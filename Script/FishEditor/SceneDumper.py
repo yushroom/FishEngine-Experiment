@@ -32,7 +32,8 @@ class SceneDumper:
             return {'fileID': name2fileID[data.name], 'guid':guid}
         if isinstance(data, Object):
             self.__AddObject(data)
-            return {'fileID': data.instanceID}
+            fileID = data.localIdentifierInFile if data.localIdentifierInFile != 0 else data.instanceID
+            return {'fileID': fileID}
         return data
 
     def d(self, label:str, data):
@@ -53,7 +54,8 @@ class SceneDumper:
                 self.begin()
                 o.Serialize(self)
                 self.end()
-                f.write('--- !u!{} &{}\n'.format(o.ClassID, o.instanceID))
+                fileID = o.localIdentifierInFile if o.localIdentifierInFile != 0 else o.instanceID
+                f.write('--- !u!{} &{}\n'.format(o.ClassID, fileID))
                 yaml.dump({o.__class__.__name__: self.dict}, f)
                 # yaml.dump({o.__class__.__name__: o.ToDict(self)}, f)
     

@@ -4,22 +4,22 @@
 
 namespace FishEngine
 {
-	Scene* SceneManager::s_activeScene = nullptr;
+	Scene* SceneManager::s_ActiveScene = nullptr;
 
-	int Scene::s_counter = 0;
+	int Scene::s_Counter = 0;
 
 	Scene::Scene()
 	{
-		s_counter++;
-		m_Handle = s_counter;
-		SceneManager::s_handleToScene[m_Handle] = this;
+		s_Counter++;
+		m_Handle = s_Counter;
+		SceneManager::s_HandleToScene[m_Handle] = this;
 	}
 
 	Scene::~Scene()
 	{
-		auto& m = SceneManager::s_handleToScene;
+		auto& m = SceneManager::s_HandleToScene;
 		m.erase(m.find(m_Handle));
-		if (SceneManager::s_activeScene == this)
+		if (SceneManager::s_ActiveScene == this)
 			SceneManager::SetActiveScene(nullptr);
 	}
 	
@@ -35,7 +35,7 @@ namespace FishEngine
 	
 	void Scene::AddRootTransform(Transform* t)
 	{
-		m_rootTransforms.push_back(t);
+		m_RootTransforms.push_back(t);
 //		t->m_RootOrder = m_rootTransforms.size() - 1;
 	}
 	
@@ -45,16 +45,16 @@ namespace FishEngine
 //		std::remove(m_rootTransforms.begin(), m_rootTransforms.end(), t);
 //		assert(oldsize-1 == m_rootTransforms.size());
 
-		int oldsize = (int)m_rootTransforms.size();
-		for (auto it = m_rootTransforms.begin(); it != m_rootTransforms.end(); ++it)
+		int oldsize = (int)m_RootTransforms.size();
+		for (auto it = m_RootTransforms.begin(); it != m_RootTransforms.end(); ++it)
 		{
 			if (t == *it)
 			{
-				m_rootTransforms.erase(it);
+				m_RootTransforms.erase(it);
 				break;
 			}
 		}
-		assert(oldsize-1 == m_rootTransforms.size());
+		assert(oldsize-1 == m_RootTransforms.size());
 		
 //		auto it = m_rootTransforms.begin();
 //		std::advance(it, t->m_RootOrder);
@@ -87,30 +87,30 @@ namespace FishEngine
 //		}
 		//m_rootTransforms.clear();
 //		for (auto t : m_rootTransforms)
-		for (int i = (int)m_rootTransforms.size()-1; i >= 0; --i)
+		for (int i = (int)m_RootTransforms.size()-1; i >= 0; --i)
 		{
-			auto t = m_rootTransforms[i];
+			auto t = m_RootTransforms[i];
 			delete t->GetGameObject();
 		}
-		m_rootTransforms.clear();
+		m_RootTransforms.clear();
 	}
 	
 	Scene* Scene::Clone()
 	{
 		Scene* cloned = new Scene;
 		SceneManager::SetActiveScene(cloned);
-		cloned->m_name = this->m_name + "-cloned";
-		cloned->m_path = this->m_path;
-		cloned->m_rootTransforms.reserve(this->m_rootTransforms.size());
+		cloned->m_Name = this->m_Name + "-cloned";
+		cloned->m_Path = this->m_Path;
+		cloned->m_RootTransforms.reserve(this->m_RootTransforms.size());
 		
-		for (int i = 0; i < m_rootTransforms.size(); ++i)
+		for (int i = 0; i < m_RootTransforms.size(); ++i)
 		{
-			auto go = m_rootTransforms[i]->GetGameObject();
+			auto go = m_RootTransforms[i]->GetGameObject();
 			go->Clone();
 		}
 		
 		return cloned;
 	}
 
-	std::map<int, Scene*> SceneManager::s_handleToScene;
+	std::map<int, Scene*> SceneManager::s_HandleToScene;
 }

@@ -115,14 +115,14 @@ namespace FishEngine
 	
 	void UISystem::Init()
 	{
-		m_context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+		m_Context = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 		
-		auto fontIcons = CreateFont(m_context, "icons", "entypo.ttf");
-		auto fontNormal = CreateFont(m_context, "sans", "Roboto-Regular.ttf");
-		auto fontBold = CreateFont(m_context, "sans-bold", "Roboto-Bold.ttf");
-		auto fontEmoji = CreateFont(m_context, "emoji", "NotoEmoji-Regular.ttf");
-		nvgAddFallbackFontId(m_context, fontNormal, fontEmoji);
-		nvgAddFallbackFontId(m_context, fontBold, fontEmoji);
+		auto fontIcons = CreateFont(m_Context, "icons", "entypo.ttf");
+		auto fontNormal = CreateFont(m_Context, "sans", "Roboto-Regular.ttf");
+		auto fontBold = CreateFont(m_Context, "sans-bold", "Roboto-Bold.ttf");
+		auto fontEmoji = CreateFont(m_Context, "emoji", "NotoEmoji-Regular.ttf");
+		nvgAddFallbackFontId(m_Context, fontNormal, fontEmoji);
+		nvgAddFallbackFontId(m_Context, fontBold, fontEmoji);
 	}
 	
 //	void UISystem::Start()
@@ -135,7 +135,7 @@ namespace FishEngine
 		float pxRatio = Screen::GetPixelsPerPoint();
 		int windowWidth = static_cast<int>( Screen::GetWidth() / pxRatio );
 		int windowHeight = static_cast<int>( Screen::GetHeight() / pxRatio );
-		nvgBeginFrame(m_context, windowWidth, windowHeight, pxRatio);
+		nvgBeginFrame(m_Context, windowWidth, windowHeight, pxRatio);
 	}
 	
 	RectTransform* GetRootUI()
@@ -194,17 +194,17 @@ namespace FishEngine
 
 		int windowHeight = Screen::GetHeight()/ Screen::GetPixelsPerPoint();
 		int p = Screen::GetPixelsPerPoint();
-		drawButton(m_context, 0, "Rotate", r.x()/p, windowHeight - r.y()/p - r.height()/p, r.width()/p, r.height()/p, nvgRGBA(255,255,255,255));
+		drawButton(m_Context, 0, "Rotate", r.x()/p, windowHeight - r.y()/p - r.height()/p, r.width()/p, r.height()/p, nvgRGBA(255,255,255,255));
 	}
 	
 	void UISystem::AfterDraw()
 	{
-		nvgEndFrame(m_context);
+		nvgEndFrame(m_Context);
 	}
 	
 	void UISystem::Clean()
 	{
-		nvgDeleteGL3(m_context);
+		nvgDeleteGL3(m_Context);
 	}
 }
 

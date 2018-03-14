@@ -27,12 +27,12 @@ namespace FishEngine
 		
 		Shader* GetShader() const
 		{
-			return m_shader;
+			return m_Shader;
 		}
 		
 		void SetShader(Shader* shader)
 		{
-			m_shader = shader;
+			m_Shader = shader;
 		}
 		
 		static void StaticInit();
@@ -40,13 +40,13 @@ namespace FishEngine
 		
 		static Material* GetErrorMaterial()
 		{
-			return s_errorMaterial;
+			return s_ErrorMaterial;
 		}
 		
 	protected:
-		Shader* m_shader = nullptr;
+		Shader* m_Shader = nullptr;
 		
-		static Material* s_errorMaterial;
-		static Material* s_defaultMaterial;
+		static Material* s_ErrorMaterial;
+		static Material* s_DefaultMaterial;
 	};
 }

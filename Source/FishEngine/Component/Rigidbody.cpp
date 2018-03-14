@@ -54,7 +54,7 @@ namespace FishEngine
 		//m_physxRigidDynamic->user
 		const auto& t = m_physxRigidDynamic->getGlobalPose();
 		//const auto& pt = t.actor2World;
-		GetTransform()->_setPosition(t.p.x, t.p.y, t.p.z);
+		GetTransform()->SetPosition(t.p.x, t.p.y, t.p.z);
 		GetTransform()->SetLocalRotation(Quaternion(t.q.x, t.q.y, t.q.z, t.q.w));
 	}
 
