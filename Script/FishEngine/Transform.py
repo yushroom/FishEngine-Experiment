@@ -225,4 +225,4 @@ class Transform(Component):
         dumper.d('m_LocalScale', self.localScale)
         dumper.d('m_Children', self.children)
         dumper.d('m_Father', self.parent)
-        dumper.d('m_RootOrder', self.m_RootOrder)
+        dumper.d('m_RootOrder', self.GetSiblingIndex())

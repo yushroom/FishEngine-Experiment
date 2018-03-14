@@ -89,7 +89,10 @@ namespace FishEngine
 		}
 
 		if (parent == nullptr)
-			SceneManager::GetActiveScene()->AddRootTransform(this);
+		{
+			auto scene = m_GameObject->GetScene();
+			scene->AddRootTransform(this);
+		}
 		else if (old_parent == nullptr)
 			SceneManager::GetActiveScene()->RemoveRootTransform(this);
 		

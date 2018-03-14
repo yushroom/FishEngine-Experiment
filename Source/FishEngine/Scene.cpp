@@ -36,7 +36,7 @@ namespace FishEngine
 	void Scene::AddRootTransform(Transform* t)
 	{
 		m_RootTransforms.push_back(t);
-//		t->m_RootOrder = m_rootTransforms.size() - 1;
+		t->m_RootOrder = m_RootTransforms.size() - 1;
 	}
 	
 	void Scene::RemoveRootTransform(Transform* t)

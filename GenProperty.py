@@ -5,21 +5,21 @@ def GenCPPProperty(type, name):
     pretty_name = name[2:]
 
     # print '+++++++++++++'
-    print ''
+    # print('')
     if type in ('int', 'float', 'bool'):
     # print '==== v1'
-        print '{0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name)
-        print 'void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name)
+        print('{0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name))
+        print('void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name))
     else:
         # print '=== v2'
-        print 'const {0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name)
-        print 'void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name)
-    print ''
+        print('const {0}& Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name))
+        print('void Set{1}(const {0}& value) {{ m_{1} = value; }}'.format(type, pretty_name))
+    print('')
 
 def GenPythonDef(klass, name):
     pretty_name = name[2:]
-    print '.def("Get{1}", &{0}::Get{1})'.format(klass, pretty_name)
-    print '.def("Set{1}", &{0}::Set{1})'.format(klass, pretty_name)
+    print('.def("Get{1}", &{0}::Get{1})'.format(klass, pretty_name))
+    print('.def("Set{1}", &{0}::Set{1})'.format(klass, pretty_name))
 
 template3 = '''
         @property
@@ -32,7 +32,7 @@ template3 = '''
 def GenPythonProperty(type, name):
     pretty_name = name[2:]
     name2 = pretty_name[0].lower() + pretty_name[1:]
-    print template3.format(center=name2, Vector3=type, Center=pretty_name)
+    print(template3.format(center=name2, Vector3=type, Center=pretty_name))
 
 
 schema = '''
@@ -83,13 +83,9 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-klass = 'Camera'
+klass = 'Object'
 s = '''
-        float m_FarClipPlane        = 1000.f;
-        float m_NearClipPlane       = 0.3f;
-        float m_FieldOfView         = 60.f;
-        bool  m_Orthographic = false;
-        float m_OrthographicSize    = 5.f;
+int         m_LocalIdentifierInFile = 0;
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]
@@ -97,7 +93,7 @@ pairs = []
 for line in s:
     t = line.split()
     pairs.append((t[0], t[1]))
-print(pairs)
+# print(pairs)
 
 for type, name in pairs:
     GenCPPProperty(type, name)

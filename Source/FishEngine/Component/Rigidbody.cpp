@@ -55,7 +55,7 @@ namespace FishEngine
 		const auto& t = m_physxRigidDynamic->getGlobalPose();
 		//const auto& pt = t.actor2World;
 		GetTransform()->SetPosition(t.p.x, t.p.y, t.p.z);
-		GetTransform()->SetLocalRotation(Quaternion(t.q.x, t.q.y, t.q.z, t.q.w));
+		GetTransform()->SetRotation(Quaternion(t.q.x, t.q.y, t.q.z, t.q.w));
 	}
 
 	void Rigidbody::OnDestroy()

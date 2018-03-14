@@ -23,8 +23,9 @@ namespace FishEngine
 	void FishEngine::BoxCollider::CreatePhysicsShape()
 	{
 		//if (m_physxShape == nullptr) {
-		auto s = GetTransform()->GetLossyScale();
-		m_physxShape = gPhysics->createShape(PxBoxGeometry(s.x*m_size.x*0.5f, s.y*m_size.y*0.5f, s.z*m_size.z*0.5f), *gMaterial);
+		auto s = GetTransform()->GetLossyScale() * m_size * 0.5f;
+		m_physxShape = gPhysics->createShape(PxBoxGeometry(s.x, s.y, s.z), *gMaterial);
+		//auto c = m_center + GetTransform()->GetPosition();
 		m_physxShape->setLocalPose(PxTransform(m_center.x, m_center.y, m_center.z));
 		//}
 	}
