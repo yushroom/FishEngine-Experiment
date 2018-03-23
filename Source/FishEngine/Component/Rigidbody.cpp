@@ -2,15 +2,10 @@
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
-
-#define _DEBUG 1
-#include <PxPhysicsAPI.h>
+#include <FishEngine/Component/SphereCollider.hpp>
+#include <FishEngine/Physics/PhysxAPI.hpp>
 
 using namespace physx;
-
-extern physx::PxPhysics*				gPhysics;
-extern physx::PxScene*				gScene;
-extern physx::PxMaterial*				gMaterial;
 
 inline physx::PxVec3 PxVec3(const FishEngine::Vector3& v)
 {
@@ -21,10 +16,13 @@ namespace FishEngine
 {
 	void Rigidbody::Initialize(PxShape* shape)
 	{
+		auto& px = PhysxWrap::GetInstance();
 		auto t = GetTransform();
 		const Vector3& p = t->GetPosition();
 		const auto& q = t->GetRotation();
-		m_physxRigidDynamic = gPhysics->createRigidDynamic(PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)));
+		m_physxRigidDynamic = px.physics->createRigidDynamic(PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)));
+		m_physxRigidDynamic->userData = (void*)this;
+		m_physxRigidDynamic->setMass(m_Mass);
 		if (shape)
 		{
 			m_physxRigidDynamic->attachShape(*shape);
@@ -34,7 +32,10 @@ namespace FishEngine
 
 	void Rigidbody::Start()
 	{
-		auto collider = GetGameObject()->GetComponent<BoxCollider>();
+		auto& px = PhysxWrap::GetInstance();
+		Collider* collider = GetGameObject()->GetComponent<BoxCollider>();
+		if (collider == nullptr)
+			collider = GetGameObject()->GetComponent<SphereCollider>();
 		if (collider != nullptr)
 			Initialize(collider->GetPhysicsShape());
 		else
@@ -46,14 +47,12 @@ namespace FishEngine
 		m_physxRigidDynamic->setGlobalPose(PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)));
 		PxRigidBodyExt::updateMassAndInertia(*m_physxRigidDynamic, 10.0f);
 		m_physxRigidDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_UseGravity);
-		gScene->addActor(*m_physxRigidDynamic);
+		px.scene->addActor(*m_physxRigidDynamic);
 	}
 
 	void Rigidbody::Update()
 	{
-		//m_physxRigidDynamic->user
 		const auto& t = m_physxRigidDynamic->getGlobalPose();
-		//const auto& pt = t.actor2World;
 		GetTransform()->SetPosition(t.p.x, t.p.y, t.p.z);
 		GetTransform()->SetRotation(Quaternion(t.q.x, t.q.y, t.q.z, t.q.w));
 	}

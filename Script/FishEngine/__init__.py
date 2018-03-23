@@ -38,6 +38,7 @@ from .Graphics import Graphics
 from .Rigidbody import Rigidbody
 from .Collider import Collider
 from .BoxCollider import BoxCollider
+from .SphereCollider import SphereCollider
 
 from .Scene import Scene, SceneManager
 

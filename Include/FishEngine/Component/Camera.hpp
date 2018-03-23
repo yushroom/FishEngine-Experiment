@@ -98,13 +98,6 @@ namespace FishEngine
 
 		virtual Camera* Clone() const override;
 
-//		static Camera*
-//		Create(
-//			float       fov             = 60,
-//			float       nearClipPlane   = 0.3f,
-//			float       farClipPlane    = 1000.0f,
-//			CameraType  type            = CameraType::Game);
-
 	private:
 //		friend class RenderSystem;
 

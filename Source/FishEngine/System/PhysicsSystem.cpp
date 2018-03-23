@@ -2,10 +2,9 @@
 #include <FishEngine/Debug.hpp>
 #include <FishEngine/Scene.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
+#include <FishEngine/Component/SphereCollider.hpp>
 
-#define _DEBUG 1
-#include <PxPhysicsAPI.h>
-//#include <pvd/PxPvd.h>
+#include <FishEngine/Physics/PhysxAPI.hpp>
 
 #include <FishEngine/Component/Rigidbody.hpp>
 
@@ -25,12 +24,6 @@ public:
 	}
 };
 
-PxFoundation*			gFoundation = NULL;
-PxPhysics*				gPhysics = NULL;
-PxDefaultCpuDispatcher*	gDispatcher = NULL;
-PxScene*				gScene = NULL;
-PxMaterial*				gMaterial = NULL;
-PxPvd * gPvd = NULL;
 
 namespace FishEngine
 {
@@ -38,29 +31,35 @@ namespace FishEngine
 	{
 		static PxDefaultAllocator		gAllocator;
 		static FishEnginePhysxErrorCallback	gErrorCallback;
-		gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
-		if (gFoundation == nullptr) {
+		auto& p = PhysxWrap::GetInstance();
+		p.foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
+		if (p.foundation == nullptr) {
 			LogError("[PhysX] create foundation failed");
 			abort();
 		}
 
+		const char*     pvd_host_ip = "127.0.0.1";  // IP of the PC which is running PVD
+		int             port = 5425;         // TCP port to connect to, where PVD is listening
+		unsigned int    timeout = 100;          // timeout in milliseconds to wait for PVD to respond,
+												// consoles and remote PCs need a higher timeout.
+
+		p.pvd = PxCreatePvd(*p.foundation);
+		auto transport = PxDefaultPvdSocketTransportCreate(pvd_host_ip, port, timeout);
+		p.pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+		// TODO: release PVD
+
 		bool recordMemoryAllocations = false;
-
-		//gPvd = PxCreatePvd(*gFoundation);
-		//PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate(PVD_HOST, 5425, 10);
-		//mPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-
 		PxTolerancesScale scale;
- 		gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, scale, recordMemoryAllocations);
+		p.physics = PxCreatePhysics(PX_PHYSICS_VERSION, *p.foundation, scale, recordMemoryAllocations, p.pvd);
 
-		PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+		PxSceneDesc sceneDesc(p.physics->getTolerancesScale());
 		sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
-		gDispatcher = PxDefaultCpuDispatcherCreate(2);
-		sceneDesc.cpuDispatcher = gDispatcher;
+		p.dispatcher = PxDefaultCpuDispatcherCreate(2);
+		sceneDesc.cpuDispatcher = p.dispatcher;
 		sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 		sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
-		gScene = gPhysics->createScene(sceneDesc);
-		gMaterial = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+		p.scene = p.physics->createScene(sceneDesc);
+		p.material = p.physics->createMaterial(0.5f, 0.5f, 0.6f);
 	}
 
 	void PhysicsSystem::Start()
@@ -72,6 +71,14 @@ namespace FishEngine
 		{
 			c->Start();
 		}
+
+		{
+			auto colliders = scene->FindComponents<SphereCollider>();
+			for (auto c : colliders)
+			{
+				c->Start();
+			}
+		}
 		
 		auto rbs = scene->FindComponents<Rigidbody>();
 		for (auto o : rbs)
@@ -82,25 +89,29 @@ namespace FishEngine
 
 	void PhysicsSystem::FixedUpdate()
 	{
+		auto& p = PhysxWrap::GetInstance();
+		p.scene->simulate(1.0f / 30.f);
+		p.scene->fetchResults(true);
+
 		auto scene = SceneManager::GetActiveScene();
 		auto rbs = scene->FindComponents<Rigidbody>();
 		for (auto o : rbs)
 		{
 			o->Update();
 		}
-		
-		gScene->simulate(1.0f / 30.f);
-		gScene->fetchResults(true);
+
 	}
 
 	void PhysicsSystem::Clean()
 	{
-		gScene->release();
-		gDispatcher->release();
-		gPhysics->release();
-		if (gPvd != nullptr)
-			gPvd->release();
-		gFoundation->release();
+		auto& p = PhysxWrap::GetInstance();
+		p.scene->release();
+		p.dispatcher->release();
+		p.physics->release();
+		auto t = p.pvd->getTransport();
+		p.pvd->release();
+		t->release();
+		p.foundation->release();
 
 		LogInfo("Clean up PhysX.");
 	}

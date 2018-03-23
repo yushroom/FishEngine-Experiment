@@ -28,6 +28,7 @@ namespace py = pybind11;
 #include <FishEngine/Component/Light.hpp>
 #include <FishEngine/Component/Collider.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
+#include <FishEngine/Component/SphereCollider.hpp>
 #include <FishEngine/Component/Rigidbody.hpp>
 
 #include <FishEngine/Render/Graphics.hpp>
@@ -350,6 +351,14 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("GetSize", &BoxCollider::GetSize)
 		.def("SetSize", &BoxCollider::SetSize)
 	;
+
+	DefineFunc(SphereCollider);
+	class_<SphereCollider, Collider>(m, "SphereCollider")
+		.def("GetCenter", &SphereCollider::GetCenter)
+		.def("SetCenter", &SphereCollider::SetCenter)
+		.def("GetRadius", &SphereCollider::GetRadius)
+		.def("SetRadius", &SphereCollider::SetRadius)
+		;
 
 	DefineFunc(Rigidbody);
 	class_<Rigidbody, Component>(m, "Rigidbody")

@@ -10,8 +10,6 @@ namespace FishEngine
 	public:
 		enum { ClassID = 65 };
 		BoxCollider() : Collider(ClassID) { }
-
-		BoxCollider(const Vector3& center, const Vector3& size);
 		
 		Vector3 GetCenter() const { return m_center; }
 		void SetCenter(const Vector3& center) { m_center = center; }

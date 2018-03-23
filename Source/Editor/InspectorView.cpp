@@ -16,6 +16,7 @@ using namespace FishEditor;
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
+#include <FishEngine/Component/SphereCollider.hpp>
 #include <FishEngine/Component/Rigidbody.hpp>
 
 
@@ -133,6 +134,13 @@ void DrawBoxCollider(BoxCollider* value)
 	DrawObject(value);
 	Float3("Center", value, &BoxCollider::GetCenter, &BoxCollider::SetCenter);
 	Float3("Size", value, &BoxCollider::GetSize, &BoxCollider::SetSize);
+}
+
+void DrawSphereCollider(SphereCollider* value)
+{
+	DrawObject(value);
+	Float3("Center", value, &SphereCollider::GetCenter, &SphereCollider::SetCenter);
+	Float("Radius", value, &SphereCollider::GetRadius, &SphereCollider::SetRadius);
 }
 
 
@@ -258,6 +266,12 @@ void Dispatch(Component* c)
 	{
 		FishGUI::Group("BoxCollider");
 		DrawBoxCollider((BoxCollider*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == SphereCollider::ClassID)
+	{
+		FishGUI::Group("SphereCollider");
+		DrawSphereCollider((SphereCollider*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == Rigidbody::ClassID)

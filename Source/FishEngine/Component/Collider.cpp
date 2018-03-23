@@ -2,33 +2,33 @@
 #include <FishEngine/Component/Rigidbody.hpp>
 #include <FishEngine/GameObject.hpp>
 
-#define _DEBUG 1
-#include <PxPhysicsAPI.h>
+#include <FishEngine/Physics/PhysxAPI.hpp>
 
 using namespace physx;
-extern physx::PxPhysics*    gPhysics;
-extern physx::PxScene*      gScene;
-extern physx::PxMaterial*   gMaterial;
-
 
 namespace FishEngine
 {
 	void Collider::Start()
 	{
-		//m_physxShape = gPhysics->createShape(PxSphereGeometry(m_radius), *gMaterial);
+		auto& px = PhysxWrap::GetInstance();
 		CreatePhysicsShape();
+		m_physxShape->userData = (void*)this;
+		//m_physxShape->setRestOffset(1);
 		auto rigidbody = GetGameObject()->GetComponent<Rigidbody>();
 		if (rigidbody == nullptr)
 		{
-			//PxRigidStatic* rigidStatic = PxCreatePlane(*gPhysics, PxPlane(0,1,0,0), *gMaterial);
 			auto t = GetTransform();
 			auto p = t->GetPosition();
 			auto q = t->GetRotation();
-			auto rigidStatic = PxCreateStatic(*gPhysics, PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)), *m_physxShape);
-			gScene->addActor(*rigidStatic);
+			auto rigidStatic = PxCreateStatic(*px.physics, PxTransform(p.x, p.y, p.z, PxQuat(q.x, q.y, q.z, q.w)), *m_physxShape);
+			px.scene->addActor(*rigidStatic);
 		}
-//        else {
-//            rigidbody->Initialize(m_physxShape);
-//        }
+	}
+
+
+	bool Collider::Raycast(const Ray & ray, RaycastHit & hitInfo, float maxDistance)
+	{
+		abort();
+		return false;
 	}
 }

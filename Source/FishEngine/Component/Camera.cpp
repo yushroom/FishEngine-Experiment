@@ -7,10 +7,6 @@
 
 namespace FishEngine
 {
-//	CameraPtr Camera::m_mainCamera = nullptr;
-//	std::vector<CameraPtr> Camera::m_allCameras;
-
-
 //	void Camera::OnWindowSizeChanged(const int width, const int height)
 //	{
 //		const float aspect = float(width) / height;
@@ -22,26 +18,6 @@ namespace FishEngine
 //				cam->m_isDirty = true;
 //			}
 //		}
-//	}
-
-//	Camera* Camera::Create(
-//		float fov, 
-//		float nearClipPlane, 
-//		float farClipPlane, 
-//		CameraType type /*= CameraType::Game*/)
-//	{
-////		auto camera = MakeShared<Camera>(fov, nearClipPlane, farClipPlane);
-//		auto camera = new Camera(fov, nearClipPlane,farClipPlane);
-//		camera->m_cameraType = type;
-////		m_allCameras.push_back(camera);
-//		return camera;
-//	}
-
-//	Camera::Camera(float fov, float zNear, float zFar)
-//		: m_fieldOfView(fov), m_farClipPlane(zFar), m_nearClipPlane(zNear)
-//	{
-//		//m_focusPoint = transform()->position() + transform()->forward() * 5.f;
-////		ResetAspect();
 //	}
 
 

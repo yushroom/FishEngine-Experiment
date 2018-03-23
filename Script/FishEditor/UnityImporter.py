@@ -2,7 +2,7 @@
 
 from . import FBXImporter, AssetDataBase
 from FishEngine import Vector2, Vector3, Quaternion
-from FishEngine import GameObject, Transform, RectTransform, Camera, Light, BoxCollider, Rigidbody
+from FishEngine import GameObject, Transform, RectTransform, Camera, Light, BoxCollider, SphereCollider, Rigidbody
 from FishEngine import MeshRenderer, MeshFilter, Material, Mesh, Debug, Prefab, Object, SceneManager
 # from FishEngine.UI import Text
 import FishEngine
@@ -63,6 +63,10 @@ def MakeComponent(ctype:str, d:int):
         # comp.Deserialize(d)
         comp.center = MakeVec3(d['m_Center'])
         comp.size = MakeVec3(d['m_Size'])
+    elif ctype == 'SphereCollider':
+        comp = SphereCollider()
+        comp.center = MakeVec3(d['m_Center'])
+        comp.radius = d['m_Radius']
     elif ctype == 'Rigidbody':
         comp = Rigidbody()
     elif ctype == 'MonoBehaviour':
@@ -75,7 +79,7 @@ def MakeComponent(ctype:str, d:int):
         comp = getattr(sys.modules[ctype], ctype)()
         comp.Deserialize(d)
     else:
-        # print('Unkown component type:', ctype)
+        print('Unkown component type:', ctype)
         pass
     return comp
 
