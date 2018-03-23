@@ -274,9 +274,10 @@ namespace FishEngine
 		// rotation should be unit quaternion
 		static Matrix4x4 FromRotation( const Quaternion& rotation );
 
-		// note: make sure to remove scale before call this func
-		// you'd better call Decompose 
+
 		Quaternion ToRotation() const;
+
+		Quaternion ToRotation_fast() const;
 
 		/**
 		 * Build a left handed look at view matrix(world space to local space).

@@ -108,10 +108,7 @@ namespace FishEngine
 		Quaternion GetRotation() const
 		{
 			UpdateMatrix();
-			//return m_LocalToWorldMatrix.ToRotation();
-			Quaternion rot;
-			Matrix4x4::Decompose(m_LocalToWorldMatrix, nullptr, &rot, nullptr);
-			return rot;
+			return m_LocalToWorldMatrix.ToRotation();
 		}
 		
 		void SetRotation(const Quaternion& new_rotation)

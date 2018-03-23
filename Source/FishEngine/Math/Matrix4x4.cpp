@@ -254,12 +254,18 @@ namespace FishEngine
 			rot_mat.m[1][3] = 0;
 			rot_mat.m[2][3] = 0;
 			rot_mat.m[3][3] = 1;
-			*outRotation = rot_mat.ToRotation();
+			*outRotation = rot_mat.ToRotation_fast();
 		}
 	}
 
-
 	Quaternion Matrix4x4::ToRotation() const
+	{
+		Quaternion rot;
+		Matrix4x4::Decompose(*this, nullptr, &rot, nullptr);
+		return rot;
+	}
+
+	Quaternion Matrix4x4::ToRotation_fast() const
 	{
 		float fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
 		float fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];
