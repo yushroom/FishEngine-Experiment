@@ -26,7 +26,7 @@ namespace FishEditor
 		static GameView* GetCurrent() { return s_Current; }
 		
 //	private:
-		FishGUI::FrameBuffer m_FrameBuffer;
+		FishGUI::FrameBuffer m_Framebuffer;
 		
 		static GameView* s_Current;
 	};

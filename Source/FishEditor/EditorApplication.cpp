@@ -78,7 +78,7 @@ namespace FishEditor
 	void EditorApplication::Update()
 	{
 		auto gameView = GameView::GetCurrent();
-		gameView->m_FrameBuffer.Bind();
+		gameView->m_Framebuffer.Bind();
 		
 		if (m_IsPlaying)
 		{
@@ -92,7 +92,7 @@ namespace FishEditor
 		FishEngine::UISystem::GetInstance().Update();
 		FishEngine::UISystem::GetInstance().AfterDraw();
 		
-		gameView->m_FrameBuffer.Bind();
+		gameView->m_Framebuffer.Unbind();
 	}
 
 	void EditorApplication::Play()
