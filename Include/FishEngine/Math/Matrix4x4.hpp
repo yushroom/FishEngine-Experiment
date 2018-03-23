@@ -271,10 +271,12 @@ namespace FishEngine
 		// Creates a scaling matrix.
 		static Matrix4x4 Scale(const Vector3& scale);
 
-		Quaternion ToRotation() const;
-
 		// rotation should be unit quaternion
 		static Matrix4x4 FromRotation( const Quaternion& rotation );
+
+		// note: make sure to remove scale before call this func
+		// you'd better call Decompose 
+		Quaternion ToRotation() const;
 
 		/**
 		 * Build a left handed look at view matrix(world space to local space).

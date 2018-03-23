@@ -26,7 +26,7 @@ namespace FishEngine
 	{
 		float sqr_len = x*x + y*y + z*z + w*w;
 		if (fabsf(sqr_len) < 1e-6)
-		return;
+			return;
 		float inv_len = 1.0f / sqrtf(sqr_len);
 		x *= inv_len;
 		y *= inv_len;

@@ -222,29 +222,40 @@ namespace FishEngine
 		Vector3*            outScale)
 	{
 		auto& m = transformation;
-		outScale->x = sqrtf(m.m[0][0]*m.m[0][0] + m.m[1][0]*m.m[1][0] + m.m[2][0]*m.m[2][0]);
-		outScale->y = sqrtf(m.m[0][1]*m.m[0][1] + m.m[1][1]*m.m[1][1] + m.m[2][1]*m.m[2][1]);
-		outScale->z = sqrtf(m.m[0][2]*m.m[0][2] + m.m[1][2]*m.m[1][2] + m.m[2][2]*m.m[2][2]);
-		
-		outTranslation->Set(m.m[0][3], m.m[1][3], m.m[2][3]);
-		Matrix4x4 rot_mat;
-		rot_mat.m[0][0] = m.m[0][0] / outScale->x;
-		rot_mat.m[1][0] = m.m[1][0] / outScale->x;
-		rot_mat.m[2][0] = m.m[2][0] / outScale->x;
-		rot_mat.m[3][0] = 0;
-		rot_mat.m[0][1] = m.m[0][1] / outScale->y;
-		rot_mat.m[1][1] = m.m[1][1] / outScale->y;
-		rot_mat.m[2][1] = m.m[2][1] / outScale->y;
-		rot_mat.m[3][1] = 0;
-		rot_mat.m[0][2] = m.m[0][2] / outScale->z;
-		rot_mat.m[1][2] = m.m[1][2] / outScale->z;
-		rot_mat.m[2][2] = m.m[2][2] / outScale->z;
-		rot_mat.m[3][2] = 0;
-		rot_mat.m[0][3] = 0;
-		rot_mat.m[1][3] = 0;
-		rot_mat.m[2][3] = 0;
-		rot_mat.m[3][3] = 1;
-		*outRotation = rot_mat.ToRotation();
+
+		if (outTranslation != nullptr)
+			outTranslation->Set(m.m[0][3], m.m[1][3], m.m[2][3]);
+
+		float sx, sy, sz;
+		sx = sqrtf(m.m[0][0]*m.m[0][0] + m.m[1][0]*m.m[1][0] + m.m[2][0]*m.m[2][0]);
+		sy = sqrtf(m.m[0][1]*m.m[0][1] + m.m[1][1]*m.m[1][1] + m.m[2][1]*m.m[2][1]);
+		sz = sqrtf(m.m[0][2]*m.m[0][2] + m.m[1][2]*m.m[1][2] + m.m[2][2]*m.m[2][2]);
+		if (outScale != nullptr)
+		{
+			outScale->Set(sx, sy, sz);
+		}
+
+		if (outRotation != nullptr)
+		{
+			Matrix4x4 rot_mat;
+			rot_mat.m[0][0] = m.m[0][0] / sx;
+			rot_mat.m[1][0] = m.m[1][0] / sx;
+			rot_mat.m[2][0] = m.m[2][0] / sx;
+			rot_mat.m[3][0] = 0;
+			rot_mat.m[0][1] = m.m[0][1] / sy;
+			rot_mat.m[1][1] = m.m[1][1] / sy;
+			rot_mat.m[2][1] = m.m[2][1] / sy;
+			rot_mat.m[3][1] = 0;
+			rot_mat.m[0][2] = m.m[0][2] / sz;
+			rot_mat.m[1][2] = m.m[1][2] / sz;
+			rot_mat.m[2][2] = m.m[2][2] / sz;
+			rot_mat.m[3][2] = 0;
+			rot_mat.m[0][3] = 0;
+			rot_mat.m[1][3] = 0;
+			rot_mat.m[2][3] = 0;
+			rot_mat.m[3][3] = 1;
+			*outRotation = rot_mat.ToRotation();
+		}
 	}
 
 
