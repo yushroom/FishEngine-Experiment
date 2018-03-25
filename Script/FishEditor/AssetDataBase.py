@@ -39,7 +39,7 @@ class AssetDataBase:
             editorScene = SceneManager.CreateScene("Editor")
             old = SceneManager.GetActiveScene()
             SceneManager.SetActiveScene(editorScene)
-            importer.globalScale = 100
+            # importer.globalScale = 100
             importer.Import(fullpath)
             SceneManager.SetActiveScene(old)
         elif ext == 'prefab':

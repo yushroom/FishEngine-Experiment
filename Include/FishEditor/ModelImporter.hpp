@@ -70,6 +70,12 @@ namespace FishEditor
 		KeyframeReductionAndCompression,    // Perform keyframe reduction and compression.
 		Optimal,                            //Perform keyframe reduction and choose the best animation curve representation at runtime to reduce memory footprint (default).
 	};
+
+	struct ModelImporterMesh
+	{
+		float globalScale = 1;
+		bool useFileScale = true;
+	};
 	
 	class ModelImporter : public AssetImporter
 	{
@@ -78,10 +84,14 @@ namespace FishEditor
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		
-		void setFileScale( const float fileScale )
-		{
-			m_fileScale = fileScale;
-		}
+		float GetGlobalScale() const { return m_GlobalScale; }
+		void SetGlobalScale(float value) { m_GlobalScale = value; }
+
+		bool GetUseFileScale() const { return m_UseFileScale; }
+		void SetUseFileScale(bool value) { m_UseFileScale = value; }
+
+		float GetFileScale() const { return m_FileScale; }
+		void SetFileScale(float value) { m_FileScale = value; }
 		
 		//ModelPtr LoadFromFile( const FishEngine::Path& path );
 
@@ -96,6 +106,14 @@ namespace FishEditor
 		}
 
 	protected:
+
+		float GetScale()
+		{
+			if (m_UseFileScale)
+				return m_GlobalScale * m_FileScale;
+			return m_GlobalScale;
+		}
+
 		
 //		friend class Inspector;
 //		friend class MainEditor;
@@ -104,12 +122,15 @@ namespace FishEditor
 //		static void Init();
 
 		// Global scale factor for importing.
-		float m_globalScale = 1.0f;
+		float m_GlobalScale = 1.0f;
 		
+
+		bool m_UseFileScale = true;
+
 		// File scale factor (if available) or default one. (Read-only).
 		// fileSscale is determined by model file and can not be modified by user.
 //		Meta(NonSerializable)
-		float m_fileScale = 1.0f;
+		float m_FileScale = 1.0f;
 
 		// Vertex normal import options.
 		ModelImporterNormals m_importNormals    = ModelImporterNormals::Import;
@@ -123,5 +144,8 @@ namespace FishEditor
 		// remove dummy nodes
 //		Meta(NonSerializable)
 		std::map<std::string, std::map<std::string, FishEngine::Matrix4x4>> m_nodeTransformations;
+
+		//ModelImporterMesh m_Meshes;
+
 	}; // end of class ModelImporter
 }

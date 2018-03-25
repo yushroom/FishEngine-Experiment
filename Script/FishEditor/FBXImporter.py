@@ -14,13 +14,22 @@ class FBXImporter(Object):
         self.fileIDToRecycleName = None
 
     def Import(self, path:str):
-        self.m_CachedPtr.Import(path)
         with open(path+'.meta') as f:
             meta = yaml.load(f)
         # print(meta)
         self.guid = meta['guid']
-        l = meta['ModelImporter']['fileIDToRecycleName']
+        meta = meta['ModelImporter']
+        l = meta['fileIDToRecycleName']
         self.fileIDToRecycleName = l
+        serializedVersion = meta['serializedVersion']
+        meshes = meta['meshes']
+        self.globalScale = meta['meshes']['globalScale']
+        if 'useFileScale' in meshes:
+            self.useFileScale = meta['meshes']['useFileScale']
+        else:
+            self.useFileScale = False
+
+        self.m_CachedPtr.Import(path)
 
     def GetMeshByFileID(self, fileID:int)->Mesh:
         print(fileID)
@@ -29,10 +38,24 @@ class FBXImporter(Object):
 
     @property
     def globalScale(self)->float:
-        return self.m_CachedPtr.GetGlobalScale()
+        return self.cpp.GetGlobalScale()
     @globalScale.setter
     def globalScale(self, value:float):
-        self.m_CachedPtr.SetGlobalScale(value)
+        self.cpp.SetGlobalScale(value)
+
+    @property
+    def useFileScale(self)->bool:
+        return self.cpp.GetUseFileScale()
+    @useFileScale.setter
+    def useFileScale(self, value:bool):
+        self.cpp.SetUseFileScale(value)
+
+    @property
+    def fileScale(self)->float:
+        return self.cpp.GetFileScale()
+    @fileScale.setter
+    def fileScale(self, value:float):
+        self.cpp.SetFileScale(value)
         
 
     def CreateNew(self):

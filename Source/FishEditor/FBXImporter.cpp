@@ -206,7 +206,7 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 	for (int controlPointIndex = 0; controlPointIndex < vertexCount; ++controlPointIndex)
 	{
 		auto & p = controlPoints[controlPointIndex];
-		float scale = m_fileScale * m_globalScale;
+		float scale = GetScale();
 		auto pp = FbxVector4ToVector3WithXFlipped(p);
 		rawMesh.m_vertexPositions.emplace_back(pp * scale);
 	}
@@ -467,7 +467,7 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 	FbxDouble3 r = pNode->LclRotation.Get();
 	FbxDouble3 s = pNode->LclScaling.Get();
 
-	float scale = m_fileScale * m_globalScale;
+	float scale = GetScale();
 
 	// note: x is flipped
 	go->GetTransform()->SetLocalPosition(-t[0] * scale, t[1] * scale, t[2] * scale);

@@ -83,17 +83,29 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-klass = 'GameObject'
+klass = 'ModelImporter'
 s = '''
-    Prefab* m_PrefabParentObject = nullptr;
-    Prefab* m_PrefabInternal = nullptr;
+// Global scale factor for importing.
+    float m_GlobalScale = 1.0f;
+    
+
+    bool m_UseFileScale = true;
+
+    // File scale factor (if available) or default one. (Read-only).
+    // fileSscale is determined by model file and can not be modified by user.
+//    Meta(NonSerializable)
+    float m_FileScale = 1.0f;
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]
 pairs = []
 for line in s:
-    t = line.strip().split()
-    pairs.append((t[0], t[1]))
+    line = line.strip()
+    if line.startswith('//'):
+      continue
+    t = line.split()
+    if len(t) >= 2:
+      pairs.append((t[0], t[1]))
 print(pairs)
 
 for type, name in pairs:
