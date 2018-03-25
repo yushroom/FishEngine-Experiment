@@ -56,8 +56,9 @@ def MakeComponent(ctype:str, d:int):
                 comp.mesh = Mesh.GetInternalMesh(id2mesh[mesh_d['fileID']])
             else:
                 importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
-                nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
-                comp.mesh = importer.GetMeshByName(nodeName)
+                # nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
+                # comp.mesh = importer.GetMeshByName(nodeName)
+                comp.mesh = importer.GetMeshByFileID(mesh_d['fileID'])
     elif ctype == 'BoxCollider':
         comp = BoxCollider()
         # comp.Deserialize(d)
@@ -339,6 +340,7 @@ class UnitySceneImporter:
                 children = None
                 if t.parent is None:
                     gos = SceneManager.GetActiveScene().GetRootGameObjects()
+                    print(gos)
                     children = [go.transform for go in gos]
                 else:
                     print([t.m_RootOrder for t in t.parent.children])

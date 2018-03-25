@@ -32,14 +32,6 @@ namespace FishEngine
 		GameObject(const std::string& name = "GameObject", GameObjectConstructionFlag flag = GameObjectConstructionFlag::WithTransform);
 		~GameObject();
 
-		// for python
-		// create GameObject and bind transform
-//		static GameObject* CreateWithTransform(const std::string& name = "GameObject");
-		
-		// for python
-		// special version for RectTransform
-//		static GameObject* CreateWithRectTransform(const std::string& name = "GameObject");
-
 		Transform* GetTransform() const
 		{
 			return m_Transform;
@@ -113,9 +105,7 @@ namespace FishEngine
 				child->GetGameObject()->GetComponentsInChildren<T>(components);
 			}
 		}
-		
-//		void AddRectTransform(RectTransform* t);
-//		void RemoveRectTransform();
+
 
 		Scene* GetScene() const
 		{
@@ -134,7 +124,7 @@ namespace FishEngine
 	protected:
 		Scene*					m_Scene = nullptr;
 		Transform*				m_Transform = nullptr;
-		std::list<Component*>	m_Components;
-		bool					m_IsActive = true;	// activeSelf
+		std::list<Component*>		m_Components;
+		bool						m_IsActive = true;	// activeSelf
 	};
 }

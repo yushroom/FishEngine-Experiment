@@ -83,6 +83,15 @@ void DrawTransform(Transform* value)
 	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
 	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
 	Float3("Scale", value, &Transform::GetLocalScale, &Transform::SetLocalScale);
+	auto m = value->GetLocalToWorldMatrix();
+	for (int row = 0; row < 4; ++ row)
+	{
+		for (int col = 0;  col < 4; ++ col)
+		{
+			std::string label = "E" + std::to_string(row) + std::to_string(col);
+			FishGUI::Float(label, m[col][row]);
+		}
+	}
 }
 
 void DrawCamera(Camera* c)

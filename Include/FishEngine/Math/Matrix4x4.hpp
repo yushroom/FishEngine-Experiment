@@ -8,11 +8,11 @@
 
 #if USE_GLM
 //#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_FORCE_LEFT_HANDED
 #include <glm/mat4x4.hpp>
 #include <glm/vec4.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 #endif
 
 namespace FishEngine
@@ -26,64 +26,33 @@ namespace FishEngine
 		
 		Matrix4x4() : m(1.0f) {}
 		
-//		const Vector4 operator[](int row) const { return m[row]; }
-//		Vector4&      operator[](int row)       { return m[row]; }
+		const glm::vec4 operator[](int col) const { return m[col]; }
+		glm::vec4&      operator[](int col)       { return m[col]; }
 		
 		const float* data() const { return glm::value_ptr(m); }
 		float*       data()       { return glm::value_ptr(m); }
 		
 		std::string ToString() const;
 		
-		Matrix4x4 inverse() const
-		{
-			Matrix4x4 ret;
-			ret.m = glm::inverse(m);
-			return ret;
-		}
+		Matrix4x4 inverse() const;
 		
-		Vector3 _MultiplyPoint(float x, float y, float z) const
-		{
-			auto v = m * glm::vec4(x, y, z, 1.0);
-			v /= v.w;
-			return Vector3(v.x, v.y, v.z);
-		}
+		Vector3 _MultiplyPoint(float x, float y, float z) const;
 		
-		Vector3 MultiplyPoint(const Vector3& v) const
-		{
-			return _MultiplyPoint(v.x, v.y, v.z);
-		}
+		Vector3 MultiplyPoint(const Vector3& v) const;
 		
-		Quaternion ToRotation() const
-		{
-			auto q = glm::quat(m);
-			return Quaternion(q.x, q.y, q.z, q.w);
-		}
+		Quaternion ToRotation() const;
 		
 		// Sets this matrix to a translation, rotation and scaling matrix.
-		void SetTRS(const Vector3& pos, const Quaternion& q, const Vector3& s)
-		{
-			m = glm::mat4(1.0f);
-			glm::scale(m, glm::vec3(s.x, s.y, s.z));
-			m *= glm::mat4_cast(glm::quat(q.x, q.y, q.z, q.w));
-			glm::translate(m, glm::vec3(pos.x, pos.y, pos.z));
-		}
+		void SetTRS(const Vector3& pos, const Quaternion& q, const Vector3& s);
 		
 		// Creates a translation, rotation and scaling matrix.
-		static Matrix4x4 TRS( const Vector3& pos, const Quaternion& q, const Vector3& s)
-		{
-			Matrix4x4 ret;
-			ret.SetTRS(pos, q, s);
-			return ret;
-		}
+		static Matrix4x4 TRS( const Vector3& pos, const Quaternion& q, const Vector3& s);
 		
 		static void Decompose(
 							  const Matrix4x4&    transformation,
 							  Vector3*            outTranslation,
 							  Quaternion*         outRotation,
-							  Vector3*            outScale)
-		{
-			puts("Decompose");
-		}
+							  Vector3*            outScale);
 		
 		// Creates an orthogonal projection matrix.
 		static Matrix4x4 Ortho(
@@ -92,32 +61,17 @@ namespace FishEngine
 							   const float bottom,
 							   const float top,
 							   const float zNear,
-							   const float zFar)
-		{
-			Matrix4x4 ret;
-			ret.m = glm::orthoRH(left, right, bottom, top, zNear, zFar);
-			return ret;
-		}
+							   const float zFar);
 		
 		// Creates a perspective projection matrix.
 		static Matrix4x4 Perspective(
 									 const float fovy,
 									 const float aspect,
 									 const float zNear,
-									 const float zFar)
-		{
-			Matrix4x4 ret;
-			ret.m = glm::perspectiveRH(glm::radians(fovy), aspect, zNear, zFar);
-			return ret;
-		}
+									 const float zFar);
 		
 //		void             operator*=(const Matrix4x4& rhs);
-		friend Matrix4x4 operator* (const Matrix4x4& lhs, const Matrix4x4& rhs)
-		{
-			Matrix4x4 ret;
-			ret.m = lhs.m * rhs.m;
-			return ret;
-		}
+		friend Matrix4x4 operator* (const Matrix4x4& lhs, const Matrix4x4& rhs);
 //		friend Vector4   operator* (const Matrix4x4& lhs, const Vector4&   rhs);
 //		friend bool      operator==(const Matrix4x4& lhs, const Matrix4x4& rhs);
 //		friend bool      operator!=(const Matrix4x4& lhs, const Matrix4x4& rhs);
@@ -125,12 +79,7 @@ namespace FishEngine
 		static Matrix4x4 LookAt(
 								const Vector3& eye,
 								const Vector3& target,
-								const Vector3& up)
-		{
-			Matrix4x4 ret;
-			ret.m = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z), glm::vec3(target.x, target.y, target.z), glm::vec3(up.x, up.y, up.z));
-			return ret;
-		}
+								const Vector3& up);
 	};
 #else
 	// Matrices are row major.

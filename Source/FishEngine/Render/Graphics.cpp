@@ -26,10 +26,15 @@ namespace FishEngine
 //		assert(loc1 != GL_INVALID_INDEX);
 //		assert(loc2 != GL_INVALID_INDEX);
 //		assert(loc3 != GL_INVALID_INDEX);
+#if USE_GLM
+		auto need_transpose = GL_FALSE;
+#else
+		auto need_transpose = GL_TRUE;
+#endif
 		if (loc1 != GL_INVALID_INDEX)
-			glProgramUniformMatrix4fv(shader->m_GLProgram, loc1, 1, GL_TRUE, mvp.data());
+			glProgramUniformMatrix4fv(shader->m_GLProgram, loc1, 1, need_transpose, mvp.data());
 		if (loc2 != GL_INVALID_INDEX)
-			glProgramUniformMatrix4fv(shader->m_GLProgram, loc2, 1, GL_TRUE, mat.data());
+			glProgramUniformMatrix4fv(shader->m_GLProgram, loc2, 1, need_transpose, mat.data());
 		if (loc3 != GL_INVALID_INDEX)
 			glProgramUniform3fv(shader->m_GLProgram, loc3, 1, lightDir.data());
 		mesh->Render(subMeshIndex);

@@ -22,14 +22,15 @@ class FBXImporter(Object):
         l = meta['ModelImporter']['fileIDToRecycleName']
         self.fileIDToRecycleName = l
 
-    def GetMeshByName(self, name:str)->Mesh:
-        m = self.m_CachedPtr.GetMeshByName(name)
+    def GetMeshByFileID(self, fileID:int)->Mesh:
+        print(fileID)
+        m = self.m_CachedPtr.GetObjectByFileID(fileID)
         return Mesh.Wrap(m)
 
     @property
     def globalScale(self)->float:
-        return self.m_CachedPtr.globalScale
+        return self.m_CachedPtr.GetGlobalScale()
     @globalScale.setter
     def globalScale(self, value:float):
-        self.m_CachedPtr.globalScale = value
+        self.m_CachedPtr.SetGlobalScale(value)
         

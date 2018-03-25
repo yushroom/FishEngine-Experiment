@@ -5,3 +5,5 @@ __pycache__/
 /ThirdParty/FBX\ SDK/
 /ThirdParty/glew/glew.pc
 /ThirdParty/glm
+/.idea/
+/cmake-build-debug/

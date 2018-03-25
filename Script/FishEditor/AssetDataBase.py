@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from FishEngine import SceneManager, Scene
 
 class ImportAssetOptions(Enum):
     Default = 0
@@ -35,8 +36,12 @@ class AssetDataBase:
             print("imporing fbx:", fullpath)
             importer = FBXImporter()
             print("[TODO] FBXImporter.globalScale")
+            editorScene = SceneManager.CreateScene("Editor")
+            old = SceneManager.GetActiveScene()
+            SceneManager.SetActiveScene(editorScene)
             importer.globalScale = 100
             importer.Import(fullpath)
+            SceneManager.SetActiveScene(old)
         elif ext == 'prefab':
             print("imporing prefab:", fullpath)
             importer = UnityPrefabImporter(fullpath)

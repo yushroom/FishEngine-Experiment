@@ -1,17 +1,109 @@
 #include <FishEditor/FBXImporter.hpp>
 
 #include <FishEngine/Debug.hpp>
+#include <FishEngine/GameObject.hpp>
+#include <FishEngine/Color.hpp>
+#include <FishEngine/Scene.hpp>
 
 #include <fbxsdk.h>
 #include <fbxsdk/utils/fbxgeometryconverter.h>
 
 #include <deque>
 #include <cassert>
+#include <iostream>
 
 #include "RawMesh.hpp"
 
 using namespace FishEngine;
 using namespace FishEditor;
+
+Matrix4x4 FBXToNativeType(fbxsdk::FbxAMatrix const & fmatrix)
+{
+	float f44[4][4];
+	auto d44 = fmatrix.Double44();
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			f44[i][j] = static_cast<float>(d44[j][i]);
+		}
+	}
+	return Matrix4x4(f44);
+}
+
+Vector3 FBXToNativeType(const FbxVector4& value)
+{
+	Vector3 native;
+	native.x = (float)value[0];
+	native.y = (float)value[1];
+	native.z = (float)value[2];
+
+	return native;
+}
+
+Vector3 FBXToNativeType(const FbxDouble3& value)
+{
+	return Vector3(static_cast<float>(value[0]),
+				   static_cast<float>(value[1]),
+				   static_cast<float>(value[2]));
+}
+
+Vector2 FBXToNativeType(const FbxVector2& value)
+{
+	Vector2 native;
+	native.x = (float)value[0];
+	native.y = (float)value[1];
+
+	return native;
+}
+
+Color FBXToNativeType(const FbxColor& value)
+{
+	Color native;
+	native.r = (float)value[0];
+	native.g = (float)value[1];
+	native.b = (float)value[2];
+	native.a = (float)value[3];
+
+	return native;
+}
+
+FbxSurfaceMaterial* FBXToNativeType(FbxSurfaceMaterial* const& value)
+{
+	return value;
+}
+
+
+RotationOrder FBXToNativeType(EFbxRotationOrder order)
+{
+	RotationOrder rotationOrder;
+	//EFbxRotationOrder order;
+	//node->GetRotationOrder(FbxNode::eDestinationPivot, order);
+	switch (order)
+	{
+		case eEulerXYZ:
+			rotationOrder = RotationOrder::XYZ; break;
+		case eEulerXZY:
+			rotationOrder = RotationOrder::XZY; break;
+		case eEulerYXZ:
+			rotationOrder = RotationOrder::YXZ; break;
+		case eEulerYZX:
+			rotationOrder = RotationOrder::YZX; break;
+		case eEulerZXY:
+			rotationOrder = RotationOrder::ZXY; break;
+		case eEulerZYX:
+			rotationOrder = RotationOrder::ZYX; break;
+		default: // do not support eSphericXYZ
+			abort();
+	}
+	return rotationOrder;
+}
+
+int FBXToNativeType(const int & value)
+{
+	return value;
+}
+
 
 inline Vector3 FbxVector4ToVector3WithXFlipped(FbxVector4 const & v)
 {
@@ -243,6 +335,7 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 	} // for polygonCount
 	
 	auto mesh = rawMesh.ToMesh();
+	mesh->SetName(fbxMesh->GetName());
 //	GetLinkData(fbxMesh, mesh, rawMesh.m_vertexIndexRemapping);
 	
 //	m_model.m_fbxMeshLookup[fbxMesh] = m_model.m_meshes.size();
@@ -310,9 +403,62 @@ void FishEditor::FBXImporter::BakeTransforms(FbxScene * scene)
 	//scene->GetRootNode()->ResetPivotSetAndConvertAnimation();
 }
 
-void FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
+
+std::string UpdateFileIDMap(std::map<std::string, FishEngine::GameObject*>& fileID2GO, const char* name, GameObject* go)
+{
+	std::string ret;
+	auto it = fileID2GO.find(name);
+	if (it == fileID2GO.end())
+	{
+		fileID2GO[name] = go;
+		ret = name;
+	}
+	else
+	{
+		int postfix = 1;
+		while (true)
+		{
+			std::string new_name = name;
+			new_name += " " + std::to_string(postfix);
+			auto it = fileID2GO.find(new_name);
+			if (it == fileID2GO.end())
+			{
+				fileID2GO[new_name] = go;
+				ret = new_name;
+				go->SetName(new_name);
+				break;
+			}
+			postfix++;
+		}
+	}
+	return ret;
+}
+
+
+GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 {
 	const char* nodeName = pNode->GetName();
+	std::cout << "FBXImporter::ParseNode " << nodeName << std::endl;
+	auto go = new GameObject(nodeName);
+//	m_model.m_objects[GameObject::ClassID][nodeName] = go;
+	auto actual_name = UpdateFileIDMap(m_model.m_gameObjects, nodeName, go);
+//	m_model.m_m_gameObjectsobjects[Transform::ClassID][actual_name] = go->GetTransform();
+
+	FbxDouble3 t = pNode->LclTranslation.Get();
+	FbxDouble3 r = pNode->LclRotation.Get();
+	FbxDouble3 s = pNode->LclScaling.Get();
+
+	float scale = m_fileScale * m_globalScale;
+	go->GetTransform()->SetLocalPosition(t[0] * scale, t[1] * scale, t[2] * scale);
+	go->GetTransform()->SetLocalScale(s[0], s[1], s[2]);
+
+	EFbxRotationOrder rotationOrder;
+	pNode->GetRotationOrder(FbxNode::eSourcePivot, rotationOrder);
+	RotationOrder order = FBXToNativeType(rotationOrder);
+	Quaternion rot = Quaternion::Euler(order, r[0], r[1], r[2]);
+	go->GetTransform()->SetLocalRotation(rot);
+	m_model.m_fbxNodeLookup[pNode] = go->GetTransform();
+
 	auto nodeAttributeCount = pNode->GetNodeAttributeCount();
 	for (int i = 0; i < nodeAttributeCount; ++i)
 	{
@@ -322,13 +468,13 @@ void FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 		{
 			FbxMesh* lMesh = (FbxMesh*)nodeAttribute;
 			auto mesh = ParseMesh(lMesh);
-//			m_model.m_meshes.push_back(mesh);
+			m_model.m_meshes.push_back(mesh);
 //			if (mesh->name().empty())
 //			{
 //				mesh->setName(nodeName);
 //			}
 			mesh->SetName(nodeName);
-			m_meshes[nodeName] = mesh;
+//			m_meshes[nodeName] = mesh;
 //
 //			if (IsNewlyCreated())
 //			{
@@ -378,13 +524,16 @@ void FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 	
 	for (int j = 0; j < pNode->GetChildCount(); j++)
 	{
-		ParseNode(pNode->GetChild(j));
-//		child->transform()->SetParent(go->transform(), false);
+		auto child = ParseNode(pNode->GetChild(j));
+		child->GetTransform()->SetParent(go->GetTransform(), false);
 	}
+	return go;
 }
 
 void FishEditor::FBXImporter::Import(const std::string& path)
 {
+//	auto oldScene = SceneManager::GetActiveScene();
+
 	// Initialize the SDK manager. This object handles memory management.
 	FbxManager * lSdkManager = FbxManager::Create();
 	
@@ -443,11 +592,55 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
 	BakeTransforms(lScene);
-	
+
+//	int geometryCount = lScene->GetGeometryCount();
+//	for (int i = 0; i < geometryCount; ++i) {
+//		auto geometry = lScene->GetGeometry(0);
+//		if (geometry->GetAttributeType() != FbxNodeAttribute::eMesh) {
+//			LogWarning("geometry type not supported");
+//			continue;
+//		}
+//		FbxMesh *lMesh = (FbxMesh *) geometry;
+//		auto name = lMesh->GetName();
+//		std::cout << i << ": " << name << std::endl;
+////		auto mesh = ParseMesh(lMesh);
+////		m_model.m_meshes.push_back(mesh);
+//	}
+
 	FbxNode* lRootNode = lScene->GetRootNode();
-	ParseNode(lRootNode);
+//	auto& root = m_model.m_rootNode;
+//	root = new GameObject();
+//	root->SetName(name);
+	m_model.m_rootNode = ParseNode(lRootNode);
 	
 	// Destroy the SDK manager and all the other objects it was handling.
 	lSdkManager->Destroy();
+
+	int count = 0;
+	for (auto&& p : m_model.m_gameObjects)
+	{
+		auto go = p.second;
+		int classID = GameObject::ClassID;
+		int fileID = classID * 100000 + count;
+		std::cout << fileID << ": " << p.first << std::endl;
+
+		m_fileIDToObject[fileID] = go;
+		for (auto comp : go->GetAllComponents())
+		{
+			classID = comp->GetClassID();
+			fileID = classID * 100000 + count;
+			m_fileIDToObject[fileID] = comp;
+		}
+		count += 2;
+	}
+
+	count = 0;
+	for (auto mesh : m_model.m_meshes)
+	{
+		int classID = Mesh::ClassID;
+		int fileID = classID*100000 + count;
+		m_fileIDToObject[fileID] = mesh;
+		count += 2;
+	}
 }
 

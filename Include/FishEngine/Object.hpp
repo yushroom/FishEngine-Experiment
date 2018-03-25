@@ -112,7 +112,9 @@ namespace FishEngine
 		static int s_DeleteCounter;
 		static std::unordered_map<int, std::unordered_set<Object*>> s_Objects;
 	};
-	
+
+
+
 	inline Object::Object(int classID) : m_ClassID(classID)
 	{
 		++s_InstanceCounter;
