@@ -4,9 +4,15 @@
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Color.hpp>
 #include <FishEngine/Scene.hpp>
+#include <FishEngine/Prefab.hpp>
+
+#include <FishEngine/Component/MeshFilter.hpp>
+#include <FishEngine/Component/MeshRenderer.hpp>
 
 #include <fbxsdk.h>
 #include <fbxsdk/utils/fbxgeometryconverter.h>
+
+#include <boost/filesystem/path.hpp>
 
 #include <deque>
 #include <cassert>
@@ -16,6 +22,17 @@
 
 using namespace FishEngine;
 using namespace FishEditor;
+
+
+FBXImporter::~FBXImporter()
+{
+	for (auto mesh : m_model.m_meshes)
+	{
+		delete mesh;
+	}
+	delete m_model.m_prefab;
+}
+
 
 Matrix4x4 FBXToNativeType(fbxsdk::FbxAMatrix const & fmatrix)
 {
@@ -439,7 +456,9 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 {
 	const char* nodeName = pNode->GetName();
 	std::cout << "FBXImporter::ParseNode " << nodeName << std::endl;
+
 	auto go = new GameObject(nodeName);
+	go->SetPrefabInternal(m_model.m_prefab);
 //	m_model.m_objects[GameObject::ClassID][nodeName] = go;
 	auto actual_name = UpdateFileIDMap(m_model.m_gameObjects, nodeName, go);
 //	m_model.m_m_gameObjectsobjects[Transform::ClassID][actual_name] = go->GetTransform();
@@ -449,13 +468,15 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 	FbxDouble3 s = pNode->LclScaling.Get();
 
 	float scale = m_fileScale * m_globalScale;
-	go->GetTransform()->SetLocalPosition(t[0] * scale, t[1] * scale, t[2] * scale);
+
+	// note: x is flipped
+	go->GetTransform()->SetLocalPosition(-t[0] * scale, t[1] * scale, t[2] * scale);
 	go->GetTransform()->SetLocalScale(s[0], s[1], s[2]);
 
 	EFbxRotationOrder rotationOrder;
 	pNode->GetRotationOrder(FbxNode::eSourcePivot, rotationOrder);
 	RotationOrder order = FBXToNativeType(rotationOrder);
-	Quaternion rot = Quaternion::Euler(order, r[0], r[1], r[2]);
+	Quaternion rot = Quaternion::Euler(order, r[0], -r[1], -r[2]);
 	go->GetTransform()->SetLocalRotation(rot);
 	m_model.m_fbxNodeLookup[pNode] = go->GetTransform();
 
@@ -474,6 +495,15 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 //				mesh->setName(nodeName);
 //			}
 			mesh->SetName(nodeName);
+
+			auto mf = new MeshFilter();
+			go->AddComponent(mf);
+			mf->SetMesh(mesh);
+
+			auto mr = new MeshRenderer();
+			go->AddComponent(mr);
+			mr->SetMaterial(Material::GetDefaultMaterial());
+
 //			m_meshes[nodeName] = mesh;
 //
 //			if (IsNewlyCreated())
@@ -521,6 +551,11 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 //			}
 		}
 	}
+
+	for (auto comp : go->GetAllComponents())
+	{
+		comp->SetPrefabInternal(m_model.m_prefab);
+	}
 	
 	for (int j = 0; j < pNode->GetChildCount(); j++)
 	{
@@ -562,7 +597,7 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	lImporter->Destroy();
 	
 //	//FbxAxisSystem::MayaYUp.ConvertScene(lScene);
-	FbxAxisSystem::DirectX.ConvertScene(lScene); // wrong!
+	//FbxAxisSystem::DirectX.ConvertScene(lScene); // wrong!
 //	// FbxSystemUnit::m.ConvertScene(lScene);
 //	// http://help.autodesk.com/view/FBX/2017/ENU/?guid=__files_GUID_CC93340E_C4A1_49EE_B048_E898F856CFBF_htm
 //	// do NOT use FbxSystemUnit::ConvertScene(lScene), which just simply set transform.scale of root nodes.
@@ -607,11 +642,20 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 ////		m_model.m_meshes.push_back(mesh);
 //	}
 
+	m_model.m_prefab = new Prefab();
 	FbxNode* lRootNode = lScene->GetRootNode();
-//	auto& root = m_model.m_rootNode;
-//	root = new GameObject();
-//	root->SetName(name);
-	m_model.m_rootNode = ParseNode(lRootNode);
+	if (lRootNode->GetChildCount() == 0)
+	{
+		abort();
+	}
+	else if (lRootNode->GetChildCount() == 1)
+	{
+		lRootNode = lRootNode->GetChild(0);
+	}
+	m_model.m_rootGameObject = ParseNode(lRootNode);
+	auto p = boost::filesystem::path(path);
+	m_model.m_rootGameObject->SetName(p.stem().string());
+	m_model.m_prefab->SetRootGameObject(m_model.m_rootGameObject);
 	
 	// Destroy the SDK manager and all the other objects it was handling.
 	lSdkManager->Destroy();
@@ -622,7 +666,8 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 		auto go = p.second;
 		int classID = GameObject::ClassID;
 		int fileID = classID * 100000 + count;
-		std::cout << fileID << ": " << p.first << std::endl;
+		std::cout << fileID << ": " << p.first << " instanceID: " << go->GetInstanceID() << std::endl;
+		//go->GetTransform()->SetRootOrder(count / 2);
 
 		m_fileIDToObject[fileID] = go;
 		for (auto comp : go->GetAllComponents())

@@ -6,7 +6,7 @@ def GenCPPProperty(type, name):
 
     # print '+++++++++++++'
     # print('')
-    if type in ('int', 'float', 'bool'):
+    if type in ('int', 'float', 'bool') or type.endswith('*'):
     # print '==== v1'
         print('{0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name))
         print('void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name))
@@ -83,17 +83,18 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-klass = 'Object'
+klass = 'GameObject'
 s = '''
-int         m_LocalIdentifierInFile = 0;
+    Prefab* m_PrefabParentObject = nullptr;
+    Prefab* m_PrefabInternal = nullptr;
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]
 pairs = []
 for line in s:
-    t = line.split()
+    t = line.strip().split()
     pairs.append((t[0], t[1]))
-# print(pairs)
+print(pairs)
 
 for type, name in pairs:
     GenCPPProperty(type, name)

@@ -42,6 +42,11 @@ namespace FishEngine
 		{
 			return s_ErrorMaterial;
 		}
+
+		static Material* GetDefaultMaterial()
+		{
+			return s_DefaultMaterial;
+		}
 		
 	protected:
 		Shader* m_Shader = nullptr;

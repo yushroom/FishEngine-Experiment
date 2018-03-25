@@ -55,8 +55,8 @@ namespace FishEngine
 		HideFlags GetHideFlags() const { return m_ObjectHideFlags; }
 		void SetHideFlags(HideFlags flags) { m_ObjectHideFlags = flags; }
 
-		int GetLocalIdentifierInFile() const { return m_LocalIdentifierInFile; }
-		void SetLocalIdentifierInFile(int value) { m_LocalIdentifierInFile = value; }
+		uint64_t GetLocalIdentifierInFile() const { return m_LocalIdentifierInFile; }
+		void SetLocalIdentifierInFile(uint64_t value) { m_LocalIdentifierInFile = value; }
 
 		
 	public:
@@ -105,7 +105,7 @@ namespace FishEngine
 	private:
 		int					m_ClassID = 0;
 		int					m_InstanceID = 0;
-		int					m_LocalIdentifierInFile = 0;
+		uint64_t			m_LocalIdentifierInFile = 0;
 		
 	private:
 		static int s_InstanceCounter;

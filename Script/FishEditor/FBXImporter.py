@@ -2,7 +2,7 @@ import FishEditorInternal
 
 # FBXImporter = FishEditorInternal.FBXImporter
 
-from FishEngine import Object, Mesh
+from FishEngine import Object, Mesh, GameObject
 import yaml
 
 class FBXImporter(Object):
@@ -33,4 +33,11 @@ class FBXImporter(Object):
     @globalScale.setter
     def globalScale(self, value:float):
         self.m_CachedPtr.SetGlobalScale(value)
+        
+
+    def CreateNew(self):
+        root = self.cpp.GetRootGameObject()
+        newRoot = root.Clone()
+        go = GameObject("", cppObject=newRoot)
+        return go
         

@@ -14,13 +14,13 @@ from . import YAMLUtils
 from timing import timing
 
 def MakeQuat(d):
-    return Quaternion(d['x'], d['y'], d['z'], d['w'])
+    return Quaternion(float(d['x']), float(d['y']), float(d['z']), float(d['w']))
 
 def MakeVec2(d):
-    return Vector2(d['x'], d['y'])
+    return Vector2(float(d['x']), float(d['y']))
 
 def MakeVec3(d):
-    return Vector3(d['x'], d['y'], d['z'])
+    return Vector3(float(d['x']), float(d['y']), float(d['z']))
 
 def MakeComponent(ctype:str, d:int):
     comp = None
@@ -86,7 +86,13 @@ def MakeComponent(ctype:str, d:int):
 
 
 def MakeGameObject(d:dict, fileID2Dict:dict, fileID2Object:dict)->GameObject:
-    tid = d['m_Component'][0]['component']['fileID']
+    # tid = d['m_Component'][0]['component']['fileID']
+    '''
+      m_Component:
+        - 4: {fileID: 400004}
+        - 137: {fileID: 13700004}
+    '''
+    tid = list(d['m_Component'][0].values())[0]['fileID']
     # fileID2Object[tid] = go.transform
     tdict = fileID2Dict[tid]
     go_name = str(d['m_Name'])
@@ -113,7 +119,7 @@ def MakeGameObject(d:dict, fileID2Dict:dict, fileID2Object:dict)->GameObject:
     go.transform.localScale = MakeVec3(t['m_LocalScale'])
     go.transform.m_RootOrder = t['m_RootOrder']
     for c in d['m_Component'][1:]:
-        cid = c['component']['fileID']
+        cid = list(c.values())[0]['fileID']
         d2 = fileID2Dict[cid]
         ctype = d2['name']
         comp = MakeComponent(ctype, d2[ctype])
@@ -173,9 +179,14 @@ class UnityPrefabImporter:
                 fileID2Object[cid].SetParent(t, False)
 
         for fileID, obj in fileID2Object.items():
+            print(obj, fileID)
             obj.localIdentifierInFile = fileID
 
-        rootID = data[0]['Prefab']['m_RootGameObject']['fileID']
+        prefabs = filter_('Prefab')
+        if len(prefabs) != 1:
+            raise RuntimeError
+        prefab, fileID = prefabs[0]
+        rootID = prefab['m_RootGameObject']['fileID']
         rootGO = fileID2Object[rootID]
         prefab = Prefab()
         rootGO.m_PrefabInternal = prefab
@@ -271,9 +282,16 @@ class UnitySceneImporter:
         for d, fileID in prefab_d:
             guid = d['m_ParentPrefab']['guid']
             mods = d['m_Modification']['m_Modifications']
-            importer:UnityPrefabImporter = AssetDataBase.GUIDToImporter(guid)
-            go = importer.CreateNew(mods)
-            fileID2Object[fileID] = go
+            importer = AssetDataBase.GUIDToImporter(guid)
+            if isinstance(importer, UnityPrefabImporter):
+                go = importer.CreateNew(mods)
+                fileID2Object[fileID] = go
+            elif isinstance(importer, FBXImporter):
+                print("TODO: mods")
+                go = importer.CreateNew()
+                fileID2Object[fileID] = go
+            else:
+                raise RuntimeError
 
         for d, fileID in filter_('GameObject'):
             go = None

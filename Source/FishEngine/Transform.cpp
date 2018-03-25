@@ -26,14 +26,14 @@ namespace FishEngine
 			// rootOrder in .unity file may > total size
 			//				if (index >= m_parent->m_children.size())
 			//					index = m_parent->m_children.size()-1;
-			assert(index <= m_Father->m_Children.size());
+			assert(index < m_Father->m_Children.size());
 		}
 		if (index == m_RootOrder)
 			return;
 		int old = m_RootOrder;
 		auto& c = m_Father == nullptr ?
-		SceneManager::GetActiveScene()->m_RootTransforms :
-		m_Father->m_Children;
+			m_GameObject->GetScene()->m_RootTransforms :
+			m_Father->m_Children;
 		c[index]->m_RootOrder = old;
 		std::swap(c[index], c[old]);
 		m_RootOrder = index;

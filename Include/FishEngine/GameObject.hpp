@@ -16,6 +16,7 @@ namespace FishEngine
 	class Transform;
 	class RectTransform;
 	class Scene;
+	class Prefab;
 	
 	enum class GameObjectConstructionFlag
 	{
@@ -121,7 +122,15 @@ namespace FishEngine
 		// Is the GameObject active in the scene?
 		bool IsActiveInHierarchy() const;
 
+		Prefab* GetPrefabParentObject() const { return m_PrefabParentObject; }
+		void SetPrefabParentObject(Prefab* value) { m_PrefabParentObject = value; }
+
+		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
+		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
+
 	protected:
+		Prefab * m_PrefabParentObject = nullptr;
+		Prefab * m_PrefabInternal = nullptr;
 		Scene*					m_Scene = nullptr;
 		Transform*				m_Transform = nullptr;
 		std::list<Component*>		m_Components;

@@ -228,7 +228,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("IsActive", &GameObject::IsActive)
 		.def("SetActive", &GameObject::SetActive)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
-		.def("Clone", &GameObject::Clone)
+		.def("Clone", &GameObject::Clone, return_value_policy::reference)
 	;
 
 	m.def("GameObject_GetComopnent", &GameObject_GetComopnent);

@@ -217,7 +217,7 @@ try
 }
 catch (pybind11::error_already_set& e)
 {
-	std::cerr << ">>> Error! Uncaught exception:\n";
+	std::cerr << ">>> Python Error:\n";
 	std::cerr << e.what() << std::endl;
 	return 1;
 }

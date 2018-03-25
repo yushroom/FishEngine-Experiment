@@ -102,7 +102,7 @@ namespace FishEngine
 	
 	GameObject* GameObject::Clone()
 	{
-		auto cloned = new GameObject(this->m_Name+"-cloned", GameObjectConstructionFlag::Empty);
+		auto cloned = new GameObject(this->m_Name, GameObjectConstructionFlag::Empty);
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();
 		auto cloned_t = m_Transform->Clone();

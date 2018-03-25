@@ -1,6 +1,9 @@
 #pragma once
 
-#define _DEBUG 1
+#if defined(_DEBUG) || defined(NDEBUG)
+#else
+#	define _DEBUG 1
+#endif
 #include <PxPhysicsAPI.h>
 
 namespace FishEngine

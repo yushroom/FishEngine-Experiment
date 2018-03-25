@@ -34,10 +34,10 @@ namespace FishEditor
 {
 	struct ModelCollection
 	{
-//		FishEngine::Prefab* m_modelPrefab;
+		FishEngine::Prefab* m_prefab;
 //		float globalScale;
 //		bool useFileScale;
-		FishEngine::GameObject* m_rootNode;
+		FishEngine::GameObject* m_rootGameObject;
 //		FishEngine::Avatar*	m_avatar;
 		std::unordered_map<fbxsdk::FbxNode*, FishEngine::Transform*> m_fbxNodeLookup;
 		std::vector<FishEngine::Mesh*> m_meshes;
@@ -50,13 +50,7 @@ namespace FishEditor
 	{
 	public:
 		
-		~FBXImporter()
-		{
-			for(auto mesh : m_model.m_meshes)
-			{
-				delete mesh;
-			}
-		}
+		~FBXImporter();
 		
 		float GetGlobalScale() const { return m_globalScale; }
 		void  SetGlobalScale(float value) { m_globalScale = value; }
@@ -68,6 +62,11 @@ namespace FishEditor
 		}
 		
 		void Import(const std::string& path);
+
+		FishEngine::GameObject* GetRootGameObject() const
+		{
+			return m_model.m_rootGameObject;
+		}
 		
 //		FishEngine::Mesh* GetMeshByName(const std::string& name)
 //		{
@@ -88,6 +87,11 @@ namespace FishEditor
 				return nullptr;
 			}
 			return it->second;
+		}
+
+		const std::map<int, FishEngine::Object*>& GetFileIDToObject() const
+		{
+			return m_fileIDToObject;
 		}
 		
 	protected:
