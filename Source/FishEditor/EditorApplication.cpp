@@ -1,17 +1,19 @@
 
 #include <FishEditor/EditorApplication.hpp>
 
-#include <FishEditor/GameView.hpp>
 
 #include <FishEngine/GameApp.hpp>
 #include <FishEngine/Screen.hpp>
-#include <FishEngine/Render/GLEnvironment.hpp>
+//#include <FishEngine/Render/GLEnvironment.hpp>
 #include <FishEngine/System/RenderSystem.hpp>
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/Scene.hpp>
 
 #include <FishEditor/Selection.hpp>
+#include <FishEditor/AssetDatabase.hpp>
+#include <FishEditor/GameView.hpp>
+
 
 #include <pybind11/embed.h>
 namespace py = pybind11;
@@ -19,33 +21,30 @@ namespace py = pybind11;
 class EditorInternalApp : public FishEngine::AbstractGameApp
 {
 public:
-	EditorInternalApp()
-	{
-
-	}
+	EditorInternalApp() = default;
 
 	int Run()
 	{
 		return 0;
 	}
 
-	virtual void Init() override
+    void Init() override
 	{
 		FishEngine::Init();
 	}
 
-	virtual void Start() override
+    void Start() override
 	{
 		FishEngine::Start();
 	}
 
-	virtual void Update() override
+    void Update() override
 	{
 		FishEngine::Update();
 		DrawScene();
 	}
 
-	virtual void Shutdown() override
+    void Shutdown() override
 	{
 
 	}
@@ -67,6 +66,13 @@ public:
 
 namespace FishEditor
 {
+	void EditorApplication::OpenProject(const std::string& projectPath)
+	{
+		AssetDatabase::s_AssetRootDir = new FileNode(projectPath);
+//		m_ApplicationPath = projectPath;
+        OnProjectOpened();
+	}
+
 	void EditorApplication::Init()
 	{
 		m_app = new EditorInternalApp();
@@ -121,8 +127,7 @@ namespace FishEditor
 		scene->Clean();
 		delete scene;
 		FishEngine::SceneManager::SetActiveScene(m_currentScene);
-		scene = FishEngine::SceneManager::GetActiveScene();
-
+//		scene = FishEngine::SceneManager::GetActiveScene();
 		//auto app = py::module::import("app");
 		//app.attr("Restore")();
 		

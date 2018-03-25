@@ -5,12 +5,9 @@
 
 #include <UnityLayout.hpp>
 #include <UnityToolBar.hpp>
-#include <DirTreeWidget.hpp>
-#include <FileListWidget.hpp>
 
-//#include "SceneViewApp.hpp"
+#include "ProjectView.hpp"
 #include "HierarchyView.hpp"
-//#include "GLWidget.hpp"
 #include "InspectorView.hpp"
 
 #include <FishEditor/FishEditorInternal.hpp>
@@ -79,29 +76,13 @@ try
 
 
 	auto inspector = new InspectorView("Inspector");
-	auto project = new FishGUI::Widget("Project");
+//	auto project = new FishGUI::Widget("Project");
 	auto console = new IMWidget2("Console");
 	auto hierarchy = new HierarchyView("Hierarchy");
 	auto scene = new IMWidget2("Scene");
 	auto game = new FishEditor::GameView();
 	auto assetStore = new IMWidget2("Asset Store");
-
-//	auto rootNode = new FileNode(R"(D:\program\github\MonumentVally-Demo\Assets)");
-	auto rootNode = new FileNode(ApplicationFilePath());
-	//	auto rootNode = new FileNode(R"(D:\program\FishGUI)");
-	//	rootNode->Find("/Users/yushroom/program/FishEngine/Example/Sponza/Assets/texture");
-	auto dirs = new DirTreeWidget("Dirs", rootNode);
-	dirs->SetWidth(150);
-	dirs->SetMinSize(100, 100);
-	auto files = new UnityFileWidget("Files");
-	files->SetWidth(400);
-	files->SetMinSize(200, 100);
-	files->GetFileListWidget()->SetRoot(rootNode);
-	dirs->GetSelectionModel()->selectionChanged.connect([files](FileNode* node) {
-		if (node != nullptr)
-			files->GetFileListWidget()->SetRoot(node);
-	});
-
+	auto project = new ProjectView();
 
 	EditorLayoutType layoutType = EditorLayoutType::eDefault;
 
@@ -118,11 +99,11 @@ try
 		bottom->AddChild(project);
 		bottom->AddChild(console);
 
-		{
-			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
-			project->SetLayout(layout);
-			layout->Split(dirs, files);
-		}
+//		{
+//			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
+//			project->SetLayout(layout);
+//			layout->Split(dirs, files);
+//		}
 
 		auto left = new FishGUI::TabWidget("Left");
 		left->SetWidth(200);
@@ -166,12 +147,12 @@ try
 		tab3->SetMinSize(150, 150);
 		tab4->SetMinSize(150, 150);
 
-		{
-			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
-			project->SetLayout(layout);
-			layout->Split(dirs, files);
-			files->SetMinSize(150, 150);
-		}
+//		{
+//			auto layout = new FishGUI::SplitLayout(FishGUI::Orientation::Vertical);
+//			project->SetLayout(layout);
+//			layout->Split(dirs, files);
+//			files->SetMinSize(150, 150);
+//		}
 
 		auto layout1 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);
 		auto layout2 = new FishGUI::SplitLayout(FishGUI::Orientation::Horizontal);

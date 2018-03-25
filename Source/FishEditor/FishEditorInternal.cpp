@@ -3,6 +3,7 @@
 #include <FishEngine/GameObject.hpp>
 
 #include <pybind11/embed.h>
+#include <FishEditor/EditorApplication.hpp>
 
 using namespace FishEditor;
 namespace py = pybind11;
@@ -18,11 +19,18 @@ namespace py = pybind11;
 //	return ret;
 //}
 
+void EditorApplication_OpenProject(const std::string& projectPath)
+{
+	EditorApplication::GetInstance().OpenProject(projectPath);
+}
+
 PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 {
 	using namespace pybind11;
 
 	//m.def("FBXImporter_FileIDToObject", &FBXImporter_FileIDToObject);
+
+	m.def("EditorApplication_OpenProject", &EditorApplication_OpenProject);
 	
 	class_<FBXImporter>(m, "FBXImporter")
 		.def(init<>())

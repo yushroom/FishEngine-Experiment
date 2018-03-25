@@ -1,6 +1,7 @@
 import yaml
 
 from FishEngine import *
+from FishEditor import EditorApplication
 
 from timing import timing
 
@@ -25,6 +26,7 @@ def Start():
     project_path = r'D:\workspace\unity\FishEngine\Assets'
     # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
     projectImporter = UnityProjectImporter(project_path)
+    EditorApplication.OpenProject(project_path)
 
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
     scene_path = os.path.join(project_path, 'TestPhysics.unity')

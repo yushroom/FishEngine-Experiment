@@ -1,6 +1,10 @@
 #pragma once
 
 #include <string>
+#include "FileNode.hpp"
+
+#include <boost/signals2/signal.hpp>
+
 
 class EditorInternalApp;
 
@@ -21,7 +25,7 @@ namespace FishEditor
 			return instance;
 		}
 
-		static void OpenProject(const std::string& projectPath);
+		void OpenProject(const std::string& projectPath);
 
 		void Init();
 
@@ -31,6 +35,8 @@ namespace FishEditor
 		void Stop();
 		void Pause();
 		void Resume();
+
+		boost::signals2::signal<void()> OnProjectOpened;
 
 	private:
 
@@ -42,5 +48,8 @@ namespace FishEditor
 		bool m_IsPlaying = false;
 
 		FishEngine::Scene * m_currentScene = nullptr;	// scene in editor
+		
+		std::string m_ApplicationPath;
+		FileNode* m_AssetRootDir = nullptr;
 	};
 }
