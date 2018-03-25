@@ -52,9 +52,6 @@ namespace FishEditor
 		
 		~FBXImporter();
 		
-		float GetGlobalScale() const { return m_globalScale; }
-		void  SetGlobalScale(float value) { m_globalScale = value; }
-		
 		// for python
 		static FBXImporter* Create()
 		{
@@ -98,9 +95,6 @@ namespace FishEditor
 		FishEngine::Mesh* ParseMesh(fbxsdk::FbxMesh* fbxMesh);
 		FishEngine::GameObject* ParseNode(fbxsdk::FbxNode* pNode);
 		void BakeTransforms(fbxsdk::FbxScene * scene);
-		
-		float m_globalScale = 1.0f;
-		float m_fileScale = 1.0f;
 
 //		std::vector<std::pair<int, FishEngine::Object*>> m_fileIDToRecycleName;
 

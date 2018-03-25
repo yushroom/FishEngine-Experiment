@@ -605,19 +605,19 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	auto unit = lScene->GetGlobalSettings().GetSystemUnit();
 	if ( unit == FbxSystemUnit::mm )
 	{
-		m_fileScale = 0.001f;
+		m_FileScale = 0.001f;
 	}
 	else if ( unit == FbxSystemUnit::dm)
 	{
-		m_fileScale = 0.1f;
+		m_FileScale = 0.1f;
 	}
 	else if (unit == FbxSystemUnit::cm)
 	{
-		m_fileScale = 0.01f;
+		m_FileScale = 0.01f;
 	}
 	else if (unit == FbxSystemUnit::m)
 	{
-		m_fileScale = 1.0f;
+		m_FileScale = 1.0f;
 	}
 	else
 	{
