@@ -32,7 +32,7 @@ class FBXImporter(Object):
         self.m_CachedPtr.Import(path)
 
     def GetMeshByFileID(self, fileID:int)->Mesh:
-        print(fileID)
+        # print(fileID)
         m = self.m_CachedPtr.GetObjectByFileID(fileID)
         return Mesh.Wrap(m)
 

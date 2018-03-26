@@ -110,7 +110,7 @@ def MakeGameObject(d:dict, fileID2Dict:dict, fileID2Object:dict)->GameObject:
         rt.pivot = MakeVec2(t['m_Pivot'])
     else:
         Debug.Log('[TODO]', tdict['name'])
-        print(tdict)
+        # print(tdict)
         return None
 
     go.SetActive(d['m_IsActive']==1)
@@ -179,7 +179,7 @@ class UnityPrefabImporter:
                 fileID2Object[cid].SetParent(t, False)
 
         for fileID, obj in fileID2Object.items():
-            print(obj, fileID)
+            # print(obj, fileID)
             obj.localIdentifierInFile = fileID
 
         prefabs = filter_('Prefab')
@@ -245,11 +245,11 @@ class UnityPrefabImporter:
                         importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
                         meshName = importer.fileIDToRecycleName[m['objectReference']['fileID']]
                         mesh = importer.GetMeshByName(meshName)
-                        print(target, mesh)
+                        # print(target, mesh)
                         target.mesh = mesh
                     else:
                         print('[TODO] this modification to Prefab is set by object:')
-                        print(m)
+                        # print(m)
         return rootGO
 
 from FishEngine import Scene
@@ -358,7 +358,7 @@ class UnitySceneImporter:
                 children = None
                 if t.parent is None:
                     gos = SceneManager.GetActiveScene().GetRootGameObjects()
-                    print(gos)
+                    # print(gos)
                     children = [go.transform for go in gos]
                 else:
                     print([t.m_RootOrder for t in t.parent.children])

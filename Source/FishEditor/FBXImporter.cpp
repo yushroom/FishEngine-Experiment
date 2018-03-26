@@ -455,7 +455,7 @@ std::string UpdateFileIDMap(std::map<std::string, FishEngine::GameObject*>& file
 GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 {
 	const char* nodeName = pNode->GetName();
-	std::cout << "FBXImporter::ParseNode " << nodeName << std::endl;
+//	std::cout << "FBXImporter::ParseNode " << nodeName << std::endl;
 
 	auto go = new GameObject(nodeName);
 	go->SetPrefabInternal(m_model.m_prefab);
@@ -666,7 +666,7 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 		auto go = p.second;
 		int classID = GameObject::ClassID;
 		int fileID = classID * 100000 + count;
-		std::cout << fileID << ": " << p.first << " instanceID: " << go->GetInstanceID() << std::endl;
+//		std::cout << fileID << ": " << p.first << " instanceID: " << go->GetInstanceID() << std::endl;
 		//go->GetTransform()->SetRootOrder(count / 2);
 
 		m_fileIDToObject[fileID] = go;

@@ -107,26 +107,33 @@ public:
 //        static FishGUI::FontIcon fileIcon{ CodePointToUTF8(fileIconCP, icon), 64.f, "ui" };
 //        return item->isDir ? &dirIcon : &fileIcon;
 		std::string icons_root = "/Users/yushroom/program/FishEngine-Experiment/Assets/Textures/Icons/";
+		static auto folder_icon = FishGUI::ImageIcon::FromFile(icons_root+"Folder@64.png");
 		static auto default_icon = FishGUI::ImageIcon::FromFile(icons_root+"DefaultAsset@64.png");
 		static auto audioclip_icon = FishGUI::ImageIcon::FromFile(icons_root+"AudioClip@64.png");
 		static auto font_icon = FishGUI::ImageIcon::FromFile(icons_root+"Font@64.png");
 		static auto material_icon = FishGUI::ImageIcon::FromFile(icons_root+"Material@64.png");
-		static auto prefab_icon = FishGUI::ImageIcon::FromFile(icons_root+"Prefab@64.png");
+		static auto prefab_icon = FishGUI::ImageIcon::FromFile(icons_root+"PrefabNormal@64.png");
 		static auto prefabModel_icon = FishGUI::ImageIcon::FromFile(icons_root+"PrefabModel@64.png");
 		static auto shader_icon = FishGUI::ImageIcon::FromFile(icons_root+"Shader@64.png");
 		static auto scene_icon = FishGUI::ImageIcon::FromFile(icons_root+"SceneAsset@64.png");
+		static auto cs_icon = FishGUI::ImageIcon::FromFile(icons_root+"cs Script@64.png");
+		
+		if (item->isDir)
+			return folder_icon;
 		
 		auto ext = item->path.extension();
 		if (ext == ".prefab")
 			return prefab_icon;
 		else if (ext == ".fbx")
 			return prefabModel_icon;
-		else if (ext == ".material")
+		else if (ext == ".mat")
 			return material_icon;
 		else if (ext == ".shader")
 			return shader_icon;
 		else if (ext == ".unity")
 			return scene_icon;
+		else if (ext == ".cs")
+			return cs_icon;
 		return default_icon;
     }
 };
