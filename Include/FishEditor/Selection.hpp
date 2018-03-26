@@ -12,27 +12,34 @@ namespace FishEditor
 	public:
 		Selection() = delete;
 
-		static FishEngine::Object* activeObject()
+		static void SetActiveObject(FishEngine::Object* obj)
 		{
-			return s_activeObject;
+			s_ActiveObject = obj;
+			OnSelectionChanged();
+		}
+
+		static FishEngine::Object* GetActiveObject()
+		{
+			return s_ActiveObject;
 		}
 
 		static FishEngine::Transform* GetActiveTransform()
 		{
-			if (s_activeObject != nullptr && s_activeObject->GetClassID() == FishEngine::Transform::ClassID)
-				return static_cast<FishEngine::Transform*>(s_activeObject);
+			if (s_ActiveObject != nullptr && s_ActiveObject->GetClassID() == FishEngine::Transform::ClassID)
+				return static_cast<FishEngine::Transform*>(s_ActiveObject);
 			return nullptr;
 		}
 		
 		static void SetActiveTransform(FishEngine::Transform* t)
 		{
-			s_activeObject = t;
+			s_ActiveObject = t;
+			OnSelectionChanged();
 		}
 		
-		static boost::signals2::signal<void(void)> selectionChanged;
+		static boost::signals2::signal<void(void)> OnSelectionChanged;
 
 	private:
-		friend class ::HierarchyView;
-		static FishEngine::Object* s_activeObject;
+		//friend class ::HierarchyView;
+		static FishEngine::Object* s_ActiveObject;
 	};
 }

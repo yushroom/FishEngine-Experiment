@@ -10,6 +10,7 @@
 #include "HierarchyView.hpp"
 #include "InspectorView.hpp"
 
+#include <FishEditor/FishEditor.hpp>
 #include <FishEditor/FishEditorInternal.hpp>
 #include <FishEditor/EditorApplication.hpp>
 #include <FishEditor/GameView.hpp>
@@ -193,6 +194,7 @@ try
 	});
 
 	FishGUI::Run();
+	FishEditor::Clean();
 	FishEngine::Clean();
 	return 0;
 }

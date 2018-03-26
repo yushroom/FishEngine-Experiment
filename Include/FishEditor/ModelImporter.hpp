@@ -80,7 +80,8 @@ namespace FishEditor
 	class ModelImporter : public AssetImporter
 	{
 	public:
-		ModelImporter() = default;
+		enum { ClassID = 1040 };
+		ModelImporter(int classID = ClassID) : AssetImporter(classID) { }
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		

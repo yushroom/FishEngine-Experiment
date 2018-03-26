@@ -6,7 +6,7 @@ def GenCPPProperty(type, name):
 
     # print '+++++++++++++'
     # print('')
-    if type in ('int', 'float', 'bool') or type.endswith('*'):
+    if type in ('int', 'float', 'bool', 'uint32_t') or type.endswith('*'):
     # print '==== v1'
         print('{0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name))
         print('void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name))
@@ -83,24 +83,19 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-klass = 'ModelImporter'
+klass = 'AssetImporter'
 s = '''
-// Global scale factor for importing.
-    float m_GlobalScale = 1.0f;
-    
-
-    bool m_UseFileScale = true;
-
-    // File scale factor (if available) or default one. (Read-only).
-    // fileSscale is determined by model file and can not be modified by user.
-//    Meta(NonSerializable)
-    float m_FileScale = 1.0f;
+    std::string m_AssetPath;
+    std::string m_GUID;
+    uint32_t m_AssetTimeStamp;
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]
 pairs = []
 for line in s:
     line = line.strip()
+    if line.endswith(';'):
+      line = line[:-1]
     if line.startswith('//'):
       continue
     t = line.split()

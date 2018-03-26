@@ -1,14 +1,18 @@
 #include "ProjectView.hpp"
 
+#include <iostream>
+
 #include <FishGUI/ModelView/TreeWidget.hpp>
 #include <FishGUI/Icon.hpp>
-#include <FishEditor/FileNode.hpp>
-#include <iostream>
 #include <FishGUI/ModelView/ListWidget.hpp>
 #include <FishGUI/Utils.hpp>
 
 #include <FishEditor/AssetDatabase.hpp>
+#include <FishEditor/AssetImporter.hpp>
 #include <FishEditor/EditorApplication.hpp>
+#include <FishEditor/FileNode.hpp>
+
+#include <FishEditor/Selection.hpp>
 
 using FishEditor::FileNode;
 
@@ -106,8 +110,14 @@ public:
 //        static FishGUI::FontIcon dirIcon{ CodePointToUTF8(dirIconCP, icon), 64.f, "ui" };
 //        static FishGUI::FontIcon fileIcon{ CodePointToUTF8(fileIconCP, icon), 64.f, "ui" };
 //        return item->isDir ? &dirIcon : &fileIcon;
+
+		// TODO: delete
+#ifdef _WIN32
+		std::string icons_root = R"(D:\program\FishEngine-Experiment\Assets\Textures\Icons\)";
+#else
 		std::string icons_root = "/Users/yushroom/program/FishEngine-Experiment/Assets/Textures/Icons/";
-		static auto folder_icon = FishGUI::ImageIcon::FromFile(icons_root+"Folder@64.png");
+#endif
+		static auto folder_icon = FishGUI::ImageIcon::FromFile(icons_root + "Folder@64.png");
 		static auto default_icon = FishGUI::ImageIcon::FromFile(icons_root+"DefaultAsset@64.png");
 		static auto audioclip_icon = FishGUI::ImageIcon::FromFile(icons_root+"AudioClip@64.png");
 		static auto font_icon = FishGUI::ImageIcon::FromFile(icons_root+"Font@64.png");
@@ -145,7 +155,7 @@ public:
     explicit FileListWidget(const char* name) : Super(name)
     {
         m_model = new FileListModel();
-        m_selectionModel.selectionChanged.connect([](FileNode* selected) {
+        m_selectionModel.OnSelectionChanged.connect([](FileNode* selected) {
             if (selected != nullptr)
                 std::cout << selected->path << std::endl;
         });
@@ -158,8 +168,9 @@ class UnityFileWidget : public FishGUI::Widget
 public:
     explicit UnityFileWidget(const char* name) : Widget(name), m_listWidget("")
     {
-        m_listWidget.GetSelectionModel()->selectionChanged.connect([this](FileNode* selected) {
-            m_selectedFile = selected;
+        m_listWidget.GetSelectionModel()->OnSelectionChanged.connect([this](FileNode* selected) {
+			this->m_selectedFile = selected;
+			this->OnSelectedFileChanged(selected);
         });
     }
 
@@ -179,6 +190,8 @@ public:
     }
 
     FileListWidget * GetFileListWidget() { return &m_listWidget; }
+
+	boost::signals2::signal<void(FileNode*)> OnSelectedFileChanged;
 
 protected:
     FileListWidget m_listWidget;
@@ -201,7 +214,7 @@ ProjectView::ProjectView() : Widget("Project")
 	m_DirTree->SetMinSize(100, 100);
 	m_FileList->SetWidth(400);
 	m_FileList->SetMinSize(200, 100);
-	m_DirTree->GetSelectionModel()->selectionChanged.connect([this](FileNode* node) {
+	m_DirTree->GetSelectionModel()->OnSelectionChanged.connect([this](FileNode* node) {
 		if (node != nullptr)
 			this->m_FileList->GetFileListWidget()->SetRoot(node);
 	});
@@ -213,4 +226,20 @@ ProjectView::ProjectView() : Widget("Project")
 	FishEditor::EditorApplication::GetInstance().OnProjectOpened.connect([this](){
 		this->UpdateRoot();
     });
+
+	m_FileList->OnSelectedFileChanged.connect([](FileNode* node) {
+		if (node != nullptr)
+		{
+			if (!node->guid.empty())
+			{
+				//auto path = FishEditor::AssetDatabase::GUIDToAssetPath(node->guid);
+				auto importer = FishEditor::AssetImporter::GetByGUID(node->guid);
+				FishEditor::Selection::SetActiveObject(importer);
+			}
+		}
+		else
+		{
+			FishEditor::Selection::SetActiveObject(nullptr);
+		}
+	});
 }

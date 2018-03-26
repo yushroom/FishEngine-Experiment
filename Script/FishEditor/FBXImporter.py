@@ -21,7 +21,7 @@ class FBXImporter(Object):
         meta = meta['ModelImporter']
         l = meta['fileIDToRecycleName']
         self.fileIDToRecycleName = l
-        serializedVersion = meta['serializedVersion']
+        # serializedVersion = meta['serializedVersion']
         meshes = meta['meshes']
         self.globalScale = meta['meshes']['globalScale']
         if 'useFileScale' in meshes:
@@ -29,11 +29,12 @@ class FBXImporter(Object):
         else:
             self.useFileScale = False
 
-        self.m_CachedPtr.Import(path)
+        self.cpp.Import(path)
+        FishEditorInternal.AssetImporter.AddImporter(self.cpp, self.guid)
 
     def GetMeshByFileID(self, fileID:int)->Mesh:
         # print(fileID)
-        m = self.m_CachedPtr.GetObjectByFileID(fileID)
+        m = self.cpp.GetObjectByFileID(fileID)
         return Mesh.Wrap(m)
 
     @property

@@ -34,10 +34,10 @@ namespace FishEditor
 {
 	struct ModelCollection
 	{
-		FishEngine::Prefab* m_prefab;
+		FishEngine::Prefab* m_prefab = nullptr;
 //		float globalScale;
 //		bool useFileScale;
-		FishEngine::GameObject* m_rootGameObject;
+		FishEngine::GameObject* m_rootGameObject = nullptr;
 //		FishEngine::Avatar*	m_avatar;
 		std::unordered_map<fbxsdk::FbxNode*, FishEngine::Transform*> m_fbxNodeLookup;
 		std::vector<FishEngine::Mesh*> m_meshes;
@@ -46,17 +46,18 @@ namespace FishEditor
 		std::map<std::string, FishEngine::GameObject*> m_gameObjects;
 	};
 	
-	class FBXImporter : public ModelImporter
+	class FBXImporter final : public ModelImporter
 	{
 	public:
-		
+		enum { ClassID = 1041 };
+		FBXImporter() : ModelImporter(ClassID) { }
 		~FBXImporter();
 		
-		// for python
-		static FBXImporter* Create()
-		{
-			return new FBXImporter();
-		}
+		//// for python
+		//static FBXImporter* Create()
+		//{
+		//	return new FBXImporter();
+		//}
 		
 		void Import(const std::string& path);
 

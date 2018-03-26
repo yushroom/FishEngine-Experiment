@@ -19,6 +19,24 @@ using namespace FishEditor;
 #include <FishEngine/Component/SphereCollider.hpp>
 #include <FishEngine/Component/Rigidbody.hpp>
 
+#include <FishEditor/AssetImporter.hpp>
+#include <FishEditor/FBXImporter.hpp>
+
+
+template<class T, class Getter>
+void Bool(const char* label, T* o, Getter getter)
+{
+	bool v = (o->*getter)();
+	FishGUI::CheckBox(label, v);
+}
+
+
+template<class T, class Getter>
+void String(const char* label, T* o, Getter getter)
+{
+	std::string v = (o->*getter)();
+	FishGUI::InputText(label, v);
+}
 
 template<class T, class Getter>
 void Float(const char* label, T* o, Getter getter)
@@ -295,15 +313,40 @@ void Dispatch(Component* c)
 	}
 }
 
+
+
+void Dispatch2(AssetImporter* i)
+{
+	String("GUID", i, &AssetImporter::GetGUID);
+	//Int("GUID", i, &AssetImporter::GetGUID);
+	if (i->GetClassID() == FishEditor::FBXImporter::ClassID)
+	{
+		FBXImporter* o = (FBXImporter*)i;
+		Float("Scale Factor", o, &ModelImporter::GetGlobalScale);
+		Bool("Use File Scale", o, &ModelImporter::GetUseFileScale);
+		Float("File Scale", o, &ModelImporter::GetFileScale);
+	}
+}
+
 void InspectorView::DrawImpl()
 {
 	auto t = Selection::GetActiveTransform();
-	if (t == nullptr)
-		return;
-
-	for (auto c : t->GetGameObject()->GetAllComponents())
+	if (t != nullptr)
 	{
-		Dispatch(c);
+		for (auto c : t->GetGameObject()->GetAllComponents())
+		{
+			Dispatch(c);
+		}
+		FishGUI::Button("Add Component");
+		return;
 	}
-	FishGUI::Button("Add Component");
+
+	auto o = Selection::GetActiveObject();
+	if (o != nullptr)
+	{
+		if (o->Is<AssetImporter>())
+		{
+			Dispatch2((AssetImporter*)o);
+		}
+	}
 }

@@ -58,6 +58,11 @@ namespace FishEngine
 		uint64_t GetLocalIdentifierInFile() const { return m_LocalIdentifierInFile; }
 		void SetLocalIdentifierInFile(uint64_t value) { m_LocalIdentifierInFile = value; }
 
+		template<class T>
+		bool Is()
+		{
+			return dynamic_cast<T*>(this) != nullptr;
+		}
 		
 	public:
 		static int GetInstanceCounter()

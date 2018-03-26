@@ -50,7 +50,7 @@ HierarchyView::HierarchyView(const char* name) : Super(name)
 	m_model = new HierarchyModel();
 	m_imContext->ymargin = 0;
 
-	m_selectionModel.selectionChanged.connect([this](FishEngine::Transform* selected) {
+	m_selectionModel.OnSelectionChanged.connect([this](FishEngine::Transform* selected) {
 		this->OnSelectionChanged();
 	});
 }
@@ -61,10 +61,10 @@ void HierarchyView::OnSelectionChanged()
 {
 	if (m_selectionModel.SelectedItems().empty())
 	{
-		FishEditor::Selection::s_activeObject = nullptr;
+		FishEditor::Selection::SetActiveObject(nullptr);
 	}
 	else
 	{
-		FishEditor::Selection::s_activeObject = m_selectionModel.SelectedItem();
+		FishEditor::Selection::SetActiveObject(m_selectionModel.SelectedItem());
 	}
 }

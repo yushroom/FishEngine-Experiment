@@ -13,50 +13,25 @@ namespace fs = boost::filesystem;
 #endif
 typedef fs::path Path;
 
+
+
 namespace FishEditor
 {
 	struct FileNode
 	{
+		FileNode() = default;
+		FileNode(const FileNode&) = delete;
+		FileNode& operator=(FileNode&) = delete;
+
 		Path 					path;
 		std::string 			fileName;
 		FileNode* 				parent = nullptr;
 		bool 					isDir = false;
 		std::vector<FileNode*> 	subdirs;
 		std::vector<FileNode*> 	files;
+		std::string				guid;
 		
-		FileNode(const Path& rootDir) : path(rootDir)
-		{
-			fileName = path.stem().string();
-			if (!fs::is_directory(path))
-			{
-				return;
-			}
-			
-			fs::directory_iterator end;
-			for (fs::directory_iterator it(path); it != end; ++it)
-			{
-				auto p = it->path();
-				auto fn = p.filename();
-				if (fn.c_str()[0] == '.')		// hidden file
-					continue;
-				if (fn.extension() == ".meta")	// .meta file
-					continue;
-				if (fs::is_directory(p))
-				{
-					auto n = new FileNode(p);
-					subdirs.push_back(n);
-					n->parent = this;
-					n->isDir = true;
-				}
-				else
-				{
-					auto n = new FileNode(p);
-					files.push_back(n);
-					n->parent = this;
-					n->isDir = false;
-				}
-			}
-		}
+		FileNode(const Path& rootDir);
 		
 		// FileNode* Find(const Path& p)
 		// {
