@@ -22,14 +22,21 @@ namespace FishEditor
 			//auto modified_time = fs::last_write_time(meta_file);
 			std::fstream fin(meta_file.string());
 			auto nodes = YAML::LoadAll(fin);
-			auto&& node = nodes.front();
-			auto timeCreated = node["timeCreated"].as<uint32_t>();
-			auto guid = node["guid"].as<std::string>();
+			auto&& meta = nodes.front();
+			auto timeCreated = meta["timeCreated"].as<uint32_t>();
+			auto guid = meta["guid"].as<std::string>();
 
 			AssetImporter* importer = nullptr;
 			if (ext == ".fbx")
 			{
-				importer = new FBXImporter();
+				auto fbximporter = new FBXImporter();
+				auto node = meta["ModelImporter"];
+				auto meshes = node["meshes"];
+				int globalScale = meshes["globalScale"].as<float>();
+				bool useFileScale = meshes["useFileScale"].as<int>() == 1;
+				fbximporter->SetGlobalScale(globalScale);
+				fbximporter->SetUseFileScale(useFileScale);
+				importer = fbximporter;
 			}
 			else
 			{

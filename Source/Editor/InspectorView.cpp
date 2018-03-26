@@ -321,10 +321,12 @@ void Dispatch2(AssetImporter* i)
 	//Int("GUID", i, &AssetImporter::GetGUID);
 	if (i->GetClassID() == FishEditor::FBXImporter::ClassID)
 	{
+		FishGUI::Group("ModelImporter");
 		FBXImporter* o = (FBXImporter*)i;
 		Float("Scale Factor", o, &ModelImporter::GetGlobalScale);
 		Bool("Use File Scale", o, &ModelImporter::GetUseFileScale);
 		Float("File Scale", o, &ModelImporter::GetFileScale);
+		FishGUI::EndGroup();
 	}
 }
 

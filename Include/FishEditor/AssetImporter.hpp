@@ -5,10 +5,17 @@
 
 namespace FishEditor
 {
+	class AssetMetaData
+	{
+	public:
+		enum { ClassID = 1028 };
+
+	};
+
 	class AssetImporter : public FishEngine::Object
 	{
 	public:
-		enum {ClassID = 1003 };
+		enum { ClassID = 1003 };
 		AssetImporter(int classID = ClassID) : Object(classID) { }
 		virtual ~AssetImporter() = default;
 
