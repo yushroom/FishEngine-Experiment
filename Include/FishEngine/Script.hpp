@@ -32,6 +32,19 @@ namespace FishEngine
 		Func(OnEnable);
 
 		virtual Script* Clone() const override;
+
+		void SetPyObject(const pybind11::object& obj)
+		{
+			m_PyObject = obj;
+		}
+
+		const pybind11::object& GetPyObject() const
+		{
+			return m_PyObject;
+		}
+
+	protected:
+		pybind11::object	m_PyObject = pybind11::none();
 	};
 }
 

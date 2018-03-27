@@ -3,16 +3,7 @@ import FishEngineInternal
 from typing import Type, List, Set
 import sys
 
-class Component(Object):
-    __slots__ = ('__gameObject')
-    def __init__(self):
-        super().__init__()
-        # self.__tag = ""
-
-    # def __del__(self):
-    #     print('Component.__del__')
-    #     # self.m_gameObject = None
-
+class __Component:
     @property
     def gameObject(self)->"GameObject":
         # cppGO = self.cpp.GetGameObject()
@@ -58,3 +49,15 @@ class Component(Object):
         wrap = getattr(sys.modules['FishEngine'], name)()
         wrap.m_CachedPtr = cppComp
         cppComp.SetPyObject(wrap)
+
+def Component__new__(cls):
+    return FishEngineInternal.CreateComponent()
+
+def Component__init__(self):
+    pass
+
+Component = FishEngineInternal.Component
+Component.__new__ = Component__new__
+Component.__init__ = Component__init__
+# Component.ClassID = FishEngineInternal.ComponentClassID()
+Component.gameObject = __Component.gameObject

@@ -1,5 +1,5 @@
 import FishEngineInternal
-from FishEngine import SceneManager, Material, Mesh, Vector3, Quaternion
+from FishEngine import SceneManager, Material, MeshManager, Vector3, Quaternion
 from timing import timing
 import demo1, demo2
 from collections import OrderedDict
@@ -31,10 +31,8 @@ def Update():
     pass
     
 def Clean():
-    # SceneManager.GetActiveScene().Clean()
-    # SceneManager.StaticClean()
-    Material.StaticClean()
-    Mesh.StaticClean()
+    # Material.StaticClean()
+    MeshManager.StaticClean()
     AssetDataBase.StaticClean()
     
 def Reload():

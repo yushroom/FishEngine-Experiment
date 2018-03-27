@@ -14,10 +14,10 @@ class PrimitiveType(Enum):
     Plane = auto()
     Quad = auto()
 
-class GameObject(Object):
+class __GameObject(Object):
 
-    __slots__ = ('__transform', 'm_PrefabInternal')
-    ClassID = FishEngineInternal.GameObject.ClassID
+    # __slots__ = ('m_PrefabInternal')
+    # ClassID = FishEngineInternal.GameObject.ClassID
 
     # CreateWithTransform
     def __init__(self, name='GameObject', *, cppObject=None):
@@ -29,7 +29,6 @@ class GameObject(Object):
         else:
             assert(isinstance(cppObject, FishEngineInternal.GameObject))
             self.m_CachedPtr = cppObject
-        self.__transform = Transform(self.m_CachedPtr.GetTransform())   # cache
         self.m_PrefabInternal:Prefab = None
         self.m_CachedPtr.SetPyObject(self)
 
@@ -56,7 +55,7 @@ class GameObject(Object):
 
     @property
     def transform(self)->'Transform':
-        return self.__transform
+        return self.GetTransform()
         # return self.m_CachedPtr.GetTransform().GetPyObject()
 
     @property
@@ -68,7 +67,7 @@ class GameObject(Object):
         '''The local active state of this GameObject. (Read Only) \n
         This returns the local active state of this GameObject, which is set using GameObject.SetActive. Note that a GameObject may be inactive because a parent is not active, even if this returns true. This state will then be used once all parents are active. Use GameObject.activeInHierarchy if you want to check if the GameObject is actually treated as active in the scene.
         '''
-        return self.cpp.IsActive()
+        return self.IsActive()
     
     @property
     def activeInHierarchy(self) -> bool:
@@ -88,7 +87,7 @@ class GameObject(Object):
 
     @property
     def components(self):
-        return [c.GetPyObject() for c in FishEngineInternal.GameObject_GetAllComponents(self.cpp)]
+        return FishEngineInternal.GameObject_GetAllComponents(self)
 
     def GetComponent(self, type):
         from . import Component
@@ -97,6 +96,9 @@ class GameObject(Object):
 
     def AddComponent(self, component:'Component')->'Component':
         from . import Component
+        if isinstance(component, FishEngineInternal.Component):
+            self.m_CachedPtr.AddComponent(component)
+            return component
         assert(isinstance(component, Component))
         self.m_CachedPtr.AddComponent(component.m_CachedPtr)
         return component
@@ -144,3 +146,20 @@ class GameObject(Object):
         for child in cloned.transform.children:
             pass
         return cloned
+
+
+def GameObject__new__(cls, name):
+    return FishEngineInternal.CreateGameObject()
+
+def GameObject__init__(self, name="GameObject"):
+    self.name = name
+
+GameObject = FishEngineInternal.GameObject
+GameObject.__new__ = GameObject__new__
+GameObject.__init__ = GameObject__init__
+GameObject.ClassID = FishEngineInternal.GameObjectClassID()
+# GameObject.transform = __GameObject.transform
+GameObject.Serialize = __GameObject.Serialize
+GameObject.Deserialize = __GameObject.Deserialize
+GameObject.components = __GameObject.components
+GameObject.activeSelf = __GameObject.activeSelf

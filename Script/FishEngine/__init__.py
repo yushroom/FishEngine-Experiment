@@ -28,7 +28,7 @@ from .Screen import Screen
 from .Camera import Camera
 from .Light import Light
 
-from .Mesh import Mesh
+from .Mesh import Mesh, MeshManager
 from .MeshFilter import MeshFilter
 from .Shader import Shader
 from .Material import Material

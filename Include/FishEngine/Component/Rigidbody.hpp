@@ -20,6 +20,11 @@ namespace FishEngine
 
 		}
 
+		~Rigidbody()
+		{
+
+		}
+
 		void Start();
 		void Update();
 		void OnDestroy();
@@ -48,7 +53,6 @@ namespace FishEngine
 		void SetIsKinematic(bool value) { m_IsKinematic = value; }
 		
 	private:
-		friend class Rigidbody;
 		float m_Mass = 2;
 		float m_Drag = 0;
 		float m_AngularDrag = 0.05f;

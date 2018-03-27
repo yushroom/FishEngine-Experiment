@@ -164,7 +164,7 @@ namespace FishEngine
 		return cloned;
 	}
 	
-	void Transform::SetSiblingIndex(float index)
+	void Transform::SetSiblingIndex(int index)
 	{
 		auto parent = GetParent();
 		auto & children = parent != nullptr ?

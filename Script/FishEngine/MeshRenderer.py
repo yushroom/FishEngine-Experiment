@@ -1,27 +1,19 @@
 from . import Component, Material
 import FishEngineInternal
 
-# MeshFilter = FishEngineInternal.MeshFilter
-
-class MeshRenderer(Component):
-    __slots__ = ('__material')
-    ClassID = FishEngineInternal.MeshRendererClassID()
-    def __init__(self):
-        super().__init__()
-        self.m_CachedPtr = FishEngineInternal.CreateMeshRenderer()
-        self.__material:Material = None
-        self.m_CachedPtr.SetPyObject(self)
-
-    @property
-    def material(self)->Material:
-        # return self.m_CachedPtr.material
-        return self.__material
-    @material.setter
-    def material(self, value:Material):
-        self.__material = value
-        self.cpp.SetMaterial( value.cpp )
-
-
+class __MeshRenderer:
     def Serialize(self, dumper):
         super().Serialize(dumper)
         dumper.d('m_Materials', [])
+
+
+def MeshRenderer__new__(cls):
+    return FishEngineInternal.CreateMeshRenderer()
+
+def MeshRenderer__init__(self):
+    pass
+
+MeshRenderer = FishEngineInternal.MeshRenderer
+MeshRenderer.__new__ = MeshRenderer__new__
+MeshRenderer.__init__ = MeshRenderer__init__
+MeshRenderer.ClassID = FishEngineInternal.MeshRendererClassID()

@@ -6,7 +6,7 @@
 #include "FishEngine.hpp"
 #include "HideFlags.hpp"
 
-#include <pybind11/pybind11.h>
+//#include <pybind11/pybind11.h>
 //#include <functional>	// hash
 
 namespace FishEngine
@@ -42,15 +42,15 @@ namespace FishEngine
 			return m_ClassID;
 		}
 		
-		void SetPyObject(const pybind11::object& obj)
-		{
-			m_PyObject = obj;
-		}
-		
-		const pybind11::object& GetPyObject() const
-		{
-			return m_PyObject;
-		}
+		//void SetPyObject(const pybind11::object& obj)
+		//{
+		//	m_PyObject = obj;
+		//}
+		//
+		//const pybind11::object& GetPyObject() const
+		//{
+		//	return m_PyObject;
+		//}
 
 		HideFlags GetHideFlags() const { return m_ObjectHideFlags; }
 		void SetHideFlags(HideFlags flags) { m_ObjectHideFlags = flags; }
@@ -104,7 +104,7 @@ namespace FishEngine
 		
 	protected:
 		std::string			m_Name;
-		pybind11::object	m_PyObject = pybind11::none();
+		//pybind11::object	m_PyObject = pybind11::none();
 		HideFlags			m_ObjectHideFlags = HideFlags::None;
 
 	private:

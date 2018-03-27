@@ -1,9 +1,7 @@
 # from . import AssetImporter
 
 from . import FBXImporter, AssetDataBase
-from FishEngine import Vector2, Vector3, Quaternion
-from FishEngine import GameObject, Transform, RectTransform, Camera, Light, BoxCollider, SphereCollider, Rigidbody
-from FishEngine import MeshRenderer, MeshFilter, Material, Mesh, Debug, Prefab, Object, SceneManager
+from FishEngine import *
 # from FishEngine.UI import Text
 import FishEngine
 import os
@@ -37,7 +35,7 @@ def MakeComponent(ctype:str, d:int):
         if len(m_Materials) == 0:
             # do not have materials
             print('TODO: m_Materials')
-            comp.material = Material.defaultMaterial()
+            comp.material = Material.GetDefaultMaterial()
             pass
         elif len(m_Materials) > 1:
             print("materials > 1")
@@ -45,7 +43,8 @@ def MakeComponent(ctype:str, d:int):
             # do not have materials
             pass
         else:
-            comp.material = Material.defaultMaterial()
+            # print(help(MeshRenderer))
+            comp.material = Material.GetDefaultMaterial()
     elif ctype == 'MeshFilter':
         comp = MeshFilter()
         mesh_d = d['m_Mesh']
@@ -53,7 +52,7 @@ def MakeComponent(ctype:str, d:int):
             guid = mesh_d['guid']
             if guid == '0000000000000000e000000000000000':
                 id2mesh = {10202:'Cube', 10206:'Cylinder', 10207:'Sphere', 10208:'Capsule', 10209:'Plane', 10210:'Quad'}
-                comp.mesh = Mesh.GetInternalMesh(id2mesh[mesh_d['fileID']])
+                comp.mesh = MeshManager.GetInternalMesh(id2mesh[mesh_d['fileID']])
             else:
                 importer:FBXImporter = AssetDataBase.GUIDToImporter(guid)
                 # nodeName = importer.fileIDToRecycleName[mesh_d['fileID']]
@@ -117,7 +116,7 @@ def MakeGameObject(d:dict, fileID2Dict:dict, fileID2Object:dict)->GameObject:
     go.transform.localRotation = MakeQuat(t['m_LocalRotation'])
     go.transform.localPosition = MakeVec3(t['m_LocalPosition'])
     go.transform.localScale = MakeVec3(t['m_LocalScale'])
-    go.transform.m_RootOrder = t['m_RootOrder']
+    # go.transform.rootOrder = t['m_RootOrder']
     for c in d['m_Component'][1:]:
         cid = list(c.values())[0]['fileID']
         d2 = fileID2Dict[cid]
@@ -313,7 +312,7 @@ class UnitySceneImporter:
             if 'm_GameObject' in d:
                 go:GameObject = fileID2Object[d['m_GameObject']['fileID']]
                 fileID2Object[fileID] = go.transform
-                go.transform.m_RootOrder = d['m_RootOrder']
+                # go.transform.rootOrder = d['m_RootOrder']
             else:
                 # print('------->find transfrom inside a prefab')
                 prefab_fileID = d['m_PrefabInternal']['fileID']
@@ -350,29 +349,29 @@ class UnitySceneImporter:
         for fileID, obj in fileID2Object.items():
             obj.localIdentifierInFile = fileID
 
-        # update rootOrder
-        for d, fileID in transform_d:
-            t:Transform = fileID2Object[fileID]
-            if t.m_RootOrder != t.GetSiblingIndex():
-                # print(t, t.m_RootOrder)
-                children = None
-                if t.parent is None:
-                    gos = SceneManager.GetActiveScene().GetRootGameObjects()
-                    # print(gos)
-                    children = [go.transform for go in gos]
-                else:
-                    print([t.m_RootOrder for t in t.parent.children])
-                    print(sorted(t.parent.children, key=lambda t: t.m_RootOrder))
-                # print('before', [t.m_RootOrder for t in children])
-                children = sorted(children, key=lambda t: t.m_RootOrder)
-                for t in children:
-                    t.SetSiblingIndex(t.m_RootOrder)
+        # # update rootOrder
+        # for d, fileID in transform_d:
+        #     t:Transform = fileID2Object[fileID]
+        #     if t.rootOrder != t.GetSiblingIndex():
+        #         # print(t, t.m_RootOrder)
+        #         children = None
+        #         if t.parent is None:
+        #             gos = SceneManager.GetActiveScene().GetRootGameObjects()
+        #             # print(gos)
+        #             children = [go.transform for go in gos]
+        #         else:
+        #             print([t.m_RootOrder for t in t.parent.children])
+        #             print(sorted(t.parent.children, key=lambda t: t.rootOrder))
+        #         # print('before', [t.m_RootOrder for t in children])
+        #         children = sorted(children, key=lambda t: t.rootOrder)
+        #         for t in children:
+        #             t.SetSiblingIndex(t.rootOrder)
 
-        for d, fileID in transform_d:
-            t:Transform = fileID2Object[fileID]
-            rootOrders = [t.m_RootOrder for t in t.children]
-            assert(rootOrders == sorted(rootOrders))    # TODO
-            # print([t.m_RootOrder for t in t.children])
+        # for d, fileID in transform_d:
+        #     t:Transform = fileID2Object[fileID]
+        #     rootOrders = [t.rootOrder for t in t.children]
+        #     assert(rootOrders == sorted(rootOrders))    # TODO
+        #     # print([t.m_RootOrder for t in t.children])
 
         print("TODO: m_RootOrder")
         # gos = Object.FindObjectsOfType(GameObject)

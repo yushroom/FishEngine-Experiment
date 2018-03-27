@@ -17,13 +17,12 @@ class HideFlags(Enum):
     DontSave = 0x34
     HideAndDontSave = 0x3D
 
-class Object():
 
-    __slots__ = ('__weakref__', 'm_CachedPtr')
+class __Object:
+
+    __slots__ = ('m_CachedPtr')
 
     def __init__(self):
-        # print('Object.__init__', type(self))
-        # self.__hideFlags
         self.m_CachedPtr = None
 
     def GetInstanceID(self):
@@ -46,10 +45,10 @@ class Object():
 
     @property
     def localIdentifierInFile(self)->int:
-        return self.cpp.GetLocalIdentifierInFile()
+        return self.cpp.localIdentifierInFile
     @localIdentifierInFile.setter
     def localIdentifierInFile(self, value:int):
-        self.cpp.SetLocalIdentifierInFile(value)
+        self.cpp.localIdentifierInFile = value
 
     def __str__(self):
         return '{0}({1})'.format(self.name, self.__class__.__name__)
@@ -144,3 +143,19 @@ class Object():
 
     def Deserialize(self, loader):
         pass
+
+
+
+# def Object__new__(cls):
+#     return FishEngineInternal.CreateObject()
+
+# def Object__init__(self):
+#     pass
+
+Object = FishEngineInternal.Object
+# Object.__new__ = Object__new__
+# Object.__init__ = Object__init__
+# Object.ClassID = FishEngineInternal.ObjectClassID()
+Object.Serialize = __Object.Serialize
+Object.Deserialize = __Object.Deserialize
+Object.FindObjectsOfType = __Object.FindObjectsOfType

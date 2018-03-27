@@ -18,8 +18,10 @@ def GenCPPProperty(type, name):
 
 def GenPythonDef(klass, name):
     pretty_name = name[2:]
-    print('.def("Get{1}", &{0}::Get{1})'.format(klass, pretty_name))
-    print('.def("Set{1}", &{0}::Set{1})'.format(klass, pretty_name))
+    # print('.def("Get{1}", &{0}::Get{1})'.format(klass, pretty_name))
+    # print('.def("Set{1}", &{0}::Set{1})'.format(klass, pretty_name))
+    name2 = pretty_name[0].lower() + pretty_name[1:]
+    print('.def_property("{mass}", &{Rigidbody}::Get{Mass}, &{Rigidbody}::Set{Mass})'.format(mass=name2, Mass=pretty_name, Rigidbody=klass))
 
 template3 = '''
         @property
@@ -83,11 +85,14 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-klass = 'AssetImporter'
+klass = 'Transform'
 s = '''
-    std::string m_AssetPath;
-    std::string m_GUID;
-    uint32_t m_AssetTimeStamp;
+    Quaternion m_LocalRotation {0, 0, 0, 1};
+    Vector3 m_LocalPosition {0, 0, 0};
+    Vector3 m_LocalScale {1, 1, 1};
+    Quaternion m_Rotation {0, 0, 0, 1};
+    Vector3 m_Position {0, 0, 0};
+    Vector3 m_Scale {1, 1, 1};
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]
@@ -109,5 +114,5 @@ for type, name in pairs:
 for _, name in pairs:
     GenPythonDef(klass, name)
 
-for type, name in pairs:
-    GenPythonProperty(type, name)
+# for type, name in pairs:
+#     GenPythonProperty(type, name)

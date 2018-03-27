@@ -3,23 +3,19 @@ import FishEngineInternal
 
 # MeshFilter = FishEngineInternal.MeshFilter
 
-class MeshFilter(Component):
-    __slots__ = ('__mesh')
-    ClassID = FishEngineInternal.MeshFilterClassID()
-    def __init__(self):
-        super().__init__()
-        self.__mesh:Mesh = None
-        self.m_CachedPtr = FishEngineInternal.CreateMeshFilter()
-        self.m_CachedPtr.SetPyObject(self)
-
-    @property
-    def mesh(self):
-        return self.__mesh
-    @mesh.setter
-    def mesh(self, value:Mesh):
-        self.__mesh = value
-        self.cpp.SetMesh( value.cpp )
-
+class __MeshFilter:
     def Serialize(self, dumper):
-        super().Serialize(dumper)
-        dumper.d('m_Mesh', self.__mesh)
+        super(MeshFilter, self).Serialize(dumper)
+        dumper.d('m_Mesh', self.mesh)
+
+def MeshFilter__new__(cls):
+    return FishEngineInternal.CreateMeshFilter()
+
+def MeshFilter__init__(self):
+    pass
+
+MeshFilter = FishEngineInternal.MeshFilter
+MeshFilter.__new__ = MeshFilter__new__
+MeshFilter.__init__ = __MeshFilter.__init__
+MeshFilter.ClassID = FishEngineInternal.MeshFilterClassID()
+MeshFilter.Serialize = __MeshFilter.Serialize

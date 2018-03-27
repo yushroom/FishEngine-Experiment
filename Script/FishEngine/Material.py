@@ -64,77 +64,21 @@ void main()
 }
 '''
 
-class Material(Object):
-    __slots__ = ('__shader')
-
-    __defaultMaterial:'Material' = None
-    __errorMaterial:'Material' = None
-
-    def __init__(self):
-        super().__init__()
-        self.m_CachedPtr = FishEngineInternal.Material()
-        self.m_CachedPtr.SetPyObject(self)
-        self.__shader:Shader = None
-
+class __Material:
     @staticmethod
     def CreateMaterial(vs:str, fs:str)->'Material':
         m = Material()
         m.shader = Shader.FromString(vs, fs)
         return m
 
-    # def Clean(self):
-    #     self.__shader.Clean()
+def Material__new__(cls):
+    return FishEngineInternal.CreateMaterial()
 
-    @staticmethod
-    def StaticClean():
-        # del Material.defaultMaterial
-        # del Material.errorMaterial
-        if Material.__defaultMaterial is not None:
-            Material.__defaultMaterial.cpp.SetPyObject(None)
-        if Material.__errorMaterial is not None:
-            Material.__errorMaterial.cpp.SetPyObject(None)
+def Material__init__(self):
+    pass
 
-    @property
-    def shader(self)->Shader:
-        return self.__shader
-    @shader.setter
-    def shader(self, value:Shader):
-        self.__shader = value
-        self.m_CachedPtr.shader = value.m_CachedPtr
-
-    @staticmethod
-    def defaultMaterial()->'Material':
-        # print('defaultMaterial')
-        if Material.__defaultMaterial is None:
-            Material.__defaultMaterial = Material.CreateMaterial(_vs, _fs)
-            Material.__defaultMaterial.name = 'Default-Material'
-        return Material.__defaultMaterial
-    
-    @staticmethod
-    def errorMaterial()->'Material':
-        if Material.__errorMaterial is None:
-            Material.__errorMaterial = Material.CreateMaterial(_vs2, _fs2)
-            Material.__errorMaterial.name = 'Error'
-        return Material.__errorMaterial
-
-
-# Material.defaultMaterial:Material = Material.CreateMaterial(_vs, _fs)
-# Material.errorMaterial:Material = Material.CreateMaterial(_vs2, _fs2)
-
-
-# Material = FishEngineInternal.Material
-
-# class __Material:
-#     @staticmethod
-#     def CreateMaterial(vs:str, fs:str)->'Material':
-#         m = Material()
-#         print(1)
-#         m.shader = Shader.FromString(vs, fs)
-#         print(2)
-#         return m
-
-# print(3)
-# Material.defaultMaterial = __Material.CreateMaterial(_vs, _fs)
-# print(4)
-# Material.errorMaterial = __Material.CreateMaterial(_vs2, _fs2)
-# print(5)
+Material = FishEngineInternal.Material
+Material.__new__ = Material__new__
+Material.__init__ = Material__init__
+# Material.ClassID = FishEngineInternal.MaterialClassID()
+print(Material.GetDefaultMaterial())

@@ -44,12 +44,12 @@ using namespace FishEngine;
 namespace py = pybind11;
 
 
-py::object FindObjectOfType(int classID)
+Object* FindObjectOfType(int classID)
 {
 	auto& objs = Object::FindObjectsOfType(classID);
 	if (objs.size() == 0)
-		return py::none{};
-	return (*objs.begin())->GetPyObject();
+		return nullptr;
+	return *objs.begin();
 }
 
 py::list FindObjectsOfType(int classID)
@@ -58,22 +58,20 @@ py::list FindObjectsOfType(int classID)
 	py::list ret;
 	for (auto o : objs)
 	{
-		auto self = o->GetPyObject();
-		assert(!self.is(py::none()));
-		ret.append(self);
+		ret.append(o);
 	}
 	return ret;
 }
 
-py::object GameObject_GetComopnent(GameObject* go, int classID)
-{
-	assert(go != nullptr);
-	auto c = go->GetComponent(classID);
-	if (c == nullptr)
-		return py::none();
-	else
-		return c->GetPyObject();
-}
+//py::object GameObject_GetComopnent(GameObject* go, int classID)
+//{
+//	assert(go != nullptr);
+//	auto c = go->GetComponent(classID);
+//	if (c == nullptr)
+//		return py::none();
+//	else
+//		return c;
+//}
 
 py::list GameObject_GetAllComponents(GameObject* go)
 {
@@ -91,7 +89,7 @@ void Transform_GetChildren(Transform* t, py::list& outChildren)
 	assert(t != nullptr);
 	for (auto c : t->GetChildren())
 	{
-		outChildren.append(c->GetPyObject());
+		outChildren.append(c);
 	}
 }
 
@@ -99,7 +97,7 @@ void Scene_GetRootGameObjects(Scene* scene, py::list& out)
 {
 	for (auto t : scene->GetRootTransforms())
 	{
-		out.append(t->GetGameObject()->GetPyObject());
+		out.append(t->GetGameObject());
 	}
 }
 
@@ -186,10 +184,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<Object>(m, "Object")
 		.def_property("name", &Object::GetName, &Object::SetName, return_value_policy::copy)
 		.def_property_readonly("instanceID", &Object::GetInstanceID)
-		.def("SetPyObject", &Object::SetPyObject)
-		.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
-		.def("GetLocalIdentifierInFile", &Object::GetLocalIdentifierInFile)
-		.def("SetLocalIdentifierInFile", &Object::SetLocalIdentifierInFile)
+		//.def("SetPyObject", &Object::SetPyObject)
+		//.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
+		.def_property("localIdentifierInFile", &Object::GetLocalIdentifierInFile, &Object::SetLocalIdentifierInFile)
 		;
 
 	m.def("Scene_GetRootGameObjects", Scene_GetRootGameObjects);
@@ -221,17 +218,18 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<GameObject, Object>(m, "GameObject")
 		//.def(init<>())
 		//.def(init<const std::string&>())
-		.def_property_readonly_static("ClassID", [](const py::object&) { return (int)GameObject::ClassID; })
-		.def("GetTransform", &GameObject::GetTransform, return_value_policy::reference)
+		//.def_property_readonly_static("ClassID", [](const py::object&) { return (int)GameObject::ClassID; })
+		.def_property_readonly("transform", &GameObject::GetTransform, return_value_policy::reference)
 		.def("AddComponent", &GameObject::AddComponent)
 		.def("GetScene", &GameObject::GetScene, return_value_policy::reference)
 		.def("IsActive", &GameObject::IsActive)
 		.def("SetActive", &GameObject::SetActive)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
 		.def("Clone", &GameObject::Clone, return_value_policy::reference)
+		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
 	;
 
-	m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
+	//m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
 	m.def("GameObject_GetAllComponents", &GameObject_GetAllComponents);
 
 
@@ -241,31 +239,28 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	//m.def("CreateTransform", []() { return new Transform(); }, return_value_policy::reference);
 
+	m.def("TransformClassID", []() ->int { return Transform::ClassID; });
 	// Transform
 	class_<Transform, Component>(m, "Transform")
-		.def_property_readonly_static("ClassID", [](py::object) { return (int)Transform::ClassID; })
-		.def("localPosition", &Transform::GetLocalPosition)
-		.def("localRotation", &Transform::GetLocalRotation)
-		.def("localEulerAngles", &Transform::GetLocalEulerAngles)
-		.def("localScale", &Transform::GetLocalScale)
-		.def("position", &Transform::GetPosition)
-		.def("rotation", &Transform::GetRotation)
-		.def("eulerAngles", &Transform::GetEulerAngles)
-		.def("SetLocalPosition", py::overload_cast<const Vector3&>(&Transform::SetLocalPosition))
-		.def("SetLocalRotation", &Transform::SetLocalRotation)
-		.def("SetLocalEulerAngles", py::overload_cast<const Vector3&>(&Transform::SetLocalEulerAngles))
-		.def("SetLocalScale", py::overload_cast<const Vector3&>(&Transform::SetLocalScale))
-		.def("SetPosition", py::overload_cast<const Vector3&>(&Transform::SetPosition))
-		.def("SetRotation", &Transform::SetRotation)
+		//.def_property_readonly_static("ClassID", [](py::object) { return (int)Transform::ClassID; })
+		.def_property("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
+		.def_property("localPosition", &Transform::GetLocalPosition, py::overload_cast<const Vector3&>(&Transform::SetLocalPosition))
+		.def_property("localScale", &Transform::GetLocalScale, py::overload_cast<const Vector3&>(&Transform::SetLocalScale))
+		.def_property("localEulerAngles", &Transform::GetLocalEulerAngles, py::overload_cast<const Vector3&>(&Transform::SetLocalEulerAngles))
+		.def_property("rotation", &Transform::GetRotation, &Transform::SetRotation)
+		.def_property("position", &Transform::GetPosition, py::overload_cast<const Vector3&>(&Transform::SetPosition))
+
 		.def("SetEulerAngles", &Transform::SetEulerAngles)
-		.def("GetParent", &Transform::GetParent, return_value_policy::reference)
+		//.def("SetParent", &Transform::SetParent, "worldPositionStays"_a=true)
 		.def("SetParent", &Transform::SetParent)
-		.def_property("m_RootOrder", &Transform::GetRootOrder, &Transform::SetRootOrder)
+		.def_property("parent", &Transform::GetParent, &Transform::SetParent, return_value_policy::reference)
+		.def_property("rootOrder", &Transform::GetRootOrder, &Transform::SetRootOrder)
 		.def("localToWorldMatrix", &Transform::GetLocalToWorldMatrix, return_value_policy::copy)
 		.def("worldToLocalMatrix", &Transform::GetWorldToLocalMatrix)
 		.def("RotateAround", &Transform::RotateAround)
 		.def("GetSiblingIndex", &Transform::GetSiblingIndex)
 		.def("SetSiblingIndex", &Transform::SetSiblingIndex)
+		//.def_property_readonly("children", &Transform::GetChildren);
 	;
 
 	m.def("Transform_GetChildren", &Transform_GetChildren);
@@ -297,19 +292,19 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<Material, Object>(m, "Material")
 		.def(init<>())
 		.def_property("shader", &Material::GetShader, &Material::SetShader, return_value_policy::reference)
-		.def_static("GetErrorMaterial", &Material::GetErrorMaterial, return_value_policy::reference)
+		//.def_property_readonly_static("defaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
+		.def("GetDefaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
+		//.def_property_readonly_static("errorMaterial", &Material::GetErrorMaterial, return_value_policy::reference)
 		;
 
 	DefineFunc(MeshFilter);
 	class_<MeshFilter, Component>(m, "MeshFilter")
-		.def("GetMesh", &MeshFilter::GetMesh)
-		.def("SetMesh", &MeshFilter::SetMesh)
+		.def_property("mesh", &MeshFilter::GetMesh, &MeshFilter::SetMesh)
 	;
 
 	DefineFunc(MeshRenderer);
 	class_<MeshRenderer, Component>(m, "MeshRenderer")
-		.def("GetMaterial", &MeshRenderer::GetMaterial)
-		.def("SetMaterial", &MeshRenderer::SetMaterial)
+		.def_property("material", &MeshRenderer::GetMaterial, &MeshRenderer::SetMaterial)
 	;
 
 	class_<Graphics>(m, "Graphics")
@@ -318,16 +313,11 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	DefineFunc(Camera);
 	class_<Camera, Component>(m, "Camera")
-		.def("GetFarClipPlane", &Camera::GetFarClipPlane)
-		.def("SetFarClipPlane", &Camera::SetFarClipPlane)
-		.def("GetNearClipPlane", &Camera::GetNearClipPlane)
-		.def("SetNearClipPlane", &Camera::SetNearClipPlane)
-		.def("GetFieldOfView", &Camera::GetFieldOfView)
-		.def("SetFieldOfView", &Camera::SetFieldOfView)
-		.def("GetOrthographic", &Camera::GetOrthographic)
-		.def("SetOrthographic", &Camera::SetOrthographic)
-		.def("GetOrthographicSize", &Camera::GetOrthographicSize)
-		.def("SetOrthographicSize", &Camera::SetOrthographicSize)
+		.def_property("farClipPlane", &Camera::GetFarClipPlane, &Camera::SetFarClipPlane)
+		.def_property("nearClipPlane", &Camera::GetNearClipPlane, &Camera::SetNearClipPlane)
+		.def_property("fieldOfView", &Camera::GetFieldOfView, &Camera::SetFieldOfView)
+		.def_property("orthographic", &Camera::GetOrthographic, &Camera::SetOrthographic)
+		.def_property("orthographicSize", &Camera::GetOrthographicSize, &Camera::SetOrthographicSize)
 		.def("GetProjectionMatrix", &Camera::GetProjectionMatrix, return_value_policy::reference)
 		.def("GetWorldToCameraMatrix", &Camera::GetWorldToCameraMatrix)
 		;
@@ -346,32 +336,23 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	DefineFunc(BoxCollider);
 	class_<BoxCollider, Collider>(m, "BoxCollider")
-		.def("GetCenter", &BoxCollider::GetCenter)
-		.def("SetCenter", &BoxCollider::SetCenter)
-		.def("GetSize", &BoxCollider::GetSize)
-		.def("SetSize", &BoxCollider::SetSize)
+		.def_property("center", &BoxCollider::GetCenter, &BoxCollider::SetCenter)
+		.def_property("size", &BoxCollider::GetSize, &BoxCollider::SetSize)
 	;
 
 	DefineFunc(SphereCollider);
 	class_<SphereCollider, Collider>(m, "SphereCollider")
-		.def("GetCenter", &SphereCollider::GetCenter)
-		.def("SetCenter", &SphereCollider::SetCenter)
-		.def("GetRadius", &SphereCollider::GetRadius)
-		.def("SetRadius", &SphereCollider::SetRadius)
+		.def_property("center", &SphereCollider::GetCenter, &SphereCollider::SetCenter)
+		.def_property("radius", &SphereCollider::GetRadius, &SphereCollider::SetRadius)
 		;
 
 	DefineFunc(Rigidbody);
 	class_<Rigidbody, Component>(m, "Rigidbody")
-		.def("GetMass", &Rigidbody::GetMass)
-		.def("SetMass", &Rigidbody::SetMass)
-		.def("GetDrag", &Rigidbody::GetDrag)
-		.def("SetDrag", &Rigidbody::SetDrag)
-		.def("GetAngularDrag", &Rigidbody::GetAngularDrag)
-		.def("SetAngularDrag", &Rigidbody::SetAngularDrag)
-		.def("GetUseGravity", &Rigidbody::GetUseGravity)
-		.def("SetUseGravity", &Rigidbody::SetUseGravity)
-		.def("GetIsKinematic", &Rigidbody::GetIsKinematic)
-		.def("SetIsKinematic", &Rigidbody::SetIsKinematic)
+		.def_property("mass", &Rigidbody::GetMass, &Rigidbody::SetMass)
+		.def_property("drag", &Rigidbody::GetDrag, &Rigidbody::SetDrag)
+		.def_property("angularDrag", &Rigidbody::GetAngularDrag, &Rigidbody::SetAngularDrag)
+		.def_property("useGravity", &Rigidbody::GetUseGravity, &Rigidbody::SetUseGravity)
+		.def_property("isKinematic", &Rigidbody::GetIsKinematic, &Rigidbody::SetIsKinematic)
 	;
 }
 

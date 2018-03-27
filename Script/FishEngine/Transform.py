@@ -17,10 +17,7 @@ class Space(Enum):
     World = auto()
     Self = auto()
 
-class Transform(Component):
-    __slots__ = ('m_RootOrder')
-    ClassID = FishEngineInternal.Transform.ClassID
-
+class __Transform:
     # DO NOT USE IT directly !!!
     def __init__(self, cppObj: FishEngineInternal.Transform = None):
         super().__init__()
@@ -43,8 +40,7 @@ class Transform(Component):
 
     @property
     def parent(self):
-        p = self.m_CachedPtr.GetParent()
-        return None if p is None else p.GetPyObject()
+        p = self.GetParent()
     @parent.setter
     def parent(self, parent: 'Transform'):
         # parent: Transform or None
@@ -57,57 +53,8 @@ class Transform(Component):
     @property
     def children(self):
         ret = []
-        FishEngineInternal.Transform_GetChildren(self.cpp, ret)
+        FishEngineInternal.Transform_GetChildren(self, ret)
         return ret
-
-    @property
-    def localPosition(self) -> Vector3:
-        return self.m_CachedPtr.localPosition()
-    @localPosition.setter
-    def localPosition(self, pos: Vector3):
-        self.m_CachedPtr.SetLocalPosition(pos)
-
-    @property
-    def localRotation(self) -> Quaternion:
-        return self.m_CachedPtr.localRotation()
-    @localRotation.setter
-    def localRotation(self, value: Quaternion):
-        self.m_CachedPtr.SetLocalRotation(value)
-
-    @property
-    def localEulerAngles(self) -> Vector3:
-        return self.m_CachedPtr.localEulerAngles()
-    @localEulerAngles.setter
-    def localEulerAngles(self, euler: Vector3):
-        self.m_CachedPtr.SetLocalEulerAngles(euler)
-
-    @property
-    def localScale(self) -> Vector3:
-        return self.m_CachedPtr.localScale()
-    @localScale.setter
-    def localScale(self, scale: Vector3):
-        self.m_CachedPtr.SetLocalScale(scale)
-
-    @property
-    def position(self) -> Vector3:
-        return self.m_CachedPtr.position()
-    @position.setter
-    def position(self, pos: Vector3):
-        self.m_CachedPtr.SetPosition(pos)
-
-    @property
-    def rotation(self) -> Quaternion:
-        return self.m_CachedPtr.rotation()
-    @rotation.setter
-    def rotation(self, rotation: Quaternion):
-        self.m_CachedPtr.SetRotation(rotation)
-
-    @property
-    def eulerAngles(self) -> Vector3:
-        return self.m_CachedPtr.eulerAngles()
-    @eulerAngles.setter
-    def eulerAngles(self, euler: Vector3):
-        self.m_CachedPtr.SetEulerAngles(euler)
 
     @property
     def right(self)->Vector3:
@@ -226,3 +173,18 @@ class Transform(Component):
         dumper.d('m_Children', self.children)
         dumper.d('m_Father', self.parent)
         dumper.d('m_RootOrder', self.GetSiblingIndex())
+
+
+def Transform__new__(cls):
+    return FishEngineInternal.CreateTransform()
+
+def Transform__init__(self):
+    pass
+
+Transform = FishEngineInternal.Transform
+Transform.__new__ = Transform__new__
+Transform.__init__ = Transform__init__
+Transform.ClassID = FishEngineInternal.TransformClassID()
+# Transform.parent = __Transform.parent
+Transform.children = __Transform.children
+Transform.Serialize = __Transform.Serialize

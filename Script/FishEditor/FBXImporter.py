@@ -5,13 +5,17 @@ import FishEditorInternal
 from FishEngine import Object, Mesh, GameObject
 import yaml
 
-class FBXImporter(Object):
-    __slots__ = ('guid', 'fileIDToRecycleName')
+class FBXImporter:
+    __slots__ = ('m_CachedPtr', 'guid', 'fileIDToRecycleName')
     def __init__(self):
         super().__init__()
         self.m_CachedPtr = FishEditorInternal.FBXImporter()
         self.guid:int = None
         self.fileIDToRecycleName = None
+
+    @property
+    def cpp(self):
+        return self.m_CachedPtr
 
     def Import(self, path:str):
         with open(path+'.meta') as f:
@@ -62,6 +66,6 @@ class FBXImporter(Object):
     def CreateNew(self):
         root = self.cpp.GetRootGameObject()
         newRoot = root.Clone()
-        go = GameObject("", cppObject=newRoot)
-        return go
+        # go = GameObject("", cppObject=newRoot)
+        return newRoot
         

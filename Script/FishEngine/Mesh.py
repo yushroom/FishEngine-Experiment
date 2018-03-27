@@ -19,39 +19,36 @@ import platform
 
 from . import Object
 
-class Mesh(Object):
-    __slots__ = ()
-    wrappedMesh = {} # instanceID -> Mesh
-    def __init__(self):
-        super().__init__()
+class MeshManager:
+    # __slots__ = ()
 
-    #internal use only
-    @staticmethod
-    def Wrap(mesh:FishEngineInternal.Mesh)->'Mesh':
-        id = mesh.instanceID
-        if id not in Mesh.wrappedMesh:
-            m = Mesh()
-            m.m_CachedPtr = mesh
-            Mesh.wrappedMesh[id] = m
-            return m
-        return Mesh.wrappedMesh[id]
+    # #internal use only
+    # @staticmethod
+    # def Wrap(mesh:FishEngineInternal.Mesh)->'Mesh':
+    #     id = mesh.instanceID
+    #     if id not in Mesh.wrappedMesh:
+    #         m = Mesh()
+    #         m.m_CachedPtr = mesh
+    #         Mesh.wrappedMesh[id] = m
+    #         return m
+    #     return Mesh.wrappedMesh[id]
 
     @staticmethod
     def StaticClean():
         # del Mesh.wrappedMesh
-        Mesh.wrappedMesh = {}
+        MeshManager.wrappedMesh = {}
         for n in ('Sphere', 'Cube', 'Capsule', 'Cylinder', 'Plane', 'Quad'):
-            if hasattr(Mesh, n):
-                delattr(Mesh, n)
+            if hasattr(MeshManager, n):
+                delattr(MeshManager, n)
 
     @staticmethod
     def GetInternalMesh(name:str):
         # print(Mesh.__dict__)
-        if not hasattr(Mesh, name):
-            mesh = Mesh.__MeshFromTextFile(name)
+        if not hasattr(MeshManager, name):
+            mesh = MeshManager.__MeshFromTextFile(name)
             mesh.name = name
-            setattr(Mesh, name, mesh)
-        return getattr(Mesh, name)
+            setattr(MeshManager, name, mesh)
+        return getattr(MeshManager, name)
 
     @staticmethod
     def __MeshFromTextFile(n)->'Mesh':
@@ -61,8 +58,16 @@ class Mesh(Object):
         else:
             q = r'/Users/yushroom/program/FishEngine-Experiment/Assets/Models/{}.txt'
         with open(q.format(n), 'r') as f:
-            m = Mesh()
-            mm = FishEngineInternal.Mesh.FromTextFile(f.read())
-            m.m_CachedPtr = mm
-            Mesh.wrappedMesh[mm.instanceID] = m
+            m = FishEngineInternal.Mesh.FromTextFile(f.read())
         return m
+
+def Mesh__new__(cls):
+    return FishEngineInternal.CreateMesh()
+
+def Mesh__init__(self):
+    pass
+
+Mesh = FishEngineInternal.Mesh
+Mesh.__new__ = Mesh__new__
+Mesh.__init__ = Mesh__init__
+# Mesh.ClassID = FishEngineInternal.MeshClassID()
