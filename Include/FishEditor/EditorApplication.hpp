@@ -50,6 +50,6 @@ namespace FishEditor
 		FishEngine::Scene * m_currentScene = nullptr;	// scene in editor
 		
 		std::string m_ApplicationPath;
-		FileNode* m_AssetRootDir = nullptr;
+//		FileNode* m_AssetRootDir = nullptr;
 	};
 }

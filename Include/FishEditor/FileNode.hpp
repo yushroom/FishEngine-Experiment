@@ -17,8 +17,9 @@ typedef fs::path Path;
 
 namespace FishEditor
 {
-	struct FileNode
+	class FileNode
 	{
+	public:
 		FileNode() = default;
 		FileNode(const FileNode&) = delete;
 		FileNode& operator=(FileNode&) = delete;
