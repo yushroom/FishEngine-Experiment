@@ -6,6 +6,8 @@
 #include "GameObject.hpp"
 #include "Transform.hpp"
 
+#include <cassert>
+
 namespace FishEngine
 {
 //	class GameObject;

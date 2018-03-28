@@ -96,11 +96,8 @@ class __GameObject(Object):
 
     def AddComponent(self, component:'Component')->'Component':
         from . import Component
-        if isinstance(component, FishEngineInternal.Component):
-            self.m_CachedPtr.AddComponent(component)
-            return component
         assert(isinstance(component, Component))
-        self.m_CachedPtr.AddComponent(component.m_CachedPtr)
+        self.AddComponent_internal(component)
         return component
 
     # ret GameObject
@@ -108,12 +105,12 @@ class __GameObject(Object):
     # @returns(GameObject)
     @staticmethod
     def CreatePrimitive(type: PrimitiveType)->'GameObject':
-        from . import MeshFilter, Mesh, MeshRenderer, Material
+        from . import MeshFilter, MeshManager, MeshRenderer, Material
         go = GameObject(type.name)
         mf = go.AddComponent(MeshFilter())
-        mf.mesh = Mesh.GetInternalMesh(type.name)
+        mf.mesh = MeshManager.GetInternalMesh(type.name)
         mr = go.AddComponent(MeshRenderer())
-        mr.material = Material.defaultMaterial()
+        mr.material = Material.GetDefaultMaterial()
         return go
 
     @staticmethod
@@ -163,3 +160,6 @@ GameObject.Serialize = __GameObject.Serialize
 GameObject.Deserialize = __GameObject.Deserialize
 GameObject.components = __GameObject.components
 GameObject.activeSelf = __GameObject.activeSelf
+GameObject.CreatePrimitive = __GameObject.CreatePrimitive
+GameObject.AddComponent_internal = GameObject.AddComponent
+GameObject.AddComponent = __GameObject.AddComponent

@@ -5,14 +5,14 @@ from collections import defaultdict
 
 from typing import List
 
-class Script(Component):
+class Script(FishEngineInternal.Script):
     # __slots__ = ()
-    __scripts = defaultdict(weakref.WeakSet)
+    __scripts = defaultdict(set)
     ClassID = FishEngineInternal.ScriptClassID()
     def __init__(self):
         super().__init__()
-        self.m_CachedPtr = FishEngineInternal.CreateScript()
-        self.m_CachedPtr.SetPyObject(self)
+        # self.m_CachedPtr = FishEngineInternal.CreateScript()
+        self.SetPyObject(self)
         Script.__scripts[type(self)].add(self)
 
     def Awake(self):
@@ -72,3 +72,16 @@ class Script(Component):
         # super(script)
         for attr in self.GetVisiableAttributes():
             setattr(self, attr, loader[attr])
+
+    @staticmethod
+    def StaticClean():
+        print(Script.__scripts)
+        Script.__scripts.clear()
+        print(Script.__scripts)
+
+# def Script__init__(self):
+#     # super(FishEngineInternal.Script, self).__init__()
+#     self.SetPyObject(self)
+
+# Script = FishEngineInternal.Script
+# Script.__init__ = Script__init__

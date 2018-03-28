@@ -4,6 +4,7 @@ import FishEngineInternal
 
 class __BoxCollider:
     def Serialize(self, dumper):
+        super(BoxCollider, self).Serialize(dumper)
         dumper.d('m_Size', self.size)
         dumper.d('m_Center', self.center)
 
@@ -21,5 +22,5 @@ BoxCollider = FishEngineInternal.BoxCollider
 BoxCollider.__new__ = BoxCollider__new__
 BoxCollider.__init__ = BoxCollider__init__
 BoxCollider.ClassID = FishEngineInternal.BoxColliderClassID()
-BoxCollider.Serialize = BoxCollider.Serialize
-BoxCollider.Deserialize = BoxCollider.Deserialize
+BoxCollider.Serialize = __BoxCollider.Serialize
+BoxCollider.Deserialize = __BoxCollider.Deserialize

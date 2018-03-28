@@ -3,7 +3,7 @@ import FishEngineInternal
 
 class __MeshRenderer:
     def Serialize(self, dumper):
-        super().Serialize(dumper)
+        super(MeshRenderer, self).Serialize(dumper)
         dumper.d('m_Materials', [])
 
 
@@ -17,3 +17,4 @@ MeshRenderer = FishEngineInternal.MeshRenderer
 MeshRenderer.__new__ = MeshRenderer__new__
 MeshRenderer.__init__ = MeshRenderer__init__
 MeshRenderer.ClassID = FishEngineInternal.MeshRendererClassID()
+MeshRenderer.Serialize = __MeshRenderer.Serialize

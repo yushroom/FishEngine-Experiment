@@ -59,7 +59,8 @@ namespace FishEngine
 //		printf("~GameObject %s\n", m_name.c_str());
 		for (auto comp : m_Components)
 		{
-			delete comp;
+			if (comp->GetClassID() != Script::ClassID)
+				delete comp;
 		}
 		//delete m_transform;
 		//m_transform = nullptr;

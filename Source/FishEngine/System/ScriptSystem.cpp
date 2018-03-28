@@ -102,6 +102,22 @@ void Scene_GetRootGameObjects(Scene* scene, py::list& out)
 }
 
 
+
+class PyScript : public Script
+{
+public:
+	void Start() override
+	{
+		PYBIND11_OVERLOAD(void, Script, Start,);
+	}
+	
+	void Update() override
+	{
+		PYBIND11_OVERLOAD(void, Script, Update,);
+	}
+};
+
+
 #define DefObject(classname) \
 	m.def("Create"##classname, [](){ return new classname();}, return_value_policy::reference); \
 	m.def(#classname"ClassID", []() { return classname::ClassID;  })
@@ -184,8 +200,6 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<Object>(m, "Object")
 		.def_property("name", &Object::GetName, &Object::SetName, return_value_policy::copy)
 		.def_property_readonly("instanceID", &Object::GetInstanceID)
-		//.def("SetPyObject", &Object::SetPyObject)
-		//.def("GetPyObject", &Object::GetPyObject, return_value_policy::reference_internal)
 		.def_property("localIdentifierInFile", &Object::GetLocalIdentifierInFile, &Object::SetLocalIdentifierInFile)
 		;
 
@@ -226,7 +240,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("SetActive", &GameObject::SetActive)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
 		.def("Clone", &GameObject::Clone, return_value_policy::reference)
-		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
+	// compile error in clang
+//		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
+		.def("GetComponent", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)
 	;
 
 	//m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
@@ -237,7 +253,6 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference);
 	;
 
-	//m.def("CreateTransform", []() { return new Transform(); }, return_value_policy::reference);
 
 	m.def("TransformClassID", []() ->int { return Transform::ClassID; });
 	// Transform
@@ -252,8 +267,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 		.def("SetEulerAngles", &Transform::SetEulerAngles)
 		//.def("SetParent", &Transform::SetParent, "worldPositionStays"_a=true)
+		.def("GetParent", &Transform::GetParent, return_value_policy::reference)
 		.def("SetParent", &Transform::SetParent)
-		.def_property("parent", &Transform::GetParent, &Transform::SetParent, return_value_policy::reference)
+//		.def_property("parent", &Transform::GetParent, &Transform::SetParent, return_value_policy::reference)
 		.def_property("rootOrder", &Transform::GetRootOrder, &Transform::SetRootOrder)
 		.def("localToWorldMatrix", &Transform::GetLocalToWorldMatrix, return_value_policy::copy)
 		.def("worldToLocalMatrix", &Transform::GetWorldToLocalMatrix)
@@ -276,8 +292,10 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		;
 
 	DefineFunc(Script);
-	class_<Script, Component>(m, "Script")
-		//.def(init<>())
+	class_<Script, Component, PyScript>(m, "Script")
+		.def(init<>())
+		.def("GetPyObject", &Script::GetPyObject)
+		.def("SetPyObject", &Script::SetPyObject)
 	;
 
 	class_<Mesh, Object>(m, "Mesh")
@@ -293,7 +311,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def(init<>())
 		.def_property("shader", &Material::GetShader, &Material::SetShader, return_value_policy::reference)
 		//.def_property_readonly_static("defaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
-		.def("GetDefaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
+		.def_static("GetDefaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
 		//.def_property_readonly_static("errorMaterial", &Material::GetErrorMaterial, return_value_policy::reference)
 		;
 

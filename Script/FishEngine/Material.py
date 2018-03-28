@@ -81,4 +81,3 @@ Material = FishEngineInternal.Material
 Material.__new__ = Material__new__
 Material.__init__ = Material__init__
 # Material.ClassID = FishEngineInternal.MaterialClassID()
-print(Material.GetDefaultMaterial())

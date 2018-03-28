@@ -3,6 +3,7 @@ import yaml
 from collections import OrderedDict
 from FishEditor import AssetDataBase, SceneDumper
 from Rotator2 import Rotator2
+from FishEditor import EditorApplication
 
 class Rotator3(Script):
     def __init__(self):
@@ -31,6 +32,10 @@ class SceneLoader:
             pass
 
 def Start():
+    project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
+    # projectImporter = UnityProjectImporter(project_path+'/Assets')
+    EditorApplication.OpenProject(project_path+'/Assets')
+
     cameraGO = GameObject(name="Camera")
     camera = cameraGO.AddComponent(Camera())
     cameraGO.transform.position = Vector3(0, 1, -10)

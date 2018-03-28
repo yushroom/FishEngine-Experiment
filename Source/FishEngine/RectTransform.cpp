@@ -1,6 +1,7 @@
 #include <FishEngine/RectTransform.hpp>
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/GameObject.hpp>
+#include <cassert>
 
 namespace FishEngine
 {

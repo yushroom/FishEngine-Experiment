@@ -4,7 +4,7 @@ import FishEngineInternal
 
 class __SphereCollider:
     def Serialize(self, dumper):
-        super().Serialize(dumper)
+        super(SphereCollider, self).Serialize(dumper)
         dumper.d('m_Radius', self.radius)
         dumper.d('m_Center', self.center)
 
@@ -22,3 +22,4 @@ SphereCollider = FishEngineInternal.SphereCollider
 SphereCollider.__new__ = SphereCollider__new__
 SphereCollider.__init__ = SphereCollider__init__
 SphereCollider.ClassID = FishEngineInternal.SphereColliderClassID()
+SphereCollider.Serialize = __SphereCollider.Serialize

@@ -16,20 +16,31 @@ def DefaultScene():
 
 from FishEditor import UnityProjectImporter, UnitySceneImporter, AssetDataBase
 import os
+import json
 
 @timing
 def Start():
     # Screen.SetResolution(640//2, 1136//2, False)
     Screen.SetResolution(1136, 640, False)
+    # scenes = []
+    # with open('scenes.json') as f:
+    #     scenes = json.load(f)
+    # # print(scenes)
+    # last_scene = scenes[0]
+    # project_path = last_scene['path']
+    # scene_path = os.path.join(project_path, last_scene['lastOpenedScene'])
     # project_path = '/Users/yushroom/program/Unity/MonumentVally/Assets'
     # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
     project_path = r'D:\workspace\unity\FishEngine\Assets'
+    # project_path = r'/Users/yushroom/program/Unity/FishEngine/Assets'
     # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
-    projectImporter = UnityProjectImporter(project_path)
-    EditorApplication.OpenProject(project_path)
+    projectImporter = UnityProjectImporter(project_path+'/Assets')
+    EditorApplication.OpenProject(project_path+'/Assets')
 
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
     scene_path = os.path.join(project_path, 'TestPhysics.unity')
+    # scene_path = os.path.join(project_path, 'sponza.unity')
+    # scene_path = os.path.join(project_path, 'PolygonSamurai', 'Scenes', 'Demo.unity')
     # scene_path = r'D:\program\FishEngine-Experiment\Script\FishEngine_demo1.unity'
     sceneImporter = UnitySceneImporter(scene_path)
     sceneImporter.Import()

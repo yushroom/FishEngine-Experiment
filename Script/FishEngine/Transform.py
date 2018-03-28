@@ -27,28 +27,21 @@ class __Transform:
             cppObj.SetPyObject(self)
         self.m_RootOrder:int = 0
 
-    # def __del__(self):
-    #     print('Transform.__del__')
-
-    # def Clean(self):
-    #     # manually break ref cycle
-    #     del self.__children
-
     @property
     def name(self):
         return self.gameObject.name
 
     @property
     def parent(self):
-        p = self.GetParent()
+        return self.GetParent()
     @parent.setter
     def parent(self, parent: 'Transform'):
         # parent: Transform or None
-        self.SetParent(parent)
+        self.SetParent(parent, True)
 
-    def SetParent(self, parent: 'Transform', worldPositionStays:bool=True):
-        t = None if parent is None else parent.m_CachedPtr
-        self.m_CachedPtr.SetParent(t, worldPositionStays)
+    # def SetParent(self, parent: 'Transform', worldPositionStays:bool=True):
+    #     t = None if parent is None else parent.m_CachedPtr
+    #     self.m_CachedPtr.SetParent(t, worldPositionStays)
 
     @property
     def children(self):
@@ -185,6 +178,7 @@ Transform = FishEngineInternal.Transform
 Transform.__new__ = Transform__new__
 Transform.__init__ = Transform__init__
 Transform.ClassID = FishEngineInternal.TransformClassID()
-# Transform.parent = __Transform.parent
+Transform.parent = __Transform.parent
 Transform.children = __Transform.children
 Transform.Serialize = __Transform.Serialize
+Transform.LookAt = __Transform.LookAt

@@ -9,10 +9,7 @@ class Rotator2(Script):
 
     # def SystemUpdate(self):
     def Update(self):
-        # print(self.cpp.GetGameObject().name)
         self.transform.RotateAround(self.transform.parent.position, Vector3.up(), self.speed)
-        # print(self.name, self.transform.localPosition, self.transform.position)
-        # printT(self.transform)
 
 # class Rotator2System(System):
 #     def Update(self):
