@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import yaml
-from FishEngine import Mesh, Object
+from FishEngine import Mesh, Object, Script
 
 class SceneDumper:
     def __init__(self):
@@ -56,7 +56,11 @@ class SceneDumper:
                 self.end()
                 fileID = o.localIdentifierInFile if o.localIdentifierInFile != 0 else o.instanceID
                 f.write('--- !u!{} &{}\n'.format(o.ClassID, fileID))
-                yaml.dump({o.__class__.__name__: self.dict}, f)
+                if isinstance(o, Script):
+                    name = 'Script'
+                else:
+                    name = o.__class__.__name__
+                yaml.dump({name: self.dict}, f)
                 # yaml.dump({o.__class__.__name__: o.ToDict(self)}, f)
     
     def __AddObject(self, obj):

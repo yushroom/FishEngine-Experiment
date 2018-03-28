@@ -65,6 +65,7 @@ class Script(Component):
 
     def Serialize(self, dumper):
         super(Script, self).Serialize(dumper)
+        dumper.d('ScriptName', self.__class__.__name__)
         for a in self.GetVisiableAttributes():
             dumper.d(a, getattr(self, a))
 

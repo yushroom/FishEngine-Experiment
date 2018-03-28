@@ -33,7 +33,7 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 	m.def("EditorApplication_OpenProject", &EditorApplication_OpenProject);
 
 	class_<AssetImporter, FishEngine::Object>(m, "AssetImporter")
-		.def_static("", &AssetImporter::AddImporter)
+		.def_static("AddImporter", &AssetImporter::AddImporter)
 	;
 
 	class_<ModelImporter, AssetImporter>(m, "ModelImporter")

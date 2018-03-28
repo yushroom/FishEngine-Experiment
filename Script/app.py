@@ -4,7 +4,7 @@ from timing import timing
 import demo1, demo2
 from collections import OrderedDict
 
-from FishEditor import AssetDataBase
+from FishEditor import AssetDataBase, EditorApplication
 
 import sys, yaml
 
@@ -24,7 +24,11 @@ def Start():
 
     scene = SceneManager.CreateScene("DefaultScene")
     SceneManager.SetActiveScene(scene)
-    demo2.Start()
+
+    # demo2.Start()
+    project_path = r'D:\workspace\unity\FishEngine\Assets'
+    EditorApplication.OpenProject(project_path)
+    demo1.Start()
 
 # @timing
 def Update():
