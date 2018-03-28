@@ -5,7 +5,7 @@ namespace FishEngine
 	MeshRenderer* MeshRenderer::Clone() const
 	{
 		auto cloned = new MeshRenderer();
-		cloned->m_material = m_material;
+		cloned->m_Material = m_Material;
 		cloned->m_Name = cloned->m_Name;
 		return cloned;
 	}

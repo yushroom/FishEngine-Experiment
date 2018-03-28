@@ -20,14 +20,16 @@ namespace FishEngine
 		virtual ~Behaviour() = default;
 
 		// Enabled Behaviours are Updated, disabled Behaviours are not.
-		bool enabled() const { return m_enabled; }
-		void setEnabled(bool value) { m_enabled = value; }
+		bool enabled() const { return m_Enabled; }
+		void setEnabled(bool value) { m_Enabled = value; }
 
 		// Has the Behaviour had enabled called.
 		bool isActiveAndEnabled() const;
 
+		DeclareSerializeFunc;
+
 	private:
 //		friend class FishEditor::Inspector;
-		bool m_enabled = true;
+		bool m_Enabled = true;
 	};
 }

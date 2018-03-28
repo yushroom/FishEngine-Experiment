@@ -51,6 +51,7 @@ namespace FishEngine
 		
 		bool GetIsKinematic() const { return m_IsKinematic; }
 		void SetIsKinematic(bool value) { m_IsKinematic = value; }
+		DeclareSerializeFunc;
 		
 	private:
 		float m_Mass = 2;

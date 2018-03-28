@@ -1,6 +1,7 @@
 from . import Object
+import FishEngineInternal
 
-class Prefab(Object):
+class __Prefab(Object):
     __slots__ = ('m_fileIDToObject', 'm_RootGameObject')
     def __init__(self):
         super().__init__()
@@ -15,3 +16,21 @@ class Prefab(Object):
     def Clean(self):
         del self.m_fileIDToObject
         del self.m_RootGameObject
+
+    def Serialize(self, dumper):
+        super(Prefab, self).Serialize(dumper)
+        dumper.d('m_Modification', [])
+        dumper.d('m_ParentPrefab', {'fileID': 1, 'guid': "fjpeoi"})
+        dumper.d('m_IsPrefabParent', 0)
+
+# def Prefab__new__(cls):
+#     return FishEngineInternal.CreatePrefab()
+
+# def Prefab__init__(self):
+#     pass
+
+Prefab = FishEngineInternal.Prefab
+# Prefab.__new__ = Prefab__new__
+# Prefab.__init__ = Prefab__init__
+Prefab.ClassID = FishEngineInternal.PrefabClassID()
+Prefab.Serialize = __Prefab.Serialize

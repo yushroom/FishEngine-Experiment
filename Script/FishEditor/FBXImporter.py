@@ -23,8 +23,7 @@ class FBXImporter:
         # print(meta)
         self.guid = meta['guid']
         meta = meta['ModelImporter']
-        l = meta['fileIDToRecycleName']
-        self.fileIDToRecycleName = l
+        self.fileIDToRecycleName = meta['fileIDToRecycleName']
         # serializedVersion = meta['serializedVersion']
         meshes = meta['meshes']
         self.globalScale = meta['meshes']['globalScale']
@@ -36,10 +35,20 @@ class FBXImporter:
         self.cpp.Import(path)
         FishEditorInternal.AssetImporter.AddImporter(self.cpp, self.guid)
 
+        from . import AssetDataBase
+        # print(self.fileIDToRecycleName)
+        for fileID, name in self.fileIDToRecycleName.items():
+            self.cpp.UpdateFileID(fileID, name)
+            obj = self.cpp.GetObjectByFileID(fileID)
+            if obj is None:
+                continue
+            # print(fileID, name, obj.name)
+            # assert(obj.name == name)
+            AssetDataBase.s_InstanceIDToGUIDAndFileID[obj.GetInstanceID()] = (self.guid, fileID)
+
     def GetMeshByFileID(self, fileID:int)->Mesh:
         # print(fileID)
-        m = self.cpp.GetObjectByFileID(fileID)
-        return Mesh.Wrap(m)
+        return self.cpp.GetObjectByFileID(fileID)
 
     @property
     def globalScale(self)->float:

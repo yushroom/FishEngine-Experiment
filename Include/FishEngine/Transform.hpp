@@ -245,6 +245,7 @@ namespace FishEngine
 		int GetSiblingIndex() const;
 		
 		Transform* Clone() const;
+		DeclareSerializeFunc;
 
 	protected:
 		friend class GameObject;

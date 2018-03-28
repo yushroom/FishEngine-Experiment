@@ -40,7 +40,7 @@ namespace FishEngine
 
 		const std::list<Component*>& GetAllComponents() const
 		{
-			return m_Components;
+			return m_Component;
 		}
 
 		void AddComponent(Component* comp);
@@ -49,7 +49,7 @@ namespace FishEngine
 		T* GetComponent()
 		{
 			static_assert(std::is_base_of<Component, T>::value, "T must be a Component");
-			for (Component* t : m_Components)
+			for (Component* t : m_Component)
 			{
 				if (t->GetClassID() == T::ClassID)
 				{
@@ -61,7 +61,7 @@ namespace FishEngine
 		
 		Component* GetComponent(int classID)
 		{
-			for (Component* t : m_Components)
+			for (Component* t : m_Component)
 			{
 				if (t->GetClassID() == classID)
 				{
@@ -128,12 +128,14 @@ namespace FishEngine
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
+		virtual void Serialize(Archive& archive) const override;
+
 	protected:
 		Prefab * m_PrefabParentObject = nullptr;
 		Prefab * m_PrefabInternal = nullptr;
 		Scene*					m_Scene = nullptr;
 		Transform*				m_Transform = nullptr;
-		std::list<Component*>		m_Components;
+		std::list<Component*>		m_Component;
 		bool						m_IsActive = true;	// activeSelf
 	};
 }

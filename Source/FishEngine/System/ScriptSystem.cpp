@@ -13,6 +13,7 @@ namespace py = pybind11;
 #include <FishEngine/Math/Quaternion.hpp>
 #include <FishEngine/Math/Matrix4x4.hpp>
 #include <FishEngine/Object.hpp>
+#include <FishEngine/Prefab.hpp>
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/RectTransform.hpp>
@@ -200,7 +201,9 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<Object>(m, "Object")
 		.def_property("name", &Object::GetName, &Object::SetName, return_value_policy::copy)
 		.def_property_readonly("instanceID", &Object::GetInstanceID)
+		.def("GetInstanceID", &Object::GetInstanceID)
 		.def_property("localIdentifierInFile", &Object::GetLocalIdentifierInFile, &Object::SetLocalIdentifierInFile)
+		
 		;
 
 	m.def("Scene_GetRootGameObjects", Scene_GetRootGameObjects);
@@ -217,6 +220,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_static("GetActiveScene", &SceneManager::GetActiveScene, return_value_policy::reference)
 		.def_static("SetActiveScene", &SceneManager::SetActiveScene);
 
+
+
 #define DefineFunc(classname) \
 	m.def("Create" #classname, []() { return new classname(); }, return_value_policy::reference); \
 	m.def(#classname "ClassID", []() ->int { return classname::ClassID; })
@@ -226,6 +231,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	//m.def("CreateScript", []() { return new Script(); }, return_value_policy::reference);
 
+	DefineFunc(Prefab);
+	class_<Prefab, Object>(m, "Prefab");
 
 	// GameObject
 	DefineFunc(GameObject);
@@ -243,6 +250,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	// compile error in clang
 //		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
 		.def("GetComponent", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)
+		.def("GetPrefabInternal", &GameObject::GetPrefabInternal, return_value_policy::reference)
 	;
 
 	//m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
@@ -250,7 +258,8 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 
 	class_<Component, Object>(m, "Component")
-		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference);
+		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference)
+		.def("GetPrefabInternal", &Component::GetPrefabInternal, return_value_policy::reference)
 	;
 
 

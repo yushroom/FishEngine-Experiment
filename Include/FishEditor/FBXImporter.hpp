@@ -34,6 +34,7 @@ namespace FishEditor
 {
 	struct ModelCollection
 	{
+		std::string name;
 		FishEngine::Prefab* m_prefab = nullptr;
 //		float globalScale;
 //		bool useFileScale;
@@ -52,12 +53,7 @@ namespace FishEditor
 		enum { ClassID = 1041 };
 		FBXImporter() : ModelImporter(ClassID) { }
 		~FBXImporter();
-		
-		//// for python
-		//static FBXImporter* Create()
-		//{
-		//	return new FBXImporter();
-		//}
+
 		
 		void Import(const std::string& path);
 
@@ -87,6 +83,15 @@ namespace FishEditor
 			return it->second;
 		}
 
+		void UpdateFileID(int fileID, std::string assetName)
+		{
+			if (assetName == "//RootNode")
+				assetName = m_model.name;
+			int classID = fileID / 100000;
+			auto obj = m_Assets[classID][assetName];
+			m_fileIDToObject[fileID] = obj;
+		}
+
 		const std::map<int, FishEngine::Object*>& GetFileIDToObject() const
 		{
 			return m_fileIDToObject;
@@ -100,6 +105,9 @@ namespace FishEditor
 //		std::vector<std::pair<int, FishEngine::Object*>> m_fileIDToRecycleName;
 
 		std::map<int, FishEngine::Object*> m_fileIDToObject;
+
+		// {ClassID: {name: assetObject}}
+		std::map<int, std::map<std::string, FishEngine::Object*>> m_Assets;
 		ModelCollection m_model;
 //		std::map<std::string, FishEngine::Mesh*> m_meshes;
 	};

@@ -31,6 +31,7 @@ namespace FishEngine
 		
 		void Update();
 
+		DeclareSerializeFunc;
 		virtual RectTransform* Clone() const override;
 	};
 }

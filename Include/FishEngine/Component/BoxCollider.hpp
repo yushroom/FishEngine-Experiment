@@ -11,15 +11,17 @@ namespace FishEngine
 		enum { ClassID = 65 };
 		BoxCollider() : Collider(ClassID) { }
 		
-		Vector3 GetCenter() const { return m_center; }
-		void SetCenter(const Vector3& center) { m_center = center; }
+		Vector3 GetCenter() const { return m_Center; }
+		void SetCenter(const Vector3& center) { m_Center = center; }
 		
-		Vector3 GetSize() const { return m_size; }
-		void SetSize(const Vector3& size) { m_size = size; }
+		Vector3 GetSize() const { return m_Size; }
+		void SetSize(const Vector3& size) { m_Size = size; }
+
+		DeclareSerializeFunc;
 
 	private:
-		Vector3 m_center{ 0, 0, 0 };
-		Vector3 m_size{ 1, 1, 1 };
+		Vector3 m_Center{ 0, 0, 0 };
+		Vector3 m_Size{ 1, 1, 1 };
 
 		virtual void CreatePhysicsShape() override;
 	};

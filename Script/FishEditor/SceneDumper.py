@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import yaml
-from FishEngine import Mesh, Object
+from FishEngine import Mesh, Object, Script, GameObject, Component
 
 class SceneDumper:
     def __init__(self):
@@ -20,6 +20,7 @@ class SceneDumper:
         pass
 
     def __pre(self, data):
+        from . import AssetDataBase
         if data is None:
             return {'fileID': 0}
         if data.__class__ is list:
@@ -27,9 +28,8 @@ class SceneDumper:
         if data.__class__ is dict:
             return {a: self.__pre(b) for a, b in data.items()}
         if isinstance(data, Mesh):
-            guid = '0000000000000000e000000000000000'
-            name2fileID = {'Cube':10202, 'Cylinder':10206, 'Sphere':10207, 'Capsule':10208, 'Plane':10209, 'Quad':10210}
-            return {'fileID': name2fileID[data.name], 'guid':guid}
+            guid, fileID = AssetDataBase.s_InstanceIDToGUIDAndFileID[data.GetInstanceID()]
+            return {'fileID': fileID, 'guid': guid}
         if isinstance(data, Object):
             self.__AddObject(data)
             fileID = data.localIdentifierInFile if data.localIdentifierInFile != 0 else data.instanceID
@@ -56,11 +56,19 @@ class SceneDumper:
                 self.end()
                 fileID = o.localIdentifierInFile if o.localIdentifierInFile != 0 else o.instanceID
                 f.write('--- !u!{} &{}\n'.format(o.ClassID, fileID))
-                yaml.dump({o.__class__.__name__: self.dict}, f)
+                if isinstance(o, Script):
+                    name = 'Script'
+                else:
+                    name = o.__class__.__name__
+                yaml.dump({name: self.dict}, f)
                 # yaml.dump({o.__class__.__name__: o.ToDict(self)}, f)
     
     def __AddObject(self, obj):
         assert(isinstance(obj, Object))
+        if isinstance(obj, GameObject) or isinstance(obj, Component):
+            prefab = obj.GetPrefabInternal()
+            if prefab is not None:
+                obj = prefab    # dump prefab instead
         if obj not in self.done:
             self.todo.append(obj)
             self.done.add(obj)

@@ -16,6 +16,10 @@ namespace FishEditor
 		static std::string AssetPathToGUID(const std::string& path);
 		static std::string GUIDToAssetPath(const std::string& guid);
 
+		static std::string GetAssetPathFromInstanceID(int instanceID);
+
+		static void StaticClean();
+
     private:
         friend class EditorApplication;
 		friend class FileNode;
@@ -24,5 +28,7 @@ namespace FishEditor
 
 		static std::unordered_map<std::string, std::string> s_PathToGUID;
 		static std::unordered_map<std::string, std::string> s_GUIDToPath;
+		static std::unordered_map<std::string, AssetImporter*> s_GUIDToImporter;
+		static std::unordered_map<int, AssetImporter*> s_AssetInstanceIDToImporter;
     };
 }

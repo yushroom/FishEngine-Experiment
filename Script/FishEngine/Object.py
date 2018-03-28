@@ -137,8 +137,7 @@ class __Object:
 
     def Serialize(self, dumper):
         # dumper.d('name', self.name)
-        dumper.d('m_PrefabParentObject', None)
-        dumper.d('m_PrefabInternal', None)
+        dumper.d('m_ObjectHideFlags', 0)
         pass
 
     def Deserialize(self, loader):

@@ -4,6 +4,7 @@
 
 #include <pybind11/embed.h>
 #include <FishEditor/EditorApplication.hpp>
+#include <FishEditor/AssetDatabase.hpp>
 
 using namespace FishEditor;
 namespace py = pybind11;
@@ -32,6 +33,12 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 
 	m.def("EditorApplication_OpenProject", &EditorApplication_OpenProject);
 
+	class_<AssetDatabase>(m, "AssetDatabase")
+		.def_static("GetAssetPathFromInstanceID", &AssetDatabase::GetAssetPathFromInstanceID)
+		.def_static("", &AssetDatabase::AssetPathToGUID)
+		.def_static("", &AssetDatabase::GUIDToAssetPath)
+	;
+
 	class_<AssetImporter, FishEngine::Object>(m, "AssetImporter")
 		.def_static("AddImporter", &AssetImporter::AddImporter)
 	;
@@ -50,6 +57,7 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 		.def("Import", &FBXImporter::Import)
 		.def("GetObjectByFileID", &FBXImporter::GetObjectByFileID, return_value_policy::reference)
 		.def("GetRootGameObject", &FBXImporter::GetRootGameObject, return_value_policy::reference)
+		.def("UpdateFileID", &FBXImporter::UpdateFileID)
 	;
 }
 

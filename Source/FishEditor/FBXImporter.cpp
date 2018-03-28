@@ -655,7 +655,9 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	}
 	m_model.m_rootGameObject = ParseNode(lRootNode);
 	auto p = boost::filesystem::path(path);
-	m_model.m_rootGameObject->SetName(p.stem().string());
+	auto fileName = p.stem().string();
+	m_model.name = fileName;
+	m_model.m_rootGameObject->SetName(fileName);
 	m_model.m_prefab->SetRootGameObject(m_model.m_rootGameObject);
 	
 	// Destroy the SDK manager and all the other objects it was handling.
@@ -670,12 +672,15 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 //		std::cout << fileID << ": " << p.first << " instanceID: " << go->GetInstanceID() << std::endl;
 		//go->GetTransform()->SetRootOrder(count / 2);
 
+		auto name = go->GetName();
 		m_fileIDToObject[fileID] = go;
+		m_Assets[classID][name] = go;
 		for (auto comp : go->GetAllComponents())
 		{
 			classID = comp->GetClassID();
 			fileID = classID * 100000 + count;
 			m_fileIDToObject[fileID] = comp;
+			m_Assets[classID][name] = go;
 		}
 		count += 2;
 	}
@@ -685,7 +690,9 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	{
 		int classID = Mesh::ClassID;
 		int fileID = classID*100000 + count;
+		auto name = mesh->GetName();
 		m_fileIDToObject[fileID] = mesh;
+		m_Assets[classID][name] = mesh;
 		count += 2;
 	}
 }

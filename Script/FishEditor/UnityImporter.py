@@ -74,9 +74,10 @@ def MakeComponent(ctype:str, d:int):
             # print("Add Text")
             comp = FishEngine.UI.Text()
             comp.text = d['m_Text']
-    elif ctype == 'Rotator2':
+    elif ctype == 'Script':
         import sys
-        comp = getattr(sys.modules[ctype], ctype)()
+        scriptName = d['ScriptName']
+        comp = getattr(sys.modules[scriptName], scriptName)()
         comp.Deserialize(d)
     else:
         print('Unkown component type:', ctype)

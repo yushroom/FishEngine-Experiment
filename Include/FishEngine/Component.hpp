@@ -34,6 +34,8 @@ namespace FishEngine
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
+		virtual void Serialize(Archive& archive) const override;
+
 	protected:
 		friend class GameObject;
 		Prefab * m_PrefabParentObject = nullptr;

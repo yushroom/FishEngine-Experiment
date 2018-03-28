@@ -28,6 +28,8 @@ class __Component:
 
     def Serialize(self, dumper):
         super(Component, self).Serialize(dumper)
+        dumper.d('m_PrefabParentObject', None)
+        dumper.d('m_PrefabInternal', self.GetPrefabInternal())
         dumper.d('m_GameObject', self.gameObject)
 
     def Deserialize(self, loader):

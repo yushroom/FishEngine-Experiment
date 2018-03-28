@@ -29,13 +29,14 @@ namespace FishEngine
 
 		physx::PxShape* GetPhysicsShape() { return m_physxShape; }
 		virtual void CreatePhysicsShape() = 0;
+		DeclareSerializeFunc;
 
 	protected:
 		// Enabled Colliders will collide with other colliders, disabled Colliders won't.
-		bool    m_enabled = true;
+		bool    m_Enabled = true;
 
 		// Is the collider a trigger?
-		bool    m_isTrigger = false;
+		bool    m_IsTrigger = false;
 
 		physx::PxShape* m_physxShape = nullptr;
 	};

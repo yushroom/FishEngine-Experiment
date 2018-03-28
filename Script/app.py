@@ -4,7 +4,7 @@ from timing import timing
 import demo1, demo2
 from collections import OrderedDict
 
-from FishEditor import AssetDataBase
+from FishEditor import AssetDataBase, EditorApplication
 
 import sys, yaml
 
@@ -18,13 +18,18 @@ def OrderedDict_representer(dumper, data):
     return dumper.represent_dict(data.items())
 
 def Start():
+    AssetDataBase.StaticInit()
     yaml.add_representer(OrderedDict, OrderedDict_representer)
     yaml.add_representer(Vector3, Vector3_representer)
     yaml.add_representer(Quaternion, Quaternion_representer)
 
     scene = SceneManager.CreateScene("DefaultScene")
     SceneManager.SetActiveScene(scene)
-    demo1.Start()
+
+    demo2.Start()
+    # project_path = r'D:\workspace\unity\FishEngine\Assets'
+    # EditorApplication.OpenProject(project_path)
+    # demo1.Start()
 
 # @timing
 def Update():

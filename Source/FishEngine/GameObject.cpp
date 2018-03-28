@@ -19,7 +19,7 @@ namespace FishEngine
 			m_Transform = new Transform();
 			m_Scene->AddRootTransform(m_Transform);
 			m_Transform->m_GameObject = this;
-			m_Components.push_back(m_Transform);
+			m_Component.push_back(m_Transform);
 		}
 		else if (flag == GameObjectConstructionFlag::WithRectTransform)
 		{
@@ -57,7 +57,7 @@ namespace FishEngine
 	{
 //		LOGF;
 //		printf("~GameObject %s\n", m_name.c_str());
-		for (auto comp : m_Components)
+		for (auto comp : m_Component)
 		{
 			if (comp->GetClassID() != Script::ClassID)
 				delete comp;
@@ -69,7 +69,7 @@ namespace FishEngine
 	void GameObject::AddComponent(Component* comp)
 	{
 		assert(comp->m_GameObject == nullptr);
-		m_Components.push_back(comp);
+		m_Component.push_back(comp);
 		comp->m_GameObject = this;
 		//if (comp->GetClassID() == Script::ClassID)
 		//{
@@ -108,13 +108,13 @@ namespace FishEngine
 		//cloned->m_self = module.attr("GameObject")();
 		auto cloned_t = m_Transform->Clone();
 		cloned->m_Transform = cloned_t;
-		cloned->m_Components.push_back(cloned_t);
+		cloned->m_Component.push_back(cloned_t);
 		cloned_t->m_GameObject = cloned;
 		cloned->m_Scene->AddRootTransform(cloned_t);
 
-		auto it = m_Components.begin();
+		auto it = m_Component.begin();
 		it++;
-		for (; it != m_Components.end(); ++it)
+		for (; it != m_Component.end(); ++it)
 		{
 			auto c = *it;
 			cloned->AddComponent(c->Clone());

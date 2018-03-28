@@ -69,4 +69,4 @@ def Start():
 
     plane = GameObject.CreatePrimitive(PrimitiveType.Plane)
 
-    cameraGO.AddComponent(Rotator3())
+    # cameraGO.AddComponent(Rotator3())

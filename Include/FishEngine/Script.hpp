@@ -87,6 +87,8 @@ namespace FishEngine
 		{
 			return m_PyObject;
 		}
+
+		DeclareSerializeFunc;
 		
 	protected:
 		pybind11::handle	m_PyObject = pybind11::none();

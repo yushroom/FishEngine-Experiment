@@ -11,6 +11,11 @@
 
 namespace FishEngine
 {
+	class Archive;
+
+#define DeclareSerializeFunc\
+	virtual void Serialize(Archive& archive) const override;
+
 	class Object
 	{
 	public:
@@ -101,6 +106,8 @@ namespace FishEngine
 		{
 			return s_Objects;
 		}
+
+		virtual void Serialize(Archive& archive) const;
 		
 	protected:
 		std::string			m_Name;

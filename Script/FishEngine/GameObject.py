@@ -124,6 +124,8 @@ class __GameObject(Object):
     def Serialize(self, dumper):
         super(GameObject, self).Serialize(dumper)
         # dumper.d('m_Component', self.components)
+        dumper.d('m_PrefabParentObject', None)
+        dumper.d('m_PrefabInternal', self.GetPrefabInternal())
         dumper.d('m_Component', [{'component': c} for c in self.components ])
         dumper.d('m_Name', self.name)
         dumper.d('m_IsActive', self.activeSelf)

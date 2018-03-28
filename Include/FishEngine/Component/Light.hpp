@@ -75,6 +75,7 @@ namespace FishEngine
 		static void ResizeShadowMaps();
 
 		virtual Light* Clone() const override;
+		DeclareSerializeFunc;
 
 	private:
 		friend class Scene;

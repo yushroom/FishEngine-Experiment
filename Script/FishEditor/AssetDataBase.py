@@ -1,5 +1,7 @@
 from enum import Enum, auto
-from FishEngine import SceneManager, Scene
+from FishEngine import SceneManager, Scene, Object
+
+import FishEditorInternal
 
 class ImportAssetOptions(Enum):
     Default = 0
@@ -15,14 +17,17 @@ class AssetDataBase:
     s_GUIDToAssetPath = {}
     s_GUIDToImporter = {}
     s_InstanceIDToAssetPath = {}
+    s_InstanceIDToGUIDAndFileID = {}
 
     @staticmethod
     def AssetPathToGUID(path:str)->str:
         return AssetDataBase.s_assetPathTOGUID[path]
+        # return FishEditorInternal.AssetDataBase.AssetPathToGUID(path)
 
     @staticmethod
     def GUIDToAssetPath(guid:str)->str:
         return AssetDataBase.s_GUIDToAssetPath[guid]
+        # return FishEditorInternal.AssetDataBase.GUIDToAssetPath(guid)
 
     @staticmethod
     def GUIDToImporter(guid:str)->str:
@@ -49,14 +54,27 @@ class AssetDataBase:
         return importer
 
     @staticmethod
-    def GetAssetPath(instanceID: int)->str:
-        return AssetDataBase.s_InstanceIDToAssetPath[instanceID]
+    def GetAssetPath(asset: Object)->str:
+        return AssetDataBase.s_InstanceIDToAssetPath[asset.GetInstanceID()]
+        # return FishEditorInternal.AssetDataBase.GetAssetPathFromInstanceID(asset.GetInstanceID())
+
+    @staticmethod
+    def StaticInit():
+        from FishEngine import MeshManager
+        # internal meshes
+        guid = '0000000000000000e000000000000000'
+        name2fileID = {'Cube':10202, 'Cylinder':10206, 'Sphere':10207, 'Capsule':10208, 'Plane':10209, 'Quad':10210}
+        for name, fileID in name2fileID.items():
+            mesh = MeshManager.GetInternalMesh(name)
+            # print(name,mesh.GetInstanceID(), fileID, guid)
+            AssetDataBase.s_InstanceIDToGUIDAndFileID[mesh.GetInstanceID()] = (guid, fileID)
 
     @staticmethod
     def StaticClean():
         AssetDataBase.s_assetPathTOGUID.clear()
         AssetDataBase.s_GUIDToAssetPath.clear()
         AssetDataBase.s_GUIDToImporter.clear()
+        AssetDataBase.s_InstanceIDToGUIDAndFileID.clear()
 
     @staticmethod
     def ImportAsset(path:str, options:ImportAssetOptions):

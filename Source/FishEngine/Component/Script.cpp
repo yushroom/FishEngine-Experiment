@@ -16,4 +16,9 @@ namespace FishEngine
 		cloned->m_PyObject.attr("m_CachedPtr") = cloned;
 		return cloned;
 	}
+
+	void Script::Serialize(Archive& archive) const
+	{
+
+	}
 }

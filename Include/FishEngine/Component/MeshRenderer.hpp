@@ -19,12 +19,13 @@ namespace FishEngine
 		{
 		}
 		
-		Material* GetMaterial() const { return m_material; }
-		void SetMaterial(Material* mat) { m_material = mat; }
+		Material* GetMaterial() const { return m_Material; }
+		void SetMaterial(Material* mat) { m_Material = mat; }
 		
 		virtual MeshRenderer* Clone() const override;
+		DeclareSerializeFunc;
 
 	private:
-		Material* m_material = nullptr;
+		Material* m_Material = nullptr;
 	};
 }

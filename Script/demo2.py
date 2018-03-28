@@ -31,11 +31,13 @@ def Start():
     # scene_path = os.path.join(project_path, last_scene['lastOpenedScene'])
     # project_path = '/Users/yushroom/program/Unity/MonumentVally/Assets'
     # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
+    # projectImporter = UnityProjectImporter(project_path+'/Assets')
+    # EditorApplication.OpenProject(project_path+'/Assets')
     project_path = r'D:\workspace\unity\FishEngine\Assets'
     # project_path = r'/Users/yushroom/program/Unity/FishEngine/Assets'
     # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
-    projectImporter = UnityProjectImporter(project_path+'/Assets')
-    EditorApplication.OpenProject(project_path+'/Assets')
+    projectImporter = UnityProjectImporter(project_path+'')
+    EditorApplication.OpenProject(project_path)
 
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
     scene_path = os.path.join(project_path, 'TestPhysics.unity')

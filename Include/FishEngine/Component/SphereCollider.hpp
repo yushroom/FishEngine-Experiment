@@ -16,6 +16,7 @@ namespace FishEngine
 
 		float GetRadius() const { return m_Radius; }
 		void SetRadius(float radius) { m_Radius = radius; }
+		DeclareSerializeFunc;
 
 	private:
 		Vector3 m_Center{ 0, 0, 0 };
