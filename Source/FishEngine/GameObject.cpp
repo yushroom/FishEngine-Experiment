@@ -4,6 +4,8 @@
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Scene.hpp>
 
+#include <FishEngine/Archive.hpp>
+
 #include <pybind11/embed.h>
 
 namespace FishEngine
@@ -103,6 +105,14 @@ namespace FishEngine
 	
 	GameObject* GameObject::Clone()
 	{
+		CollectObjectArchive archive;
+		this->Serialize(archive);
+
+		std::ofstream fout("test_output_archive.yaml");
+		OutputArchive archive2(fout);
+		archive2.Dump(this);
+		fout.close();
+
 		auto cloned = new GameObject(this->m_Name, GameObjectConstructionFlag::Empty);
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();

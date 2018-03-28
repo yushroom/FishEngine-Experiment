@@ -30,6 +30,24 @@ schema = '''
 	m_Children: std::vector<Transform*>
 	m_Father: Transform*
 	m_RootOrder: int
+@Camera: Component
+	m_FarClipPlane
+	m_NearClipPlane
+	m_FieldOfView
+	m_Orthographic
+	m_OrthographicSize
+
+@Behaviour: Component
+	m_Enabled
+
+@Light: Behaviour
+
+@RectTransform: Component
+	m_AnchorMin: {0.5f, 0.5f};
+	m_AnchorMax: {0.5f, 0.5f};
+	m_AnchoredPosition: {0, 0};
+	m_SizeDelta: {100, 100};
+	m_Pivot: {0.5f, 0.5f};
 
 @MeshFilter: Component
 	m_Mesh: Mesh*
@@ -59,24 +77,7 @@ schema = '''
 	# m_Interpolate: 0
 	# m_Constraints: 0
 	# m_CollisionDetection: 0
-@Camera: Component
-	m_FarClipPlane
-	m_NearClipPlane
-	m_FieldOfView
-	m_Orthographic
-	m_OrthographicSize
 
-@Behaviour: Component
-	m_Enabled
-
-@Light: Behaviour
-
-@RectTransform: Component
-	m_AnchorMin: {0.5f, 0.5f};
-	m_AnchorMax: {0.5f, 0.5f};
-	m_AnchoredPosition: {0, 0};
-	m_SizeDelta: {100, 100};
-	m_Pivot: {0.5f, 0.5f};
 '''
 
 '''
@@ -125,7 +126,7 @@ template1 = '''
 		${c['parent']}::Serialize(archive);
 	% endif
 	% for member in c['members']:
-		archive.Add("${member}", this->${member});
+		archive.AddNVP("${member}", this->${member});
 	% endfor
 	}
 
