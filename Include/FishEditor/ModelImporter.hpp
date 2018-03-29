@@ -80,8 +80,10 @@ namespace FishEditor
 	class ModelImporter : public AssetImporter
 	{
 	public:
-		enum { ClassID = 1040 };
-		ModelImporter(int classID = ClassID) : AssetImporter(classID) { }
+		constexpr static int ClassID = 1040;
+		constexpr static const char* ClassName = "ModelImporter";
+		
+		ModelImporter(int classID, const char* className) : AssetImporter(classID, className) { }
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		

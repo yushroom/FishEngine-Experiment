@@ -27,9 +27,9 @@ namespace FishEngine
 	class FE_EXPORT Light : public Behaviour
 	{
 	public:
-		enum {ClassID = 108};
+		DeclareObject(Light, 108);
 		
-		Light() : Behaviour(Light::ClassID)
+		Light() : Behaviour(Light::ClassID, ClassName)
 		{
 			LOGF;
 		}
@@ -75,7 +75,6 @@ namespace FishEngine
 		static void ResizeShadowMaps();
 
 		virtual Light* Clone() const override;
-		DeclareSerializeFunc;
 
 	private:
 		friend class Scene;

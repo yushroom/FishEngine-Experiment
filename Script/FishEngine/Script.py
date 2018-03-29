@@ -76,9 +76,9 @@ class Script(FishEngineInternal.Script):
 
     @staticmethod
     def StaticClean():
-        print(Script.__scripts)
+        # print(Script.__scripts)
         Script.__scripts.clear()
-        print(Script.__scripts)
+        # print(Script.__scripts)
 
 # def Script__init__(self):
 #     # super(FishEngineInternal.Script, self).__init__()

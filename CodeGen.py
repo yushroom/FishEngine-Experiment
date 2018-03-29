@@ -31,8 +31,8 @@ schema = '''
 	m_Father: Transform*
 	m_RootOrder: int
 @Camera: Component
-	m_FarClipPlane
 	m_NearClipPlane
+	m_FarClipPlane
 	m_FieldOfView
 	m_Orthographic
 	m_OrthographicSize
@@ -91,11 +91,11 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+	serializedVersion: 2
+	x: 0
+	y: 0
+	width: 1
+	height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -103,8 +103,8 @@ Camera:
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+	serializedVersion: 2
+	m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -120,7 +120,17 @@ Camera:
 
 template1 = '''
 % for c in ClassInfo:
-	void ${c['className']}::Serialize(Archive& archive) const
+	void ${c['className']}::Deserialize(InputArchive& archive)
+	{
+	% if 'parent' in c:
+		${c['parent']}::Deserialize(archive);
+	% endif
+	% for member in c['members']:
+		archive.AddNVP("${member}", this->${member});
+	% endfor
+	}
+
+	void ${c['className']}::Serialize(OutputArchive& archive) const
 	{
 	% if 'parent' in c:
 		${c['parent']}::Serialize(archive);
@@ -129,6 +139,7 @@ template1 = '''
 		archive.AddNVP("${member}", this->${member});
 	% endfor
 	}
+
 
 % endfor
 '''

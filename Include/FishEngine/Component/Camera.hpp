@@ -19,9 +19,9 @@ namespace FishEngine
 	class FE_EXPORT Camera : public Behaviour
 	{
 	public:
-		enum {ClassID = 20};
+		DeclareObject(Camera, 20);
 
-		Camera() : Behaviour(Camera::ClassID)
+		Camera() : Behaviour(Camera::ClassID, ClassName)
 		{
 			LOGF;
 		}
@@ -97,7 +97,6 @@ namespace FishEngine
 		static void OnWindowSizeChanged(const int width, const int height);
 
 		virtual Camera* Clone() const override;
-		DeclareSerializeFunc;
 
 	private:
 //		friend class RenderSystem;

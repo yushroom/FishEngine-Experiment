@@ -9,7 +9,7 @@ class FBXImporter:
     __slots__ = ('m_CachedPtr', 'guid', 'fileIDToRecycleName')
     def __init__(self):
         super().__init__()
-        self.m_CachedPtr = FishEditorInternal.FBXImporter()
+        self.m_CachedPtr = FishEditorInternal.CreateFBXImporter()
         self.guid:int = None
         self.fileIDToRecycleName = None
 

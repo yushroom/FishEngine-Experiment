@@ -2,17 +2,7 @@
 
 #include <iostream>
 #include <FishGUI/Utils.hpp>
-
-#ifdef _WIN32
-#include <filesystem>
-namespace fs = std::experimental::filesystem;
-#else
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-namespace fs = boost::filesystem;
-#endif
-typedef fs::path Path;
-
+#include "Path.hpp"
 
 
 namespace FishEditor

@@ -110,6 +110,7 @@ void DrawTransform(Transform* value)
 	//		FishGUI::Float(label, m[col][row]);
 	//	}
 	//}
+	Int("RootOrder", value, &Transform::GetRootOrder);
 }
 
 void DrawCamera(Camera* c)

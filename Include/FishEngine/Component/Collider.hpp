@@ -14,9 +14,9 @@ namespace FishEngine
 	class Collider : public Component
 	{
 	public:
-		enum {ClassID = 56};
+		DeclareObject(Collider, 56);
 
-		Collider(int classID) : Component(classID) { }
+		Collider(int classID, const char* className) : Component(classID, className) { }
 
 		virtual Collider* Clone() const override
 		{
@@ -29,7 +29,6 @@ namespace FishEngine
 
 		physx::PxShape* GetPhysicsShape() { return m_physxShape; }
 		virtual void CreatePhysicsShape() = 0;
-		DeclareSerializeFunc;
 
 	protected:
 		// Enabled Colliders will collide with other colliders, disabled Colliders won't.

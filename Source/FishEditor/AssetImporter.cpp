@@ -40,7 +40,7 @@ namespace FishEditor
 			}
 			else
 			{
-				importer = new AssetImporter();
+//				importer = new AssetImporter();
 			}
 			importer->m_GUID = guid;
 			importer->m_AssetTimeStamp = timeCreated;

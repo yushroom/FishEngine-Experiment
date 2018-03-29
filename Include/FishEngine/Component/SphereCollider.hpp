@@ -8,15 +8,16 @@ namespace FishEngine
 	class SphereCollider : public Collider
 	{
 	public:
-		enum { ClassID = 135 };
-		SphereCollider() : Collider(ClassID) { }
+		DeclareObject(SphereCollider, 135);
+		
+		SphereCollider() : Collider(ClassID, ClassName) { }
 
 		Vector3 GetCenter() const { return m_Center; }
 		void SetCenter(const Vector3& center) { m_Center = center; }
 
 		float GetRadius() const { return m_Radius; }
 		void SetRadius(float radius) { m_Radius = radius; }
-		DeclareSerializeFunc;
+
 
 	private:
 		Vector3 m_Center{ 0, 0, 0 };

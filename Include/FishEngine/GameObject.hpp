@@ -28,7 +28,7 @@ namespace FishEngine
 	class GameObject : public Object
 	{
 	public:
-		enum {ClassID = 1};
+		DeclareObject(GameObject, 1);
 		
 		GameObject(const std::string& name = "GameObject", GameObjectConstructionFlag flag = GameObjectConstructionFlag::WithTransform);
 		~GameObject();
@@ -127,8 +127,6 @@ namespace FishEngine
 
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
-
-		virtual void Serialize(Archive& archive) const override;
 
 	protected:
 		Prefab * m_PrefabParentObject = nullptr;

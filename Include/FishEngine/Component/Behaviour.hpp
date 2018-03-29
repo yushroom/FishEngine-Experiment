@@ -9,10 +9,9 @@ namespace FishEngine
 	class FE_EXPORT Behaviour : public Component
 	{
 	public:
+		DeclareObject(Behaviour, 8);
 
-//		DefineComponent(Behaviour)
-
-		Behaviour(int classID) : Component(classID)
+		Behaviour(int classID, const char* className) : Component(classID, className)
 		{
 
 		}
@@ -25,8 +24,6 @@ namespace FishEngine
 
 		// Has the Behaviour had enabled called.
 		bool isActiveAndEnabled() const;
-
-		DeclareSerializeFunc;
 
 	private:
 //		friend class FishEditor::Inspector;

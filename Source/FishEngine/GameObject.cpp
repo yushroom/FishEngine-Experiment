@@ -4,14 +4,13 @@
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Scene.hpp>
 
-#include <FishEngine/Archive.hpp>
-
 #include <pybind11/embed.h>
 
 namespace FishEngine
 {
-    GameObject::GameObject(const std::string& name, GameObjectConstructionFlag flag) : Object(GameObject::ClassID)
-    {
+    GameObject::GameObject(const std::string& name, GameObjectConstructionFlag flag)
+			: Object(ClassID, ClassName)
+	{
         LOGF;
         this->SetName(name);
 		m_Scene = SceneManager::GetActiveScene();
@@ -70,13 +69,16 @@ namespace FishEngine
 
 	void GameObject::AddComponent(Component* comp)
 	{
+        if (comp == nullptr)
+            return;
 		assert(comp->m_GameObject == nullptr);
+		if (comp->GetClassID() == Transform::ClassID)
+		{
+			assert(m_Transform == nullptr);
+			m_Transform = (Transform*)comp;
+		}
 		m_Component.push_back(comp);
 		comp->m_GameObject = this;
-		//if (comp->GetClassID() == Script::ClassID)
-		//{
-		//	comp->m_self.attr
-		//}
 	}
 
 	
@@ -105,14 +107,14 @@ namespace FishEngine
 	
 	GameObject* GameObject::Clone()
 	{
-		CollectObjectArchive archive;
-		this->Serialize(archive);
+//		CollectObjectArchive archive;
+//		this->Serialize(archive);
 
-		std::ofstream fout("test_output_archive.yaml");
-		OutputArchive archive2(fout);
-		archive2.Dump(this);
-		fout.close();
-
+//		std::ofstream fout("test_output_archive.yaml");
+//		YAMLArchive archive2(fout);
+//		archive2.Dump(this);
+//		fout.close();
+		
 		auto cloned = new GameObject(this->m_Name, GameObjectConstructionFlag::Empty);
 		//auto module = pybind11::module::import("FishEngine");
 		//cloned->m_self = module.attr("GameObject")();

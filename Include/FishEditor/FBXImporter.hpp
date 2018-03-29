@@ -50,8 +50,10 @@ namespace FishEditor
 	class FBXImporter final : public ModelImporter
 	{
 	public:
-		enum { ClassID = 1041 };
-		FBXImporter() : ModelImporter(ClassID) { }
+		constexpr static int ClassID = 1041;
+		constexpr static const char* ClassName = "FBXImporter";
+		
+		FBXImporter() : ModelImporter(ClassID, ClassName) { }
 		~FBXImporter();
 
 		

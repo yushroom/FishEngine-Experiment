@@ -11,16 +11,26 @@
 
 namespace FishEngine
 {
-	class Archive;
+	class InputArchive;
+	class OutputArchive;
 
-#define DeclareSerializeFunc\
-	virtual void Serialize(Archive& archive) const override;
+#define InjectClassName(className, classID) 				\
+	enum {ClassID = classID}; 								\
+	static constexpr const char* ClassName = #className;
+	
+#define OverrideSerializeFunc 											\
+	virtual void Deserialize(InputArchive& archive) override; \
+	virtual void Serialize(OutputArchive& archive) const override;
+	
+#define DeclareObject(className, classID)	\
+	InjectClassName(className, classID) 	\
+	OverrideSerializeFunc
 
 	class Object
 	{
 	public:
 
-		Object(int classID);
+		Object(int classID, const char* clasName);
 		virtual ~Object() = 0;
 		
 		// noncopyable
@@ -45,6 +55,11 @@ namespace FishEngine
 		int GetClassID() const
 		{
 			return m_ClassID;
+		}
+
+		const char* GetClassName() const
+		{
+			return m_ClassName;
 		}
 		
 		//void SetPyObject(const pybind11::object& obj)
@@ -107,7 +122,8 @@ namespace FishEngine
 			return s_Objects;
 		}
 
-		virtual void Serialize(Archive& archive) const;
+		virtual void Deserialize(InputArchive& archive);
+		virtual void Serialize(OutputArchive& archive) const;
 		
 	protected:
 		std::string			m_Name;
@@ -115,6 +131,7 @@ namespace FishEngine
 		HideFlags			m_ObjectHideFlags = HideFlags::None;
 
 	private:
+		const char*			m_ClassName = "Object";
 		int					m_ClassID = 0;
 		int					m_InstanceID = 0;
 		uint64_t			m_LocalIdentifierInFile = 0;
@@ -127,7 +144,8 @@ namespace FishEngine
 
 
 
-	inline Object::Object(int classID) : m_ClassID(classID)
+	inline Object::Object(int classID, const char* className)
+			: m_ClassName(className), m_ClassID(classID)
 	{
 		++s_InstanceCounter;
 		m_InstanceID = s_InstanceCounter;

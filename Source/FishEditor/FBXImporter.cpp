@@ -26,6 +26,7 @@ using namespace FishEditor;
 
 FBXImporter::~FBXImporter()
 {
+//	puts("FBXImporter::~FBXImporter()");
 	for (auto mesh : m_model.m_meshes)
 	{
 		delete mesh;

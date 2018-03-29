@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "../Component.hpp"
 
 namespace FishEngine
@@ -9,9 +10,10 @@ namespace FishEngine
 	class MeshRenderer : public Component
 	{
 	public:
-		enum {ClassID = 23};
+		DeclareObject(MeshRenderer, 23);
+
 		
-		MeshRenderer() : Component(MeshRenderer::ClassID)
+		MeshRenderer() : Component(MeshRenderer::ClassID, ClassName)
 		{
 		}
 		
@@ -19,13 +21,12 @@ namespace FishEngine
 		{
 		}
 		
-		Material* GetMaterial() const { return m_Material; }
-		void SetMaterial(Material* mat) { m_Material = mat; }
+		Material* GetMaterial() const { return m_Materials[0]; }
+		void SetMaterial(Material* mat) { m_Materials[0] = mat; }
 		
 		virtual MeshRenderer* Clone() const override;
-		DeclareSerializeFunc;
 
 	private:
-		Material* m_Material = nullptr;
+		std::vector<Material*> m_Materials;
 	};
 }

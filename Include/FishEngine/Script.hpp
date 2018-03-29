@@ -55,8 +55,9 @@ namespace FishEngine
 	class Script : public Component
 	{
 	public:
-		enum { ClassID = 115 };
-		Script() : Component(Script::ClassID)
+		DeclareObject(Script, 115);
+
+		Script() : Component(Script::ClassID, ClassName)
 		{
 			LOGF;
 		}
@@ -87,8 +88,6 @@ namespace FishEngine
 		{
 			return m_PyObject;
 		}
-
-		DeclareSerializeFunc;
 		
 	protected:
 		pybind11::handle	m_PyObject = pybind11::none();

@@ -11,8 +11,9 @@ namespace FishEngine
 	class Component : public Object
 	{
 	public:
-		enum {ClassID = 2};
-		Component(int classID) : Object(classID)
+		DeclareObject(Component, 2);
+
+		Component(int classID, const char* className) : Object(classID, className)
 		{
 		}
 		
@@ -33,8 +34,6 @@ namespace FishEngine
 
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
-
-		virtual void Serialize(Archive& archive) const override;
 
 	protected:
 		friend class GameObject;

@@ -13,10 +13,9 @@ namespace FishEngine
 	{
 		friend class GameObject;
 	public:
-		enum {ClassID = 4};
+		DeclareObject(Transform, 4);
 
-	protected:
-		Transform() : Component(Transform::ClassID)
+		Transform() : Component(Transform::ClassID, ClassName)
 		{
 			LOGF;
 		}
@@ -244,8 +243,7 @@ namespace FishEngine
 		void SetSiblingIndex(int index);
 		int GetSiblingIndex() const;
 		
-		Transform* Clone() const;
-		DeclareSerializeFunc;
+		Transform* Clone() const override;
 
 	protected:
 		friend class GameObject;

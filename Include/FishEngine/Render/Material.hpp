@@ -10,10 +10,9 @@ namespace FishEngine
 	class Material : public Object
 	{
 	public:
+        InjectClassName(Material, 21);
 		
-		enum {ClassID = 21};
-		
-		Material() : Object(Material::ClassID)
+		Material() : Object(Material::ClassID, ClassName)
 		{
 //			LOGF;
 		}

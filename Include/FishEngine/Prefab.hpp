@@ -9,9 +9,9 @@ namespace FishEngine
 	class Prefab : public Object
 	{
 	public:
-		enum { ClassID = 1001 };
+		DeclareObject(Prefab, 1001);
 
-		Prefab() : Object(ClassID) {
+		Prefab() : Object(ClassID, ClassName) {
 
 		}
 
@@ -24,8 +24,6 @@ namespace FishEngine
 		{
 			m_RootGameObject = root;
 		}
-
-		virtual void Serialize(Archive& archive) const override;
 
 		Prefab* Instantiate();
 

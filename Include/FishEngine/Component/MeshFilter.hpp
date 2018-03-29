@@ -9,9 +9,9 @@ namespace FishEngine
 	class MeshFilter : public Component
 	{
 	public:
-		enum {ClassID = 33};
+		DeclareObject(MeshFilter, 33);
 		
-		MeshFilter() : Component(MeshFilter::ClassID)
+		MeshFilter() : Component(MeshFilter::ClassID, ClassName)
 		{
 		}
 		
@@ -23,7 +23,6 @@ namespace FishEngine
 		void SetMesh(Mesh* mesh) { m_Mesh = mesh; }
 
 		virtual MeshFilter* Clone() const override;
-		DeclareSerializeFunc;
 		
 	private:
 		Mesh* m_Mesh = nullptr;

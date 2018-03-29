@@ -14,8 +14,9 @@ namespace FishEngine
 	class Rigidbody : public Component
 	{
 	public:
-		enum {ClassID = 54};
-		Rigidbody() : Component(ClassID)
+		DeclareObject(Rigidbody, 54);
+		
+		Rigidbody() : Component(ClassID, ClassName)
 		{
 
 		}
@@ -51,7 +52,7 @@ namespace FishEngine
 		
 		bool GetIsKinematic() const { return m_IsKinematic; }
 		void SetIsKinematic(bool value) { m_IsKinematic = value; }
-		DeclareSerializeFunc;
+
 		
 	private:
 		float m_Mass = 2;

@@ -16,9 +16,9 @@ namespace FishEngine
 	class Shader : public Object
 	{
 	public:
-		enum {ClassID = 48};
+		InjectClassName(Shader, 48);
 		
-		Shader() : Object(Shader::ClassID)
+		Shader() : Object(Shader::ClassID, ClassName)
 		{
 			LOGF;
 		}

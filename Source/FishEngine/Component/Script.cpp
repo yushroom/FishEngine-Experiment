@@ -17,8 +17,13 @@ namespace FishEngine
 		return cloned;
 	}
 
-	void Script::Serialize(Archive& archive) const
+	void Script::Serialize(OutputArchive& archive) const
 	{
 
+	}
+	
+	void Script::Deserialize(InputArchive& archive)
+	{
+		
 	}
 }

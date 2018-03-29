@@ -14,10 +14,9 @@ namespace FishEngine
 	{
 		friend class RawMesh;
 	public:
+		InjectClassName(Mesh, 43);
 
-		enum { ClassID = 43};
-
-		Mesh() : Object(Mesh::ClassID)
+		Mesh() : Object(Mesh::ClassID, ClassName)
 		{
 			LOGF;
 		}

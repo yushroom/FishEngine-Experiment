@@ -9,9 +9,8 @@ namespace FishEngine
 	class RectTransform final : public Component
 	{
 	public:
-		
-		enum {ClassID = 224};
-		
+		DeclareObject(RectTransform, 224);
+
 		Vector2 m_AnchorMin = {0.5f, 0.5f};
 		Vector2 m_AnchorMax = {0.5f, 0.5f};
 		Vector2 m_AnchoredPosition = {0, 0};
@@ -21,7 +20,7 @@ namespace FishEngine
 		mutable Rect m_Rect;
 		
 	public:
-		RectTransform() : Component(RectTransform::ClassID)
+		RectTransform() : Component(RectTransform::ClassID, ClassName)
 		{
 		}
 		
@@ -31,7 +30,6 @@ namespace FishEngine
 		
 		void Update();
 
-		DeclareSerializeFunc;
 		virtual RectTransform* Clone() const override;
 	};
 }

@@ -15,8 +15,10 @@ namespace FishEditor
 	class AssetImporter : public FishEngine::Object
 	{
 	public:
-		enum { ClassID = 1003 };
-		AssetImporter(int classID = ClassID) : Object(classID) { }
+		constexpr static int ClassID = 1003;
+		constexpr static const char* ClassName = "AssetImporter";
+		
+		AssetImporter(int classID, const char* className) : Object(classID, className) { }
 		virtual ~AssetImporter() = default;
 
 		// noncopyable

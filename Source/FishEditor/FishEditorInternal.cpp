@@ -20,10 +20,16 @@ namespace py = pybind11;
 //	return ret;
 //}
 
+FBXImporter* CreateFBXImporter()
+{
+	return new FBXImporter;
+}
+
 void EditorApplication_OpenProject(const std::string& projectPath)
 {
 	EditorApplication::GetInstance().OpenProject(projectPath);
 }
+
 
 PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 {
@@ -52,6 +58,8 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 		.def("SetFileScale", &ModelImporter::SetFileScale)
 	;
 	
+
+	m.def("CreateFBXImporter", CreateFBXImporter, return_value_policy::reference);
 	class_<FBXImporter, ModelImporter>(m, "FBXImporter")
 		.def(init<>())
 		.def("Import", &FBXImporter::Import)

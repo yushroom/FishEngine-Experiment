@@ -5,6 +5,8 @@
 
 namespace FishEditor
 {
+	class AssetImporter;
+	
     class AssetDatabase
     {
     public:
