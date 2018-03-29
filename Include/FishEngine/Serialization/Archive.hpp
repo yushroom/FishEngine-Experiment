@@ -23,20 +23,20 @@ namespace FishEngine
 		void AddNVP(const char* name, T& t)
 		{
 			this->MapKey(name);
-			this->Add(t);
+			this->Get(t);
 			this->AfterValue();
 		}
 
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
-		void Add(T& t)
+		void Get(T& t)
 		{
-            std::underlying_type_t<T> v;
-			this->Add(v);
-            t = static_cast<T>(v);
+			std::underlying_type_t<T> v;
+			this->Get(v);
+			t = static_cast<T>(v);
 		}
 
 		template<typename T>
-		void Add(std::vector<T>& t)
+		void Get(std::vector<T>& t)
 		{
 			int size = BeginSequence();
 			for (int i = 0; i < size; ++i)
@@ -48,11 +48,11 @@ namespace FishEngine
 		}
 
 		template<typename T>
-		void Add(std::list<T>& t)
+		void Get(std::list<T>& t)
 		{
-            int size = BeginSequence();
+			int size = BeginSequence();
 			for (int i = 0; i < size; ++i)
-            {
+			{
 				T item = NewSequenceItem<T>();
 				t.push_back(item);
 			}
@@ -60,41 +60,45 @@ namespace FishEngine
 		}
 
 		template<class T>
-		void Add(T*& t)
+		void Get(T*& t)
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a Object");
 			t = (T*)ParseObjectRef();
 		}
 		
-		virtual Object* ParseObjectRef() = 0;
-		
-		void Add(Vector2& t)
+		void Get(Vector2& t)
 		{
 			this->AddNVP("x", t.x);
 			this->AddNVP("y", t.y);
 		}
-		void Add(Vector3& t) {
+		void Get(Vector3& t)
+		{
 			this->AddNVP("x", t.x);
 			this->AddNVP("y", t.y);
 			this->AddNVP("z", t.z);
 		}
-		void Add(Vector4& t) {
+		void Get(Vector4& t)
+		{
 			this->AddNVP("x", t.x);
 			this->AddNVP("y", t.y);
 			this->AddNVP("z", t.z);
 			this->AddNVP("w", t.w);
 		}
-		void Add(Quaternion& t) {
+		void Get(Quaternion& t) {
 			this->AddNVP("x", t.x);
 			this->AddNVP("y", t.y);
 			this->AddNVP("z", t.z);
 			this->AddNVP("w", t.w);
 		}
 
-		virtual void Add(std::string& t) = 0;
-		virtual void Add(int& t) = 0;
-		virtual void Add(float& t) = 0;
-		virtual void Add(bool& t) = 0;
+		// override these methods
+
+		virtual void Get(std::string& t) = 0;
+		virtual void Get(int& t) = 0;
+		virtual void Get(float& t) = 0;
+		virtual void Get(bool& t) = 0;
+
+		virtual Object* ParseObjectRef() = 0;
 
 		// Map
 		virtual void MapKey(const char* name) = 0;
@@ -104,18 +108,17 @@ namespace FishEngine
 		virtual int BeginSequence() = 0;		// return sequence size
 		virtual void BeginSequenceItem() = 0;
 		virtual void AfterSequenceItem() = 0;
-        virtual void EndSequence() = 0;
+		virtual void EndSequence() = 0;
 
-        template<class T>
+		template<class T>
 		T NewSequenceItem()
-        {
-            BeginSequenceItem();
-            T value;
-			this->Add(value);
+		{
+			BeginSequenceItem();
+			T value;
+			this->Get(value);
 			AfterSequenceItem();
 			return value;
-        }
-
+		}
 	};
 
 	

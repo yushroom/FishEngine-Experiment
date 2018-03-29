@@ -16,6 +16,7 @@ schema = '''
 
 @Prefab: Object
 	m_ParentPrefab: Prefab*
+	m_RootGameObject
 	m_IsPrefabParent: bool
 
 @Component: Object
