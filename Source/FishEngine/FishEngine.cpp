@@ -17,6 +17,7 @@
 #include <FishEngine/Component/Light.hpp>
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
+#include <FishEngine/ClassID.hpp>
 
 
 namespace FishEngine
@@ -78,23 +79,6 @@ namespace FishEngine
 		PhysicsSystem::GetInstance().FixedUpdate();
 	}
 	
-#define PAIR(classname) \
-		{classname::ClassID, #classname}
-	
-	std::map<int, std::string> ClassID2ClassName = {
-		{GameObject::ClassID, "GameObject"},
-		{Transform::ClassID, "Transform"},
-		PAIR(Camera),
-		PAIR(Light),
-		PAIR(MeshFilter),
-		PAIR(MeshRenderer),
-		PAIR(Script),
-		PAIR(Material),
-		PAIR(Shader),
-		PAIR(Mesh)
-	};
-#undef PAIR
-	
 	void Clean()
 	{
 		Material::StaticClean();
@@ -112,7 +96,7 @@ namespace FishEngine
 			{
 				if (p.second.size() != 0)
 				{
-					printf("Class[ID:%d, name:%s] has %lu obj\n", p.first, ClassID2ClassName[p.first].c_str(), p.second.size());
+					printf("Class[ID:%d, name:%s] has %lu obj\n", p.first, GetNameByClassID(p.first).c_str(), p.second.size());
 				}
 			}
 			throw std::runtime_error("Memory Leak!");

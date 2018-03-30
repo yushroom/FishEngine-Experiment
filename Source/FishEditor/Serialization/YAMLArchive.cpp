@@ -104,7 +104,7 @@ namespace FishEditor
 					std::string guid = parentPrefab["guid"].as<std::string>();
 					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
 					//LogError("[TODO] make a copy of main asset");
-					Prefab* prefab = (Prefab*)AssetDatabase::LoadMainAssetAtPath(assetPath);
+					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
 					Prefab* instance  = prefab->Instantiate();
 					obj = instance;
 				}
