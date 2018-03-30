@@ -6,17 +6,11 @@
 #	undef GetClassName
 #endif
 
+#include <FishEngine/CreateObject.hpp>
+
 
 namespace FishEditor
 {
-	template<class T>
-	inline T* CreateObject() { return new T(); }
-
-	template<>
-	inline GameObject* CreateObject<GameObject>() {
-		return new GameObject("", GameObjectConstructionFlag::Empty);
-	}
-
 	std::vector<std::pair<int, int64_t>> GetClassIDAndFileID(const std::string& s)
 	{
 		std::vector<std::pair<int, int64_t>> pairs;
@@ -74,30 +68,6 @@ namespace FishEditor
 		}
 	}
 
-	Object* CreateEmptyObject(int classID)
-	{
-#define E(T) \
-		else if (classID == T::ClassID) \
-			obj = CreateObject<T>();
-
-		Object* obj = nullptr;
-		if (classID == GameObject::ClassID)
-			obj = CreateObject<GameObject>();
-		else if (classID == Transform::ClassID)
-			obj = CreateObject<Transform>();
-		E(Prefab)
-		E(Camera)
-		E(Light)
-		E(RectTransform)
-		E(MeshFilter)
-		E(MeshRenderer)
-		E(BoxCollider)
-		E(SphereCollider)
-		E(Rigidbody)
-#undef E
-		return obj;
-	}
-
 	std::vector<Object*> YAMLInputArchive::LoadAll(const std::string& path)
 	{
 		std::ifstream is(path);
@@ -127,12 +97,13 @@ namespace FishEditor
 				auto parentFileID = parentPrefab["fileID"].as<int64_t>();
 				if (parentFileID == 0)
 				{
-					obj = CreateObject<Prefab>();
+					obj = CreateEmptyObject<Prefab>();
 				}
 				else
 				{
 					std::string guid = parentPrefab["guid"].as<std::string>();
 					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
+					//LogError("[TODO] make a copy of main asset");
 					Prefab* prefab = (Prefab*)AssetDatabase::LoadMainAssetAtPath(assetPath);
 					Prefab* instance  = prefab->Instantiate();
 					obj = instance;
@@ -140,7 +111,7 @@ namespace FishEditor
 			}
 			else
 			{
-				obj = CreateEmptyObject(classID);
+				obj = CreateEmptyObjectByClassID(classID);
 			}
 
 			objects[i] = obj;
@@ -181,11 +152,14 @@ namespace FishEditor
 			if (it == done.end())
 			{
 				done.insert(o);
-				fout << Format("--- !u!{} &{}", o->GetClassID(), o->GetInstanceID());
-				Serialize(Format("\n{}:\n", o->GetClassName()));
-				indent += 2;
+				NewLine();
+				fout << Format("--- !u!{} &{}\n", o->GetClassID(), o->GetInstanceID());
+				beginOfLine = true;
+				this->BeforeKey();
+				Serialize(o->GetClassName());
+				this->AfterKey();
 				o->Serialize(*this);
-				indent -= 2;
+				this->AfterValue();
 			}
 		}
 	}

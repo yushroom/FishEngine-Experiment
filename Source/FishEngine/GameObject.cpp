@@ -8,11 +8,11 @@
 
 namespace FishEngine
 {
-    GameObject::GameObject(const std::string& name, GameObjectConstructionFlag flag)
+	GameObject::GameObject(const std::string& name, GameObjectConstructionFlag flag)
 			: Object(ClassID, ClassName)
 	{
-        LOGF;
-        this->SetName(name);
+		LOGF;
+		this->SetName(name);
 		m_Scene = SceneManager::GetActiveScene();
 		
 		if (flag == GameObjectConstructionFlag::WithTransform)
@@ -30,7 +30,7 @@ namespace FishEngine
 		{
 			// empty
 		}
-    }
+	}
 	
 //	// for python
 //	// create GameObject and bind transform
@@ -69,8 +69,8 @@ namespace FishEngine
 
 	void GameObject::AddComponent(Component* comp)
 	{
-        if (comp == nullptr)
-            return;
+		if (comp == nullptr)
+			return;
 		assert(comp->m_GameObject == nullptr);
 		if (comp->GetClassID() == Transform::ClassID)
 		{

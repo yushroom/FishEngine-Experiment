@@ -32,7 +32,8 @@ class FBXImporter:
         else:
             self.useFileScale = False
 
-        self.cpp.Import(path)
+        self.cpp.assetPath = path
+        self.cpp.Import()
         FishEditorInternal.AssetImporter.AddImporter(self.cpp, self.guid)
 
         from . import AssetDataBase

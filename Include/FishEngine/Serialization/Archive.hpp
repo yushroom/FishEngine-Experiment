@@ -35,77 +35,18 @@ namespace FishEngine
 			this->AfterValue();
 		}
 		
-		InputArchive & operator >> (short & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (unsigned short & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (int & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (unsigned int & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (long & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (unsigned long & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (long long & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (unsigned long long & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (float & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (double & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (bool & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
-		
-		InputArchive & operator >> (std::string & t)
-		{
-			this->Deserialize(t);
-			return *this;
-		}
+		InputArchive & operator >> (short & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (unsigned short & t)		{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (int & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (unsigned int & t)		{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (long & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (unsigned long & t)		{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (long long & t)			{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (unsigned long long & t) { this->Deserialize(t); return *this; }
+		InputArchive & operator >> (float & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (double & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (bool & t)				{ this->Deserialize(t); return *this; }
+		InputArchive & operator >> (std::string & t)		{ this->Deserialize(t); return *this; }
 
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
 		InputArchive& operator>>(T& t)
@@ -146,11 +87,12 @@ namespace FishEngine
 		InputArchive& operator>>(T*& t)
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a Object");
-			t = (T*) GetObject();
+			t = (T*) DeserializeObject();
 			return *this;
 		}
 
-		
+
+	protected:
 		// override these methods
 
 		virtual void Deserialize(short & t) = 0;
@@ -166,7 +108,7 @@ namespace FishEngine
 		virtual void Deserialize(bool & t) = 0;
 		virtual void Deserialize(std::string & t) = 0;
 
-		virtual Object* GetObject() = 0;
+		virtual Object* DeserializeObject() = 0;
 
 		// Map
 		virtual void MapKey(const char* name) = 0;
@@ -178,6 +120,7 @@ namespace FishEngine
 		virtual void AfterSequenceItem() = 0;
 		virtual void EndSequence() = 0;
 
+	protected:
 		template<class T>
 		T GetSequenceItem()
 		{
@@ -202,155 +145,67 @@ namespace FishEngine
 			(*this) << t;
 			this->AfterValue();
 		}
-		
-		OutputArchive & operator << (short t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (unsigned short t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (int t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (unsigned int t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (long t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (unsigned long t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (long long t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (unsigned long long t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (float t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (double t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (bool t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (std::nullptr_t const & t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
 
+		OutputArchive & operator << (short t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (unsigned short t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (int t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (unsigned int t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (long t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (unsigned long t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (long long t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (unsigned long long t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (float t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (double t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (bool t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (std::string const & t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (const char* t) { this->Serialize(t); return *this; }
+		OutputArchive & operator << (std::nullptr_t const & t) { this->SerializeNullPtr(); return *this; }
+
+		// Enum
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
 		OutputArchive & operator << (T const & t)
 		{
 			(*this) << static_cast<std::underlying_type_t<T>>(t);
 			return *this;
 		}
-		
-		OutputArchive & operator << (std::string const & t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
-		OutputArchive & operator << (const char* t)
-		{
-			this->Serialize(t);
-			return *this;
-		}
-		
 
+		// Vector
 		template<typename T>
 		OutputArchive & operator << (const std::vector<T>& t)
 		{
 			BeginSequence(t.size());
 			for (auto&& item : t) {
-				NewSequenceItem();
+				BeforeSequenceItem();
 				(*this) << item;
+				AfterSequenceItem();
 			}
 			EndSequence();
 			return (*this);
 		}
 
+		// List
 		template<typename T>
 		OutputArchive & operator << (const std::list<T>& t)
 		{
 			BeginSequence(t.size());
 			for (auto&& item : t) {
-				NewSequenceItem();
+				BeforeSequenceItem();
 				(*this) << item;
+				AfterSequenceItem();
 			}
-			EndSequence();
+			EndSequence();  
 			return (*this);
 		}
 
+		// Object*
 		OutputArchive & operator << (Object* t)
 		{
 			if (t == nullptr)
-				Serialize(nullptr);
+				SerializeNullPtr();
 			else
 				SerializeObject(t);
 			return (*this);
 		}
-		
-//		virtual void Add(const Vector2& t)
-//		{
-//			this->AddNVP("x", t.x);
-//			this->AddNVP("y", t.y);
-//		}
-//		virtual void Add(const Vector3& t) {
-//			this->AddNVP("x", t.x);
-//			this->AddNVP("y", t.y);
-//			this->AddNVP("z", t.z);
-//		}
-//		virtual void Add(const Vector4& t) {
-//			this->AddNVP("x", t.x);
-//			this->AddNVP("y", t.y);
-//			this->AddNVP("z", t.z);
-//			this->AddNVP("w", t.w);
-//		}
-//		virtual void Add(const Quaternion& t) {
-//			this->AddNVP("x", t.x);
-//			this->AddNVP("y", t.y);
-//			this->AddNVP("z", t.z);
-//			this->AddNVP("w", t.w);
-//		}
-
 
 	protected:
 		virtual void Serialize(short t) = 0;
@@ -366,8 +221,8 @@ namespace FishEngine
 		virtual void Serialize(bool t) = 0;
 		virtual void Serialize(std::string const & t) = 0;
 		virtual void Serialize(const char* t) = 0;
-		virtual void Serialize(std::nullptr_t const & t) = 0;
-		
+
+		virtual void SerializeNullPtr() = 0;	// nullptr
 		virtual void SerializeObject(Object* t) = 0;
 
 
@@ -378,7 +233,8 @@ namespace FishEngine
 
 		// Sequence
 		virtual void BeginSequence(int size) {}
-		virtual void NewSequenceItem() {}
+		virtual void BeforeSequenceItem() {}
+		virtual void AfterSequenceItem() {}
 		virtual void EndSequence() {}
 	};
 }

@@ -2,6 +2,7 @@ import yaml
 
 from FishEngine import *
 from FishEditor import EditorApplication
+import FishEditorInternal
 
 from timing import timing
 
@@ -33,16 +34,20 @@ def Start():
     # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
     # projectImporter = UnityProjectImporter(project_path+'/Assets')
     # EditorApplication.OpenProject(project_path+'/Assets')
-    project_path = r'D:\workspace\unity\FishEngine\Assets'
+    project_path = r'D:\workspace\unity\FishEngine'
     # project_path = r'/Users/yushroom/program/Unity/FishEngine/Assets'
     # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
-    projectImporter = UnityProjectImporter(project_path+'')
+    # projectImporter = UnityProjectImporter(project_path+'')
     EditorApplication.OpenProject(project_path)
 
+    scene_path = 'Assets/TestPhysics.unity'
+    importer = FishEditorInternal.AssetImporter.GetAtPath(scene_path)
+    importer.Import()
+
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
-    scene_path = os.path.join(project_path, 'TestPhysics.unity')
+    # scene_path = os.path.join(project_path, 'Assets/TestPhysics.unity')
     # scene_path = os.path.join(project_path, 'sponza.unity')
     # scene_path = os.path.join(project_path, 'PolygonSamurai', 'Scenes', 'Demo.unity')
     # scene_path = r'D:\program\FishEngine-Experiment\Script\FishEngine_demo1.unity'
-    sceneImporter = UnitySceneImporter(scene_path)
-    sceneImporter.Import()
+    # sceneImporter = UnitySceneImporter(scene_path)
+    # sceneImporter.Import()

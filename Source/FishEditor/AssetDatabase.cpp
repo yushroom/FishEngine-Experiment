@@ -2,6 +2,8 @@
 
 #include <FishEditor/AssetImporter.hpp>
 
+#include <regex>
+
 namespace FishEditor
 {
     FileNode* AssetDatabase::s_AssetRootDir = nullptr;
@@ -13,9 +15,10 @@ namespace FishEditor
 	FishEngine::Object* AssetDatabase::LoadMainAssetAtPath(const std::string& path)
 	{
 		auto importer = AssetImporter::GetAtPath(path);
+		assert(importer != nullptr);
 		return importer->GetMainAsset();
 	}
-
+	
 	std::string AssetDatabase::AssetPathToGUID(const std::string& path)
 	{
 		auto it = s_PathToGUID.find(path);
@@ -54,5 +57,23 @@ namespace FishEditor
 		s_PathToGUID.clear();
 		s_GUIDToPath.clear();
 		s_AssetInstanceIDToImporter.clear();
+	}
+
+	inline std::string ReplaceSep(std::string path)
+	{
+		fs::path p(path);
+		assert(!p.is_absolute());
+		p.remove_trailing_separator();
+		auto pp = p.string();
+		std::regex sep_pattern(R"(\\)");
+		std::regex_replace(path.begin(), pp.begin(), pp.end(), sep_pattern, "/");
+		return path;
+	}
+
+	void AssetDatabase::AddAssetPathAndGUIDPair(const std::string& path, const std::string& guid)
+	{
+		auto p = ReplaceSep(path);
+		s_PathToGUID[p] = guid;
+		s_GUIDToPath[guid] = p;
 	}
 }

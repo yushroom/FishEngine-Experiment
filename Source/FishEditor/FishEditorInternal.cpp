@@ -1,5 +1,8 @@
 #include <FishEditor/FishEditorInternal.hpp>
 #include <FishEditor/FBXImporter.hpp>
+#include <FishEditor/Serialization/DefaultImporter.hpp>
+#include <FishEditor/Serialization/NativeFormatImporter.hpp>
+
 #include <FishEngine/GameObject.hpp>
 
 #include <pybind11/embed.h>
@@ -41,13 +44,21 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 
 	class_<AssetDatabase>(m, "AssetDatabase")
 		.def_static("GetAssetPathFromInstanceID", &AssetDatabase::GetAssetPathFromInstanceID)
-		.def_static("", &AssetDatabase::AssetPathToGUID)
-		.def_static("", &AssetDatabase::GUIDToAssetPath)
+		.def_static("AssetPathToGUID", &AssetDatabase::AssetPathToGUID)
+		.def_static("GUIDToAssetPath", &AssetDatabase::GUIDToAssetPath)
 	;
 
 	class_<AssetImporter, FishEngine::Object>(m, "AssetImporter")
-		.def_static("AddImporter", &AssetImporter::AddImporter)
+		//.def_static("AddImporter", &AssetImporter::AddImporter)
+		.def_property("assetPath", &AssetImporter::GetAssetPath, &AssetImporter::SetAssetPath)
+		.def_property("gUID", &AssetImporter::GetGUID, &AssetImporter::SetGUID)
+		.def_property("assetTimeStamp", &AssetImporter::GetAssetTimeStamp, &AssetImporter::SetAssetTimeStamp)
+		.def("GetAtPath", &AssetImporter::GetAtPath)
+		.def("Import", &AssetImporter::Import)
 	;
+
+	class_<NativeFormatImporter, AssetImporter>(m, "NativeFormatImporter");
+	class_<DefaultImporter, AssetImporter>(m, "DefaultImporter");
 
 	class_<ModelImporter, AssetImporter>(m, "ModelImporter")
 		.def("GetGlobalScale", &ModelImporter::GetGlobalScale)

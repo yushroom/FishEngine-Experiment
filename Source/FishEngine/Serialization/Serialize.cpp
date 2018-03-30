@@ -3,41 +3,6 @@
 #include <FishEngine/FishEngine2.hpp>
 #include <FishEngine/Serialization/Archive.hpp>
 
-
-namespace FishEngine
-{
-	// Modification
-	void Modification::Deserialize(InputArchive& archive)
-	{
-		archive.AddNVP("target", this->target);
-		archive.AddNVP("propertyPath", this->propertyPath);
-		archive.AddNVP("value", this->value);
-		archive.AddNVP("objectReference", this->objectReference);
-	}
-	void Modification::Serialize(OutputArchive& archive) const
-	{
-		archive.AddNVP("target", this->target);
-		archive.AddNVP("propertyPath", this->propertyPath);
-		archive.AddNVP("value", this->value);
-		archive.AddNVP("objectReference", this->objectReference);
-	}
-
-	// PrefabModification
-	void PrefabModification::Deserialize(InputArchive& archive)
-	{
-		archive.AddNVP("m_TransformParent", this->m_TransformParent);
-		archive.AddNVP("m_Modifications", this->m_Modifications);
-		archive.AddNVP("m_RemovedComponents", this->m_RemovedComponents);
-	}
-	void PrefabModification::Serialize(OutputArchive& archive) const
-	{
-		archive.AddNVP("m_TransformParent", this->m_TransformParent);
-		archive.AddNVP("m_Modifications", this->m_Modifications);
-		archive.AddNVP("m_RemovedComponents", this->m_RemovedComponents);
-	}
-}
-
-
 namespace FishEngine
 {
 
@@ -82,6 +47,7 @@ namespace FishEngine
 	void Prefab::Deserialize(InputArchive& archive)
 	{
 		Object::Deserialize(archive);
+		archive.AddNVP("m_Modification", this->m_Modification);
 		archive.AddNVP("m_ParentPrefab", this->m_ParentPrefab);
 		archive.AddNVP("m_IsPrefabParent", this->m_IsPrefabParent);
 		if (this->m_IsPrefabParent) {
@@ -92,6 +58,7 @@ namespace FishEngine
 	void Prefab::Serialize(OutputArchive& archive) const
 	{
 		Object::Serialize(archive);
+		archive.AddNVP("m_Modification", this->m_Modification);
 		archive.AddNVP("m_ParentPrefab", this->m_ParentPrefab);
 		if (this->m_IsPrefabParent) {
 			archive.AddNVP("m_RootGameObject", this->m_RootGameObject);

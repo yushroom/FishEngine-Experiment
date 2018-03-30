@@ -10,13 +10,13 @@ namespace FishEditor
 {
 	class AssetImporter;
 	
-    class AssetDatabase
-    {
-    public:
-        static FileNode* AssetRootDir()
-        {
-            return s_AssetRootDir;
-        }
+	class AssetDatabase
+	{
+	public:
+		static FileNode* AssetRootDir()
+		{
+			return s_AssetRootDir;
+		}
 
 
 
@@ -34,15 +34,19 @@ namespace FishEditor
 
 		static void StaticClean();
 
-    private:
-        friend class EditorApplication;
-		friend class FileNode;
-		friend class AssetImporter;
-        static FileNode* s_AssetRootDir;
+		static void AddAssetPathAndGUIDPair(const std::string& path, const std::string& guid);
+
+		static std::string GetAssetRootDir() { return s_AssetRootDir->path.string(); }
+
+	private:
+		friend class EditorApplication;
+		//friend class FileNode;
+		//friend class AssetImporter;
+		static FileNode* s_AssetRootDir;
 
 		static std::unordered_map<std::string, std::string> s_PathToGUID;
 		static std::unordered_map<std::string, std::string> s_GUIDToPath;
 		static std::unordered_map<std::string, AssetImporter*> s_GUIDToImporter;
 		static std::unordered_map<int, AssetImporter*> s_AssetInstanceIDToImporter;
-    };
+	};
 }

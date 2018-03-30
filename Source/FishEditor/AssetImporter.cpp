@@ -4,6 +4,7 @@
 #include <FishEditor/FBXImporter.hpp>
 #include <FishEditor/Path.hpp>
 #include <FishEditor/Serialization/NativeFormatImporter.hpp>
+#include <FishEditor/Serialization/DefaultImporter.hpp>
 
 #include <yaml-cpp/yaml.h>
 #include <fstream>
@@ -39,6 +40,7 @@ namespace FishEditor
 	std::string AssetImporter::GetFullPath() const
 	{
 		fs::path p(FishEngine::Application::GetInstance().GetDataPath());
+		p = p.parent_path();
 		p.append(m_AssetPath);
 		return p.string();
 	}
@@ -46,7 +48,12 @@ namespace FishEditor
 	AssetImporter* AssetImporter::GetAtPath(std::string path)
 	{
 		path = AssetImporter::CorrectAssetPath(path);
-		auto root = FishEngine::Application::GetInstance().GetDataPath();
+		auto guid = AssetDatabase::AssetPathToGUID(path);
+		auto it = s_GUIDToImporter.find(guid);
+		if (it != s_GUIDToImporter.end())
+			return it->second;
+
+		auto root = FishEngine::Application::GetInstance().GetDataPath()+"/..";
 		auto p = fs::path(root);
 		p.append(path);
 		auto ext = boost::to_lower_copy(p.extension().string());
@@ -78,15 +85,24 @@ namespace FishEditor
 				auto nativeImporter = new NativeFormatImporter();
 				importer = nativeImporter;
 			}
+			else if (ext == ".unity")
+			{
+				auto defaultImporter = new DefaultImporter();
+				importer = defaultImporter;
+			}
 			assert(importer != nullptr);
 			importer->m_GUID = guid;
 			importer->m_AssetTimeStamp = timeCreated;
 			importer->m_AssetPath = path;
 
-			AssetDatabase::s_GUIDToPath[guid] = path;
-			AssetDatabase::s_PathToGUID[path] = guid;
+			AssetDatabase::AddAssetPathAndGUIDPair(path, guid);
 			AddImporter(importer, guid);
 			return importer;
+		}
+		else
+		{
+			LogError(".meta file not found!");
+			abort();
 		}
 		return nullptr;
 	}

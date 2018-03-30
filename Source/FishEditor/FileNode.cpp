@@ -7,9 +7,32 @@
 #include <fstream>
 //#include <boost/filesystem.hpp>
 
+#include <FishEngine/Debug.hpp>
+
 FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 {
 	fileName = path.stem().string();
+
+	std::string guid;
+	auto meta_file = fs::path(path.string() + ".meta");
+	if (fs::exists(meta_file))
+	{
+		//auto modified_time = fs::last_write_time(meta_file);
+		std::fstream fin(meta_file.string());
+		auto nodes = YAML::LoadAll(fin);
+		auto&& node = nodes.front();
+		auto meta_created_time = node["timeCreated"].as<uint32_t>();
+		guid = node["guid"].as<std::string>();
+
+		auto rel = fs::relative(path, FishEngine::Application::GetInstance().GetDataPath()+"/..");
+		AssetDatabase::AddAssetPathAndGUIDPair(rel.string(), guid);
+	}
+	else
+	{
+		LogWarning(FishEngine::Format(".meta not found for file[{}]", path.string()));
+	}
+
+
 	if (!fs::is_directory(path))
 	{
 		return;
@@ -25,22 +48,6 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 		auto ext = fn.extension();
 		if (ext == ".meta" || ext == ".DS_store")	// .meta file
 			continue;
-
-		std::string guid;
-		auto meta_file = fs::path(p.string() + ".meta");
-		if (fs::exists(meta_file))
-		{
-			//auto modified_time = fs::last_write_time(meta_file);
-			std::fstream fin(meta_file.string());
-			auto nodes = YAML::LoadAll(fin);
-			auto&& node = nodes.front();
-			auto meta_created_time = node["timeCreated"].as<uint32_t>();
-			guid = node["guid"].as<std::string>();
-			
-			p = fs::relative(p, FishEngine::Application::GetInstance().GetDataPath());
-			AssetDatabase::s_GUIDToPath[guid] = p.string();
-			AssetDatabase::s_PathToGUID[p.string()] = guid;
-		}
 
 		auto n = new FileNode(p);
 		n->parent = this;

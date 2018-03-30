@@ -245,5 +245,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-Func(schema, template2)
-# Func(object_schema, template1)
+# Func(schema, template2)
+Func(object_schema, template1)
