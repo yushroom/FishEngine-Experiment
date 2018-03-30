@@ -16,6 +16,9 @@
 
 
 #include <pybind11/embed.h>
+#include <FishEngine/Application.hpp>
+
+
 namespace py = pybind11;
 
 class EditorInternalApp : public FishEngine::AbstractGameApp
@@ -68,7 +71,8 @@ namespace FishEditor
 {
 	void EditorApplication::OpenProject(const std::string& projectPath)
 	{
-		AssetDatabase::s_AssetRootDir = new FileNode(projectPath);
+		FishEngine::Application::GetInstance().m_DataPath = projectPath+"/Assets";
+		AssetDatabase::s_AssetRootDir = new FileNode(projectPath+"/Assets");
 //		m_ApplicationPath = projectPath;
         OnProjectOpened();
 	}

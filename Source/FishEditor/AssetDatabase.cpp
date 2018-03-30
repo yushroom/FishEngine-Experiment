@@ -10,6 +10,12 @@ namespace FishEditor
 	std::unordered_map<std::string, AssetImporter*> AssetDatabase::s_GUIDToImporter;
 	std::unordered_map<int, AssetImporter*> AssetDatabase::s_AssetInstanceIDToImporter;
 
+	FishEngine::Object* AssetDatabase::LoadMainAssetAtPath(const std::string& path)
+	{
+		auto importer = AssetImporter::GetAtPath(path);
+		return importer->GetMainAsset();
+	}
+
 	std::string AssetDatabase::AssetPathToGUID(const std::string& path)
 	{
 		auto it = s_PathToGUID.find(path);

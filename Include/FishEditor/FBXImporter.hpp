@@ -57,7 +57,7 @@ namespace FishEditor
 		~FBXImporter();
 
 		
-		void Import(const std::string& path);
+		virtual void Import() override;
 
 		FishEngine::GameObject* GetRootGameObject() const
 		{

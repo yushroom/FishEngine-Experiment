@@ -3,6 +3,9 @@
 #include "FileNode.hpp"
 #include <unordered_map>
 
+#include <FishEngine/Object.hpp>
+
+
 namespace FishEditor
 {
 	class AssetImporter;
@@ -14,6 +17,15 @@ namespace FishEditor
         {
             return s_AssetRootDir;
         }
+
+
+
+		// Returns the main asset object at assetPath.
+		// All paths are relative to the project folder, for example: "Assets/MyTextures/hello.png".
+		static FishEngine::Object* LoadMainAssetAtPath(const std::string& path);
+
+		static bool IsMainAsset(FishEngine::Object* obj);
+		static bool IsMainAsset(int instanceID);
 
 		static std::string AssetPathToGUID(const std::string& path);
 		static std::string GUIDToAssetPath(const std::string& guid);

@@ -14,6 +14,14 @@
 #include <iostream>
 #include <fstream>
 
+#include <type_traits>
+
+template <typename T, typename = int>
+struct HasSerialize : std::false_type { };
+
+template <typename T>
+struct HasSerialize <T, decltype((void) T::Serialize, 0)> : std::true_type { };
+
 namespace FishEngine
 {
 	class InputArchive
@@ -23,82 +31,142 @@ namespace FishEngine
 		void AddNVP(const char* name, T& t)
 		{
 			this->MapKey(name);
-			this->Get(t);
+			(*this) >> t;
 			this->AfterValue();
+		}
+		
+		InputArchive & operator >> (short & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (unsigned short & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (int & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (unsigned int & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (long & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (unsigned long & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (long long & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (unsigned long long & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (float & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (double & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (bool & t)
+		{
+			this->Deserialize(t);
+			return *this;
+		}
+		
+		InputArchive & operator >> (std::string & t)
+		{
+			this->Deserialize(t);
+			return *this;
 		}
 
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
-		void Get(T& t)
+		InputArchive& operator>>(T& t)
 		{
 			std::underlying_type_t<T> v;
-			this->Get(v);
+			(*this) >> v;
 			t = static_cast<T>(v);
+			return *this;
 		}
 
 		template<typename T>
-		void Get(std::vector<T>& t)
+		InputArchive& operator>>(std::vector<T>& t)
 		{
 			int size = BeginSequence();
 			for (int i = 0; i < size; ++i)
 			{
-				T item = NewSequenceItem<T>();
+				T item = GetSequenceItem<T>();
 				t.push_back(item);
 			}
 			EndSequence();
+			return *this;
 		}
 
 		template<typename T>
-		void Get(std::list<T>& t)
+		InputArchive& operator>>(std::list<T>& t)
 		{
 			int size = BeginSequence();
 			for (int i = 0; i < size; ++i)
 			{
-				T item = NewSequenceItem<T>();
+				T item = GetSequenceItem<T>();
 				t.push_back(item);
 			}
 			EndSequence();
+			return *this;
 		}
 
 		template<class T>
-		void Get(T*& t)
+		InputArchive& operator>>(T*& t)
 		{
 			static_assert(std::is_base_of<Object, T>::value, "T must be a Object");
-			t = (T*)ParseObjectRef();
-		}
-		
-		void Get(Vector2& t)
-		{
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-		}
-		void Get(Vector3& t)
-		{
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
-		}
-		void Get(Vector4& t)
-		{
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
-			this->AddNVP("w", t.w);
-		}
-		void Get(Quaternion& t) {
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
-			this->AddNVP("w", t.w);
+			t = (T*) GetObject();
+			return *this;
 		}
 
+		
 		// override these methods
 
-		virtual void Get(std::string& t) = 0;
-		virtual void Get(int& t) = 0;
-		virtual void Get(float& t) = 0;
-		virtual void Get(bool& t) = 0;
+		virtual void Deserialize(short & t) = 0;
+		virtual void Deserialize(unsigned short & t) = 0;
+		virtual void Deserialize(int & t) = 0;
+		virtual void Deserialize(unsigned int & t) = 0;
+		virtual void Deserialize(long & t) = 0;
+		virtual void Deserialize(unsigned long & t) = 0;
+		virtual void Deserialize(long long & t) = 0;
+		virtual void Deserialize(unsigned long long & t) = 0;
+		virtual void Deserialize(float & t) = 0;
+		virtual void Deserialize(double & t) = 0;
+		virtual void Deserialize(bool & t) = 0;
+		virtual void Deserialize(std::string & t) = 0;
 
-		virtual Object* ParseObjectRef() = 0;
+		virtual Object* GetObject() = 0;
 
 		// Map
 		virtual void MapKey(const char* name) = 0;
@@ -111,11 +179,11 @@ namespace FishEngine
 		virtual void EndSequence() = 0;
 
 		template<class T>
-		T NewSequenceItem()
+		T GetSequenceItem()
 		{
 			BeginSequenceItem();
 			T value;
-			this->Get(value);
+			(*this) >> value;
 			AfterSequenceItem();
 			return value;
 		}
@@ -129,83 +197,179 @@ namespace FishEngine
 		void AddNVP(const char* name, T&& t)
 		{
 			this->BeforeKey();
-			this->Add(name);
+			Serialize(name);
 			this->AfterKey();
-			this->Add(t);
+			(*this) << t;
 			this->AfterValue();
+		}
+		
+		OutputArchive & operator << (short t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (unsigned short t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (int t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (unsigned int t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (long t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (unsigned long t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (long long t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (unsigned long long t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (float t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (double t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (bool t)
+		{
+			this->Serialize(t);
+			return *this;
+		}
+		
+		OutputArchive & operator << (std::nullptr_t const & t)
+		{
+			this->Serialize(t);
+			return *this;
 		}
 
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
-		void Add(T t)
+		OutputArchive & operator << (T const & t)
 		{
-			this->Add(static_cast<std::underlying_type_t<T>>(t));
-		}
-
-		template<typename T>
-		void Add(const std::vector<T>& t)
-		{
-			BeginSequence(t.size());
-			for (auto&& item : t) {
-				NewSequenceItem();
-				this->Add(item);
-			}
-			EndSequence();
-		}
-
-		template<typename T>
-		void Add(const std::list<T>& t)
-		{
-			BeginSequence(t.size());
-			for (auto&& item : t) {
-				NewSequenceItem();
-				this->Add(item);
-			}
-			EndSequence();
-		}
-
-		void Add(Object*& t)
-		{
-			if (t == nullptr)
-				AddNone();
-			else
-				AddObject(t);
-		}
-
-		void Add(const std::string& t)
-		{
-			Add(t.c_str());
+			(*this) << static_cast<std::underlying_type_t<T>>(t);
+			return *this;
 		}
 		
-		virtual void Add(const Vector2& t)
+		OutputArchive & operator << (std::string const & t)
 		{
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
+			this->Serialize(t);
+			return *this;
 		}
-		virtual void Add(const Vector3& t) {
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
+		
+		OutputArchive & operator << (const char* t)
+		{
+			this->Serialize(t);
+			return *this;
 		}
-		virtual void Add(const Vector4& t) {
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
-			this->AddNVP("w", t.w);
-		}
-		virtual void Add(const Quaternion& t) {
-			this->AddNVP("x", t.x);
-			this->AddNVP("y", t.y);
-			this->AddNVP("z", t.z);
-			this->AddNVP("w", t.w);
+		
+
+		template<typename T>
+		OutputArchive & operator << (const std::vector<T>& t)
+		{
+			BeginSequence(t.size());
+			for (auto&& item : t) {
+				NewSequenceItem();
+				(*this) << item;
+			}
+			EndSequence();
+			return (*this);
 		}
 
-		virtual void Add(int t) {}
-		virtual void Add(float t) {}
-		virtual void Add(bool t) {}
-		virtual void Add(const char * t) {}		// required
+		template<typename T>
+		OutputArchive & operator << (const std::list<T>& t)
+		{
+			BeginSequence(t.size());
+			for (auto&& item : t) {
+				NewSequenceItem();
+				(*this) << item;
+			}
+			EndSequence();
+			return (*this);
+		}
 
-		virtual void AddNone() {}
-		virtual void AddObject(Object* t) {}
+		OutputArchive & operator << (Object* t)
+		{
+			if (t == nullptr)
+				Serialize(nullptr);
+			else
+				SerializeObject(t);
+			return (*this);
+		}
+		
+//		virtual void Add(const Vector2& t)
+//		{
+//			this->AddNVP("x", t.x);
+//			this->AddNVP("y", t.y);
+//		}
+//		virtual void Add(const Vector3& t) {
+//			this->AddNVP("x", t.x);
+//			this->AddNVP("y", t.y);
+//			this->AddNVP("z", t.z);
+//		}
+//		virtual void Add(const Vector4& t) {
+//			this->AddNVP("x", t.x);
+//			this->AddNVP("y", t.y);
+//			this->AddNVP("z", t.z);
+//			this->AddNVP("w", t.w);
+//		}
+//		virtual void Add(const Quaternion& t) {
+//			this->AddNVP("x", t.x);
+//			this->AddNVP("y", t.y);
+//			this->AddNVP("z", t.z);
+//			this->AddNVP("w", t.w);
+//		}
+
+
+	protected:
+		virtual void Serialize(short t) = 0;
+		virtual void Serialize(unsigned short t) = 0;
+		virtual void Serialize(int t) = 0;
+		virtual void Serialize(unsigned int t) = 0;
+		virtual void Serialize(long t) = 0;
+		virtual void Serialize(unsigned long t) = 0;
+		virtual void Serialize(long long t) = 0;
+		virtual void Serialize(unsigned long long t) = 0;
+		virtual void Serialize(float t) = 0;
+		virtual void Serialize(double t) = 0;
+		virtual void Serialize(bool t) = 0;
+		virtual void Serialize(std::string const & t) = 0;
+		virtual void Serialize(const char* t) = 0;
+		virtual void Serialize(std::nullptr_t const & t) = 0;
+		
+		virtual void SerializeObject(Object* t) = 0;
+
 
 		// Map
 		virtual void BeforeKey() {}

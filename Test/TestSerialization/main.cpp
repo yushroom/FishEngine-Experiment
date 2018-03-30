@@ -2,28 +2,29 @@
 #include <FishEditor/Serialization/NativeFormatImporter.hpp>
 #include <FishEngine/Scene.hpp>
 
+#include <FishEditor/EditorApplication.hpp>
+#include <FishEditor/AssetDatabase.hpp>
+
 using namespace FishEngine;
 using namespace FishEditor;
 
 int main()
 {
+#if _WIN32
+#else
+	const std::string projectPath = "/Users/yushroom/program/FishEngine-Experiment/Projects/Unity/";
+#endif
+	const char* prefabPath = "Cube.prefab";
+	const char* scenePath = "Scene01.unity";
+	EditorApplication::GetInstance().OpenProject(projectPath);
+	
 	auto scene = SceneManager::CreateScene("Test");
 	SceneManager::SetActiveScene(scene);
-
-	const char* prefabPath = R"(D:\program\FishEngine-Experiment\Project\Unity\Assets\TestPrefab\Cube.prefab)";
-	NativeFormatImporter importer;
-	importer.SetAssetPath(prefabPath);
-	Prefab* prefab = (Prefab*)importer.Import();
-
-#if _WIN32
-	const char* path = R"(D:\workspace\unity\FishEngine\Assets\TestPhysics.unity)";
-#else
-	const char* path = "/Users/yushroom/program/Unity/FishEngine/Assets/TestPhysics.unity";
-#endif
-
+	
+	Prefab* prefab = (Prefab*)AssetDatabase::LoadMainAssetAtPath(prefabPath);
 
 	YAMLInputArchive input;
-	auto objects = input.LoadAll(path);
+	auto objects = input.LoadAll(projectPath+"/Assets/"+scenePath);
     return 0;
 }
 

@@ -567,7 +567,7 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 	return go;
 }
 
-void FishEditor::FBXImporter::Import(const std::string& path)
+void FishEditor::FBXImporter::Import()
 {
 //	auto oldScene = SceneManager::GetActiveScene();
 
@@ -582,7 +582,7 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 	FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
 	
 	// Use the first argument as the filename for the importer.
-	if (!lImporter->Initialize(path.c_str(), -1, lSdkManager->GetIOSettings()))
+	if (!lImporter->Initialize(m_AssetPath.c_str(), -1, lSdkManager->GetIOSettings()))
 	{
 		LogError("Call to FbxImporter::Initialize() failed.");
 		LogError(std::string( "Error returned: ") + lImporter->GetStatus().GetErrorString() );
@@ -655,7 +655,7 @@ void FishEditor::FBXImporter::Import(const std::string& path)
 		lRootNode = lRootNode->GetChild(0);
 	}
 	m_model.m_rootGameObject = ParseNode(lRootNode);
-	auto p = boost::filesystem::path(path);
+	auto p = boost::filesystem::path(m_AssetPath);
 	auto fileName = p.stem().string();
 	m_model.name = fileName;
 	m_model.m_rootGameObject->SetName(fileName);

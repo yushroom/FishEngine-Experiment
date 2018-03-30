@@ -1,5 +1,35 @@
 from mako.template import Template
 schema = '''
+@Vector2
+	x
+	y
+@Vector3
+	x
+	y
+	z
+@Vector4
+	x
+	y
+	z
+	w
+@Quaternion
+	x
+	y
+	z
+	w
+@Modification
+	target: nullptr;
+	propertyPath
+	value
+	objectReference: nullptr;
+	
+@PrefabModification
+	m_TransformParent: nullptr;
+	m_Modifications
+	m_RemovedComponents
+'''
+
+object_schema = '''
 @Object
 	m_ObjectHideFlags: ObjectHideFlags
 
@@ -15,6 +45,7 @@ schema = '''
 	m_IsActive : bool
 
 @Prefab: Object
+	m_Modification
 	m_ParentPrefab: Prefab*
 	m_RootGameObject
 	m_IsPrefabParent: bool
@@ -119,8 +150,45 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-template1 = '''
+template2 = '''#pragma once
+
+#include <FishEngine/Math/Vector2.hpp>
+#include <FishEngine/Math/Vector3.hpp>
+#include <FishEngine/Math/Vector4.hpp>
+#include <FishEngine/Math/Quaternion.hpp>
+#include <FishEngine/Prefab.hpp>
+
+#include <FishEngine/Serialization/Archive.hpp>
+
+namespace FishEngine
+{
 % for c in ClassInfo:
+	// ${c['className']}
+	InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
+	{
+	% for member in c['members']:
+		archive.AddNVP("${member}", t.${member});
+	% endfor
+		return archive;
+	}
+	OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
+	{
+	% for member in c['members']:
+		archive.AddNVP("${member}", t.${member});
+	% endfor
+		return archive;
+	}
+
+% endfor
+}
+
+'''
+
+template1 = '''
+namespace FishEngine
+{
+% for c in ClassInfo:
+	// ${c['className']}
 	void ${c['className']}::Deserialize(InputArchive& archive)
 	{
 	% if 'parent' in c:
@@ -143,33 +211,39 @@ template1 = '''
 
 
 % endfor
+}
 '''
-template1 = Template(template1)
 
-def GenSerialize(className, parentClassName, members):
-	classInfo = {'className': className, 'parent': parentClassName, 'members':members}
-	return template1.render(c = classInfo)
-classInfo = []
+def Func(schema, template):
+	template1 = Template(template)
 
-for s in schema.split("@"):
-	s = s.strip()
-	if len(s) == 0:
-		continue
-	lines = s.split('\n')
-	l0 = lines[0].strip()
-	klass = {}
-	if ':' in l0:
-		className, parentClassName = l0.split(':')
-		className = className.strip()
-		parentClassName = parentClassName.strip()
-		klass['parent'] = parentClassName
-	else:
-		className = l0
-	klass['className'] = className
-	members = list(map(lambda x: x.split(':')[0].strip(), lines[1:]))
-	members = [m for m in members if not m.startswith('#')]
-	klass['members'] = members
+	def GenSerialize(className, parentClassName, members):
+		classInfo = {'className': className, 'parent': parentClassName, 'members':members}
+		return template1.render(c = classInfo)
+	classInfo = []
 
-	classInfo.append(klass)
-# print(classInfo)
-print(template1.render(ClassInfo=classInfo))
+	for s in schema.split("@"):
+		s = s.strip()
+		if len(s) == 0:
+			continue
+		lines = s.split('\n')
+		l0 = lines[0].strip()
+		klass = {}
+		if ':' in l0:
+			className, parentClassName = l0.split(':')
+			className = className.strip()
+			parentClassName = parentClassName.strip()
+			klass['parent'] = parentClassName
+		else:
+			className = l0
+		klass['className'] = className
+		members = list(map(lambda x: x.split(':')[0].strip(), lines[1:]))
+		members = [m for m in members if not m.startswith('#')]
+		klass['members'] = members
+
+		classInfo.append(klass)
+	# print(classInfo)
+	print(template1.render(ClassInfo=classInfo))
+
+Func(schema, template2)
+# Func(object_schema, template1)

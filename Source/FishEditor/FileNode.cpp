@@ -1,6 +1,7 @@
 #include <FishEditor/FileNode.hpp>
 
 #include <FishEditor/AssetDatabase.hpp>
+#include <FishEngine/Application.hpp>
 
 #include <yaml-cpp/yaml.h>
 #include <fstream>
@@ -35,7 +36,8 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 			auto&& node = nodes.front();
 			auto meta_created_time = node["timeCreated"].as<uint32_t>();
 			guid = node["guid"].as<std::string>();
-
+			
+			p = fs::relative(p, FishEngine::Application::GetInstance().GetDataPath());
 			AssetDatabase::s_GUIDToPath[guid] = p.string();
 			AssetDatabase::s_PathToGUID[p.string()] = guid;
 		}

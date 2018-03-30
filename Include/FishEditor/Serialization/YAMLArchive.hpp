@@ -25,7 +25,7 @@ namespace FishEditor
 
 		std::vector<Object*> LoadAll(const std::string& path);
 		
-		virtual Object* ParseObjectRef() override
+		virtual Object* GetObject() override
 		{
 			auto current = CurrentNode();
 			uint64_t fileID = current["fileID"].as<uint64_t>();
@@ -37,23 +37,72 @@ namespace FishEditor
 			}
 			return nullptr;
 		}
-
-		virtual void Get(std::string& t) override
+		
+		virtual void Deserialize(short & t) override
 		{
-			t = CurrentNode().as<std::string>();
+			t = CurrentNode().as<short>();
 		}
-		virtual void Get(int& t) override
+		virtual void Deserialize(unsigned short & t) override
+		{
+			t = CurrentNode().as<unsigned short>();
+		}
+		virtual void Deserialize(int & t) override
 		{
 			t = CurrentNode().as<int>();
 		}
-		virtual void Get(float& t) override
+		virtual void Deserialize(unsigned int & t) override
+		{
+			t = CurrentNode().as<unsigned int>();
+		}
+		virtual void Deserialize(long & t) override
+		{
+			t = CurrentNode().as<long>();
+		}
+		virtual void Deserialize(unsigned long & t) override
+		{
+			t = CurrentNode().as<unsigned long>();
+		}
+		virtual void Deserialize(long long & t) override
+		{
+			t = CurrentNode().as<long long>();
+		}
+		virtual void Deserialize(unsigned long long & t) override
+		{
+			t = CurrentNode().as<unsigned long long>();
+		}
+		virtual void Deserialize(float & t) override
 		{
 			t = CurrentNode().as<float>();
 		}
-		virtual void Get(bool& t) override
+		virtual void Deserialize(double & t) override
 		{
-			t = CurrentNode().as<int>() == 1;
+			t = CurrentNode().as<double>();
 		}
+		virtual void Deserialize(bool & t) override
+		{
+			t = (CurrentNode().as<int>() == 1);
+		}
+		virtual void Deserialize(std::string & t) override
+		{
+			t = CurrentNode().as<std::string>();
+		}
+
+//		virtual void Get(std::string& t) override
+//		{
+//			t = CurrentNode().as<std::string>();
+//		}
+//		virtual void Get(int& t) override
+//		{
+//			t = CurrentNode().as<int>();
+//		}
+//		virtual void Get(float& t) override
+//		{
+//			t = CurrentNode().as<float>();
+//		}
+//		virtual void Get(bool& t) override
+//		{
+//			t = CurrentNode().as<int>() == 1;
+//		}
 
 		// Map
 		virtual void MapKey(const char* name) override
@@ -140,31 +189,36 @@ namespace FishEditor
 		{
 			fout << "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n";
 		}
+		
+	protected:
+		virtual void Serialize(short t) override { fout << t; }
+		virtual void Serialize(unsigned short t) override { fout << t; }
+		virtual void Serialize(int t) override { fout << t; }
+		virtual void Serialize(unsigned int t) override { fout << t; }
+		virtual void Serialize(long t) override { fout << t; }
+		virtual void Serialize(unsigned long t) override { fout << t; }
+		virtual void Serialize(long long t) override { fout << t; }
+		virtual void Serialize(unsigned long long t) override { fout << t; }
+		virtual void Serialize(float t) override { fout << t; }
+		virtual void Serialize(double t) override { fout << t; }
+		virtual void Serialize(bool t) override { fout << t; }
+		virtual void Serialize(std::string const & t) override { fout << t; }
+		virtual void Serialize(const char* t) override { fout << t; }
+		virtual void Serialize(std::nullptr_t const & t) override { fout << "{fileID: 0}"; }
 
-		void Add(int t) override {
-			fout << t;
-		}
-		void Add(float t) override {
-			fout << t;
-		}
-		void Add(bool t) override {
-			fout << t;
-		}
-		void Add(const char* t) override {
-			fout << t;
-		}
-		void Add(const Vector2& t) override {
-			fout << Format("{{x:{}, y:{}}}", t.x, t.y);
-		}
-		void Add(const Vector3& t) override {
-			fout << Format("{{x:{}, y:{}, z:{}}}", t.x, t.y, t.x);
-		}
-		void Add(const Vector4& t) override {
-			fout << Format("{{x:{}, y:{}, z:{}, w:{}}}", t.x, t.y, t.x, t.w);
-		}
-		void Add(const Quaternion& t) override {
-			fout << Format("{{x:{}, y:{}, z:{}, w:{}}}", t.x, t.y, t.x, t.w);
-		}
+
+//		void Add(const Vector2& t) override {
+//			fout << Format("{{x:{}, y:{}}}", t.x, t.y);
+//		}
+//		void Add(const Vector3& t) override {
+//			fout << Format("{{x:{}, y:{}, z:{}}}", t.x, t.y, t.x);
+//		}
+//		void Add(const Vector4& t) override {
+//			fout << Format("{{x:{}, y:{}, z:{}, w:{}}}", t.x, t.y, t.x, t.w);
+//		}
+//		void Add(const Quaternion& t) override {
+//			fout << Format("{{x:{}, y:{}, z:{}, w:{}}}", t.x, t.y, t.x, t.w);
+//		}
 
 		void BeforeKey() override
 		{
@@ -206,15 +260,11 @@ namespace FishEditor
 		}
 
 
-		void AddNone() override {
-			fout << "{fileID: 0}";
-		}
-
-		void AddObject(Object* t) override
+		void SerializeObject(Object* t) override
 		{
 			todo.push_back(t);
 			std::string s = Format("{{fileID: {}}}", t->GetInstanceID());
-			OutputArchive::Add(s);
+			Serialize(s);
 		}
 
 		void Dump(Object* obj);
@@ -242,22 +292,22 @@ namespace FishEditor
 
 
 
-	class CloneArchive : public OutputArchive
-	{
-	public:
-		void AddObject(Object* t) override
-		{
-			if (t != nullptr)
-			{
-				//auto it = m_Objects.find(t);
-				//if (it == m_Objects.end())
-				//{
-				//	m_Objects.insert(t);
-				//	t->Serialize(*this);
-				//}
-			}
-		}
-
-		Object* current = nullptr;
-	};
+//	class CloneArchive : public OutputArchive
+//	{
+//	public:
+//		void AddObject(Object* t) override
+//		{
+//			if (t != nullptr)
+//			{
+//				//auto it = m_Objects.find(t);
+//				//if (it == m_Objects.end())
+//				//{
+//				//	m_Objects.insert(t);
+//				//	t->Serialize(*this);
+//				//}
+//			}
+//		}
+//
+//		Object* current = nullptr;
+//	};
 }

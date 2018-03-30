@@ -1,22 +1,56 @@
 #include <FishEditor/AssetImporter.hpp>
-
 #include <FishEditor/FileNode.hpp>
 #include <FishEditor/AssetDatabase.hpp>
 #include <FishEditor/FBXImporter.hpp>
+#include <FishEditor/Path.hpp>
+#include <FishEditor/Serialization/NativeFormatImporter.hpp>
+
 #include <yaml-cpp/yaml.h>
 #include <fstream>
 
 #include <boost/algorithm/string.hpp>
 
+#include <FishEngine/Application.hpp>
+
 namespace FishEditor
 {
 	std::unordered_map<std::string, AssetImporter*> AssetImporter::s_GUIDToImporter;
 
-	AssetImporter* AssetImporter::GetAtPath(const std::string& path)
+
+	std::string AssetImporter::CorrectAssetPath(const std::string& path)
 	{
-		auto p = fs::path(path);
+		fs::path p(path);
+		if (p.is_absolute())
+		{
+			LogWarning("The path is absolute. All paths should be relative to the project folder, for example: \"Assets/MyTextures/hello.png\"");
+			auto assetRoot = FishEngine::Application::GetInstance().GetDataPath();
+			auto rel = fs::relative(path, assetRoot);
+			return rel.string();
+		}
+		return path;
+	}
+
+
+	void AssetImporter::SetAssetPath(const std::string& value)
+	{
+		m_AssetPath = CorrectAssetPath(value);
+	}
+
+	std::string AssetImporter::GetFullPath() const
+	{
+		fs::path p(FishEngine::Application::GetInstance().GetDataPath());
+		p.append(m_AssetPath);
+		return p.string();
+	}
+
+	AssetImporter* AssetImporter::GetAtPath(std::string path)
+	{
+		path = AssetImporter::CorrectAssetPath(path);
+		auto root = FishEngine::Application::GetInstance().GetDataPath();
+		auto p = fs::path(root);
+		p.append(path);
 		auto ext = boost::to_lower_copy(p.extension().string());
-		auto meta_file = fs::path(path + ".meta");
+		auto meta_file = fs::path(p.string() + ".meta");
 		if (fs::exists(meta_file))
 		{
 			//auto modified_time = fs::last_write_time(meta_file);
@@ -32,16 +66,19 @@ namespace FishEditor
 				auto fbximporter = new FBXImporter();
 				auto node = meta["ModelImporter"];
 				auto meshes = node["meshes"];
-				int globalScale = meshes["globalScale"].as<float>();
+				float globalScale = meshes["globalScale"].as<float>();
 				bool useFileScale = meshes["useFileScale"].as<int>() == 1;
 				fbximporter->SetGlobalScale(globalScale);
 				fbximporter->SetUseFileScale(useFileScale);
 				importer = fbximporter;
 			}
-			else
+			else if (ext == ".prefab")
 			{
 //				importer = new AssetImporter();
+				auto nativeImporter = new NativeFormatImporter();
+				importer = nativeImporter;
 			}
+			assert(importer != nullptr);
 			importer->m_GUID = guid;
 			importer->m_AssetTimeStamp = timeCreated;
 			importer->m_AssetPath = path;

@@ -5,15 +5,15 @@
 
 namespace FishEditor
 {
-    class NativeFormatImporter : public AssetImporter
-    {
-    public:
-        InjectClassName(NativeFormatImporter, 1034);
+	class NativeFormatImporter : public AssetImporter
+	{
+	public:
+		InjectClassName(NativeFormatImporter, 1034);
 
-        NativeFormatImporter() : AssetImporter(ClassID, ClassName)
-        {
-        }
-		
-        FishEngine::Object* Import();
-    };
+		NativeFormatImporter() : AssetImporter(ClassID, ClassName)
+		{
+		}
+
+		virtual void Import() override;
+	};
 }

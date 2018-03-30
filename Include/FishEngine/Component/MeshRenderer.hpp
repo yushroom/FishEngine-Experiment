@@ -21,8 +21,20 @@ namespace FishEngine
 		{
 		}
 		
-		Material* GetMaterial() const { return m_Materials[0]; }
-		void SetMaterial(Material* mat) { m_Materials[0] = mat; }
+		Material* GetMaterial() const
+		{
+			if (m_Materials.empty())
+				return nullptr;
+			return m_Materials[0];
+		}
+		
+		void SetMaterial(Material* mat)
+		{
+			if (m_Materials.empty())
+				m_Materials.push_back(mat);
+			else
+				m_Materials[0] = mat;
+		}
 		
 		virtual MeshRenderer* Clone() const override;
 

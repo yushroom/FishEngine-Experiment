@@ -27,22 +27,16 @@ namespace FishEditor
 		return meta;
 	}
 
-	FishEngine::Object* NativeFormatImporter::Import()
+	void NativeFormatImporter::Import()
 	{
-		auto meta = ImportMeta(m_AssetPath + ".meta");
+		auto path = GetFullPath();
+		auto meta = ImportMeta(path + ".meta");
 
 		YAMLInputArchive archive;
 
-		auto objects = archive.LoadAll(m_AssetPath);
+		auto objects = archive.LoadAll(path);
 		auto mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
 		auto mainObject = archive.GetObjectByFileID(mainObjectFileID);
-		return mainObject;
-
-		//auto ext = fs::path(m_AssetPath).extension();
-		//if (ext == ".prefab")
-		//{
-		//	
-		//}
-		//return nullptr;
+		m_MainAsset = mainObject;
 	}
 }

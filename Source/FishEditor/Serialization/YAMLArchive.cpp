@@ -1,5 +1,7 @@
 #include <FishEditor/Serialization/YAMLArchive.hpp>
 
+#include <FishEditor/AssetDatabase.hpp>
+#include <FishEditor/AssetImporter.hpp>
 #if _WIN32
 #	undef GetClassName
 #endif
@@ -93,7 +95,7 @@ namespace FishEditor
 		E(SphereCollider)
 		E(Rigidbody)
 #undef E
-			return obj;
+		return obj;
 	}
 
 	std::vector<Object*> YAMLInputArchive::LoadAll(const std::string& path)
@@ -115,7 +117,31 @@ namespace FishEditor
 		{
 			int classID = classID_fileID[i].first;
 			int64_t fileID = classID_fileID[i].second;
-			Object* obj = CreateEmptyObject(classID);
+			
+			Object* obj = nullptr;
+			
+			if (classID == Prefab::ClassID)
+			{
+				auto&& node = m_nodes[i];
+				auto&& parentPrefab = node.begin()->second["m_ParentPrefab"];
+				auto parentFileID = parentPrefab["fileID"].as<int64_t>();
+				if (parentFileID == 0)
+				{
+					obj = CreateObject<Prefab>();
+				}
+				else
+				{
+					std::string guid = parentPrefab["guid"].as<std::string>();
+					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
+					Prefab* prefab = (Prefab*)AssetDatabase::LoadMainAssetAtPath(assetPath);
+					Prefab* instance  = prefab->Instantiate();
+					obj = instance;
+				}
+			}
+			else
+			{
+				obj = CreateEmptyObject(classID);
+			}
 
 			objects[i] = obj;
 			m_FileIDToObject[fileID] = obj;
@@ -156,7 +182,7 @@ namespace FishEditor
 			{
 				done.insert(o);
 				fout << Format("--- !u!{} &{}", o->GetClassID(), o->GetInstanceID());
-				OutputArchive::Add(Format("\n{}:\n", o->GetClassName()));
+				Serialize(Format("\n{}:\n", o->GetClassName()));
 				indent += 2;
 				o->Serialize(*this);
 				indent -= 2;
