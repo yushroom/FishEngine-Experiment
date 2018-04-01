@@ -27,8 +27,6 @@ namespace FishEngine
 			return m_GameObject;
 		}
 
-		virtual Component* Clone() const = 0;
-
 		Prefab* GetPrefabParentObject() const { return m_PrefabParentObject; }
 		void SetPrefabParentObject(Prefab* value) { m_PrefabParentObject = value; }
 

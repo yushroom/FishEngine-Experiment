@@ -114,17 +114,4 @@ namespace FishEngine
 //		}
 //		return nullptr;
 //	}
-
-	Camera* Camera::Clone() const
-	{
-		abort();
-//		auto cloned = new Camera();
-//		cloned->m_cameraType = m_cameraType;
-//		cloned->m_farClipPlane = m_farClipPlane;
-//		cloned->m_nearClipPlane = m_nearClipPlane;
-//		cloned->m_fieldOfView = m_fieldOfView;
-//		cloned->m_orthographic = m_orthographic;
-//		cloned->m_orthographicSize = m_orthographicSize;
-//		return cloned;
-	}
 }

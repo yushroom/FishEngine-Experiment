@@ -8,28 +8,28 @@
 
 namespace FishEditor
 {
-    class SceneInputArchive : public AssetImporter
-    {
-    public:
-        SceneInputArchive(const std::string& path)
-            : archive(path)
-        {
-            m_AssetPath = path;
-        }
+	class SceneInputArchive : public AssetImporter
+	{
+	public:
+		SceneInputArchive(const std::string& path)
+			: archive(path)
+		{
+			m_AssetPath = path;
+		}
 
-        Scene* Import()
-        {
-            fs::path path = m_AssetPath;
-            auto fn = path.stem().string();
-            auto old = SceneManager::GetActiveScene();
-            auto scene = SceneManager::CreateScene(fn);
-            SceneManager::SetActiveScene(scene);
-            archive.LoadAll();
-            SceneManager::SetActiveScene(old);
-            return scene;
-        }
+		Scene* Import()
+		{
+			fs::path path = m_AssetPath;
+			auto fn = path.stem().string();
+			auto old = SceneManager::GetActiveScene();
+			auto scene = SceneManager::CreateScene(fn);
+			SceneManager::SetActiveScene(scene);
+			archive.LoadAllFromString();
+			SceneManager::SetActiveScene(old);
+			return scene;
+		}
 
-    private:
+	private:
 		YAMLInputArchive archive;
-    };
+	};
 }

@@ -56,13 +56,4 @@ namespace FishEngine
 //		return l;
 //	}
 
-	Light* Light::Clone() const
-	{
-		auto cloned = new Light();
-		cloned->m_color = m_color;
-		cloned->m_intensity = m_intensity;
-		cloned->m_range = m_range;
-
-		return cloned;
-	}
 }

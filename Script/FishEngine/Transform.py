@@ -158,15 +158,6 @@ class __Transform:
         # return self.m_CachedPtr.m_RootOrder
         return self.cpp.GetSiblingIndex()
 
-    def Serialize(self, dumper):
-        super(Transform, self).Serialize(dumper)
-        dumper.d('m_LocalRotation', self.localRotation)
-        dumper.d('m_LocalPosition', self.localPosition)
-        dumper.d('m_LocalScale', self.localScale)
-        dumper.d('m_Children', self.children)
-        dumper.d('m_Father', self.parent)
-        dumper.d('m_RootOrder', self.GetSiblingIndex())
-
 
 def Transform__new__(cls):
     return FishEngineInternal.CreateTransform()
@@ -180,5 +171,4 @@ Transform.__init__ = Transform__init__
 Transform.ClassID = FishEngineInternal.TransformClassID()
 Transform.parent = __Transform.parent
 Transform.children = __Transform.children
-Transform.Serialize = __Transform.Serialize
 Transform.LookAt = __Transform.LookAt

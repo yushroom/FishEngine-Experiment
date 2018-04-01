@@ -17,12 +17,6 @@ class __Prefab(Object):
         del self.m_fileIDToObject
         del self.m_RootGameObject
 
-    def Serialize(self, dumper):
-        super(Prefab, self).Serialize(dumper)
-        dumper.d('m_Modification', [])
-        dumper.d('m_ParentPrefab', {'fileID': 1, 'guid': "fjpeoi"})
-        dumper.d('m_IsPrefabParent', 0)
-
 # def Prefab__new__(cls):
 #     return FishEngineInternal.CreatePrefab()
 
@@ -33,4 +27,3 @@ Prefab = FishEngineInternal.Prefab
 # Prefab.__new__ = Prefab__new__
 # Prefab.__init__ = Prefab__init__
 Prefab.ClassID = FishEngineInternal.PrefabClassID()
-Prefab.Serialize = __Prefab.Serialize

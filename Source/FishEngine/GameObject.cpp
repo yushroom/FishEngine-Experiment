@@ -71,7 +71,10 @@ namespace FishEngine
 	{
 		if (comp == nullptr)
 			return;
-		assert(comp->m_GameObject == nullptr);
+		if (comp->m_GameObject != nullptr)
+		{
+			assert(comp->m_GameObject == this);
+		}
 		if (comp->GetClassID() == Transform::ClassID)
 		{
 			assert(m_Transform == nullptr);
@@ -104,45 +107,7 @@ namespace FishEngine
 //	{
 //
 //	}
-	
-	GameObject* GameObject::Clone()
-	{
-//		CollectObjectArchive archive;
-//		this->Serialize(archive);
 
-//		std::ofstream fout("test_output_archive.yaml");
-//		YAMLArchive archive2(fout);
-//		archive2.Dump(this);
-//		fout.close();
-		
-		auto cloned = new GameObject(this->m_Name, GameObjectConstructionFlag::Empty);
-		//auto module = pybind11::module::import("FishEngine");
-		//cloned->m_self = module.attr("GameObject")();
-		auto cloned_t = m_Transform->Clone();
-		cloned->m_Transform = cloned_t;
-		cloned->m_Component.push_back(cloned_t);
-		cloned_t->m_GameObject = cloned;
-		cloned->m_Scene->AddRootTransform(cloned_t);
-
-		auto it = m_Component.begin();
-		it++;
-		for (; it != m_Component.end(); ++it)
-		{
-			auto c = *it;
-			cloned->AddComponent(c->Clone());
-		}
-		
-		cloned->m_Transform->m_Children.reserve(this->m_Transform->m_Children.size());
-		for (auto child : this->m_Transform->m_Children)
-		{
-			auto cloned_child = child->GetGameObject()->Clone();
-			cloned_child->m_Transform->SetParent(cloned->m_Transform, false);
-//			cloned->m_transform->m_children.push_back(cloned_child->m_transform);
-		}
-		
-		return cloned;
-	}
-	
 	bool GameObject::IsActiveInHierarchy() const
 	{
 		if (!m_IsActive)

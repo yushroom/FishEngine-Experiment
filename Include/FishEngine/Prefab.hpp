@@ -52,7 +52,7 @@ namespace FishEngine
 
 		Prefab* Instantiate();
 
-		Prefab* Instantiate(const PrefabModification& modification);
+		Prefab* InstantiateWithModification(const PrefabModification& modification);
 
 
 		void AddObject(int64_t fileID, Object* obj)

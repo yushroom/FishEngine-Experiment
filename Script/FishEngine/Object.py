@@ -135,16 +135,6 @@ class __Object:
     def name(self, name):
         self.m_CachedPtr.name = name
 
-    def Serialize(self, dumper):
-        # dumper.d('name', self.name)
-        dumper.d('m_ObjectHideFlags', 0)
-        pass
-
-    def Deserialize(self, loader):
-        pass
-
-
-
 # def Object__new__(cls):
 #     return FishEngineInternal.CreateObject()
 
@@ -155,6 +145,4 @@ Object = FishEngineInternal.Object
 # Object.__new__ = Object__new__
 # Object.__init__ = Object__init__
 # Object.ClassID = FishEngineInternal.ObjectClassID()
-Object.Serialize = __Object.Serialize
-Object.Deserialize = __Object.Deserialize
 Object.FindObjectsOfType = __Object.FindObjectsOfType

@@ -19,7 +19,8 @@ namespace FishEditor
 		Scene* scene = SceneManager::CreateScene(sceneName);
 		SceneManager::SetActiveScene(scene);
 		YAMLInputArchive archive;
-		auto objects = archive.LoadAll(fullpath);
+		std::string str = ReadFileAsString(fullpath);
+		auto objects = archive.LoadAllFromString(str);
 		SceneManager::SetActiveScene(old);
 
 //		auto&& transforms = m_Scene->FindComponents<Transform>();

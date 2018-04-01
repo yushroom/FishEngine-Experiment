@@ -2,9 +2,8 @@
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Transform.hpp>
 
-// TODO: remove it
-#include <FishEditor/Serialization/YAMLArchive.hpp>
-#include <sstream>
+#include <FishEngine/CloneObject.hpp>
+
 
 namespace FishEngine
 {
@@ -101,51 +100,22 @@ namespace FishEngine
 	
 	Scene* Scene::Clone()
 	{
-		std::stringstream sout;
-		{
-			FishEditor::YAMLOutputArchive archive(sout);
-			for (auto t : m_RootTransforms)
-				archive.Dump(t->GetGameObject());
-		}
-		std::cout << sout.str();
-
-//		Scene* cloned = new Scene;
-		Scene* cloned = SceneManager::CreateScene(this->m_Name + "-Cloned");
+		Scene* old = SceneManager::GetActiveScene();
+		Scene* cloned = new Scene;
 		SceneManager::SetActiveScene(cloned);
+		cloned->m_Name = this->m_Name + "-cloned";
+		cloned->m_Path = this->m_Path;
+		cloned->m_RootTransforms.reserve(this->m_RootTransforms.size());
 
-		FishEditor::YAMLInputArchive archive;
-		auto objects = archive.LoadAll(fullpath);
-
-//		auto&& transforms = m_Scene->FindComponents<Transform>();
-		std::vector<Transform*> transforms;
-		for (auto o : objects) {
-			if (o != nullptr && o->GetClassID() == Transform::ClassID) {
-				auto t = o->As<Transform>();
-				if (t->GetParent() == nullptr)
-					transforms.push_back(o->As<Transform>());
-			}
+		for (int i = 0; i < m_RootTransforms.size(); ++i)
+		{
+			auto go = m_RootTransforms[i]->GetGameObject();
+			auto cloned_go = CloneObject(go)->As<GameObject>();
+			cloned->AddRootTransform(cloned_go->GetTransform());
 		}
-		sort(transforms.begin(), transforms.end(), [](Transform* a, Transform* b){
-			return a->GetRootOrder() < b->GetRootOrder();
-		});
 
-		for (auto t : transforms)
-			cloned->AddRootTransform(t);
-
-
-//		Scene* cloned = new Scene;
-//		SceneManager::SetActiveScene(cloned);
-//		cloned->m_Name = this->m_Name + "-cloned";
-//		cloned->m_Path = this->m_Path;
-//		cloned->m_RootTransforms.reserve(this->m_RootTransforms.size());
-//
-//		for (int i = 0; i < m_RootTransforms.size(); ++i)
-//		{
-//			auto go = m_RootTransforms[i]->GetGameObject();
-//			go->Clone();
-//		}
-//
-//		return cloned;
+		SceneManager::SetActiveScene(old);
+		return cloned;
 	}
 
 	std::map<int, Scene*> SceneManager::s_HandleToScene;

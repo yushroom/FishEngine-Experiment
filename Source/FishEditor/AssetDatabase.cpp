@@ -56,11 +56,18 @@ namespace FishEditor
 		return s_AssetInstanceIDToImporter[instanceID]->GetAssetPath();
 	}
 
+	std::string AssetDatabase::GetGUIDFromInstanceID(int instanceID)
+	{
+		return s_AssetInstanceIDToImporter[instanceID]->GetGUID();
+	}
+
+
 	void AssetDatabase::StaticInit()
 	{
+		// mesh
 		{
 #ifdef _WIN32
-			q = R'(D:\program\FishEngine-Experiment\Assets\Models\{}.txt)'
+			const char *modelsRootDir = R"(D:\program\FishEngine-Experiment\Assets\Models\{}.txt)";
 #else
 			const char *modelsRootDir = "/Users/yushroom/program/FishEngine-Experiment/Assets/Models/{}.txt";
 #endif
@@ -75,8 +82,8 @@ namespace FishEditor
 			};
 			auto importer = new ModelImporter();
 			importer->SetGUID(guid);
-			auto prefab = new Prefab();
-			importer->m_MainAsset = prefab;
+			//auto prefab = new Prefab();
+			//importer->m_MainAsset = prefab;
 
 			for (auto &&p : id2name)
 			{
@@ -85,21 +92,26 @@ namespace FishEditor
 				auto path = FishEngine::Format(modelsRootDir, name);
 				auto str = ReadFileAsString(path);
 				FishEngine::Mesh *mesh = FishEngine::Mesh::FromTextFile(str);
+				mesh->SetLocalIdentifierInFile(fileID);
 				importer->m_FileIDToObject[fileID] = mesh;
-				prefab->AddObject(fileID, mesh);
+				//prefab->AddObject(fileID, mesh);
+				AssetDatabase::s_AssetInstanceIDToImporter[mesh->GetInstanceID()] = importer;
 			}
 
 			AssetImporter::AddImporter(importer, guid);
 		}
 
+		// materials
 		{
 			const char *guid = "0000000000000000f000000000000000";
 			auto importer = new NativeFormatImporter();
 			importer->SetGUID(guid);
 			auto mat = FishEngine::Material::GetDefaultMaterial();
+			mat->SetLocalIdentifierInFile(10303);
 			importer->m_MainAsset = mat;
 			importer->m_FileIDToObject[10303] = mat;
 			AssetImporter::AddImporter(importer, guid);
+			AssetDatabase::s_AssetInstanceIDToImporter[mat->GetInstanceID()] = importer;
 		}
 	}
 
@@ -137,7 +149,7 @@ namespace FishEditor
 	{
 		if (guid == "0000000000000000f000000000000000")
 		{
-			LogWarning("0000000000000000f000000000000000");
+			//LogWarning("0000000000000000f000000000000000");
 			assert(fileID == 10303);
 		}
 		auto importer = AssetImporter::GetByGUID(guid);	// maybe internal assset

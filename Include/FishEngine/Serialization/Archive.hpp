@@ -146,9 +146,7 @@ namespace FishEngine
 		template<class T>
 		void AddNVP(const char* name, T&& t)
 		{
-			this->BeforeKey();
-			Serialize(name);
-			this->AfterKey();
+			this->MapKey(name);
 			(*this) << t;
 			this->AfterValue();
 		}
@@ -215,6 +213,11 @@ namespace FishEngine
 		}
 
 	protected:
+		void Serialize(const char* t) { Serialize(std::string(t)); };
+
+
+		// override these methods
+
 		virtual void Serialize(short t) = 0;
 		virtual void Serialize(unsigned short t) = 0;
 		virtual void Serialize(int t) = 0;
@@ -227,15 +230,13 @@ namespace FishEngine
 		virtual void Serialize(double t) = 0;
 		virtual void Serialize(bool t) = 0;
 		virtual void Serialize(std::string const & t) = 0;
-		virtual void Serialize(const char* t) = 0;
 
 		virtual void SerializeNullPtr() = 0;	// nullptr
 		virtual void SerializeObject(Object* t) = 0;
 
 
 		// Map
-		virtual void BeforeKey() {}
-		virtual void AfterKey() {}
+		virtual void MapKey(const char* name) = 0;
 		virtual void AfterValue() {}
 
 		// Sequence

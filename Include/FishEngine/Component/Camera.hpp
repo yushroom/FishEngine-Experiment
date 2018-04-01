@@ -96,7 +96,6 @@ namespace FishEngine
 
 		static void OnWindowSizeChanged(const int width, const int height);
 
-		virtual Camera* Clone() const override;
 
 	private:
 //		friend class RenderSystem;

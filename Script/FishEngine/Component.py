@@ -26,16 +26,6 @@ class __Component:
     def FindByTypes(*componentTypes)->Set['Component']:
         return set.intersection(*[Component.FindByType(t) for t in componentTypes])
 
-    def Serialize(self, dumper):
-        super(Component, self).Serialize(dumper)
-        dumper.d('m_PrefabParentObject', None)
-        dumper.d('m_PrefabInternal', self.GetPrefabInternal())
-        dumper.d('m_GameObject', self.gameObject)
-
-    def Deserialize(self, loader):
-        super(Component, self).Deserialize(loader)
-        self.gameObject = loader['m_GameObject']
-
 # def Component__new__(cls):
 #     return FishEngineInternal.CreateComponent()
 
@@ -48,4 +38,3 @@ Component = FishEngineInternal.Component
 # Component.ClassID = FishEngineInternal.ComponentClassID()
 Component.gameObject = __Component.gameObject
 Component.transform = __Component.transform
-Component.Serialize = __Component.Serialize

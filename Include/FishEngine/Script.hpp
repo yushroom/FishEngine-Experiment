@@ -77,8 +77,6 @@ namespace FishEngine
 			
 		}
 		
-		virtual Script* Clone() const override;
-		
 		void SetPyObject(const pybind11::handle& obj)
 		{
 			m_PyObject = obj;

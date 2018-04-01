@@ -5,6 +5,7 @@ from FishEditor import EditorApplication
 import FishEditorInternal
 
 from timing import timing
+import platform
 
 def DefaultScene():
     camGO = GameObject('Main Camera')
@@ -15,7 +16,6 @@ def DefaultScene():
     lightGO.transform.localEulerAngles = Vector3(50, -30, 0)
     lightGO.AddComponent(Light())
 
-from FishEditor import UnityProjectImporter, UnitySceneImporter, AssetDataBase
 import os
 import json
 
@@ -23,6 +23,12 @@ import json
 def Start():
     # Screen.SetResolution(640//2, 1136//2, False)
     Screen.SetResolution(1136, 640, False)
+    if platform.system() == 'Windows':
+        project_path = r'D:\workspace\unity\FishEngine'
+        scene_path = 'Assets/TestPhysics.unity'
+    else
+        project_path = r'/Users/yushroom/program/Unity/FishEngine'
+        scene_path = 'Assets/TestPhysics.unity'
     # scenes = []
     # with open('scenes.json') as f:
     #     scenes = json.load(f)
@@ -34,12 +40,10 @@ def Start():
     # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
     # projectImporter = UnityProjectImporter(project_path+'/Assets')
     # EditorApplication.OpenProject(project_path+'/Assets')
-    # project_path = r'D:\workspace\unity\FishEngine'
-    project_path = r'/Users/yushroom/program/Unity/FishEngine'
+    
+    # project_path = r'/Users/yushroom/program/Unity/FishEngine'
     # projectImporter = UnityProjectImporter(project_path+'')
     EditorApplication.OpenProject(project_path)
-
-    scene_path = 'Assets/TestPhysics.unity'
     # importer = FishEditorInternal.AssetImporter.GetAtPath(scene_path)
     # importer.Import()
     scene = FishEditorInternal.EditorSceneManager.OpenScene(scene_path, FishEditorInternal.OpenSceneMode.Single)

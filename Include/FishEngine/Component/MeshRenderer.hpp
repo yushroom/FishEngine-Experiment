@@ -35,8 +35,6 @@ namespace FishEngine
 			else
 				m_Materials[0] = mat;
 		}
-		
-		virtual MeshRenderer* Clone() const override;
 
 	private:
 		std::vector<Material*> m_Materials;

@@ -25,16 +25,18 @@ namespace FishEngine
 	void Init()
 	{
 		puts("======== Init ========");
+		//Debug::Init();
+		//Debug::SetColorMode(true);
 		Material::StaticInit();
 		InputSystem::GetInstance().Init();
 		ScriptSystem::GetInstance().Init();
 		UISystem::GetInstance().Init();
 	}
 
-    void Start()
-    {
+	void Start()
+	{
 		ScriptSystem::GetInstance().Start();
-        puts("======== Start ========");
+		puts("======== Start ========");
 		for (auto o : Object::FindObjectsOfType<GameObject>())
 		{
 			auto go = (GameObject*)o;
@@ -46,8 +48,8 @@ namespace FishEngine
 					 s->Start();
 				 }
 			}
-        }
-    }
+		}
+	}
 	
 	void UpdateRecursively(GameObject* go)
 	{
@@ -65,8 +67,8 @@ namespace FishEngine
 		}
 	}
 
-    void Update()
-    {
+	void Update()
+	{
 //		puts("======== Update ========");
 		ScriptSystem::GetInstance().Update();
 		
@@ -90,13 +92,13 @@ namespace FishEngine
 		int b = Object::GetDeleteCounter();
 		if (a != b)
 		{
-			printf("Memory Leak in FishEngine::Clean(): [%d] objects created but only [%d] objects deleted\n", a, b);
+			LogError(Format("Memory Leak in FishEngine::Clean(): [{}] objects created but only [{}] objects deleted\n", a, b));
 			
 			for (auto& p : Object::GetAllObjects())
 			{
 				if (p.second.size() != 0)
 				{
-					printf("Class[ID:%d, name:%s] has %lu obj\n", p.first, GetNameByClassID(p.first).c_str(), p.second.size());
+					LogError(Format("Class[ID:{}, name:{}] has {} obj\n", p.first, GetNameByClassID(p.first), p.second.size()));
 				}
 			}
 			throw std::runtime_error("Memory Leak!");

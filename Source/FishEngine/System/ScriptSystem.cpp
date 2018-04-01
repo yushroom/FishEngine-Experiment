@@ -246,7 +246,6 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("IsActive", &GameObject::IsActive)
 		.def("SetActive", &GameObject::SetActive)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
-		.def("Clone", &GameObject::Clone, return_value_policy::reference)
 	// compile error in clang
 //		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
 		.def("GetComponent", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)

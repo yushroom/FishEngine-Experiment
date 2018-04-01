@@ -21,7 +21,7 @@ namespace FishEditor
 		constexpr static const char* ClassName = "AssetImporter";
 		
 		AssetImporter(int classID, const char* className) : Object(classID, className) { }
-		virtual ~AssetImporter() = default;
+		virtual ~AssetImporter();
 
 		// noncopyable
 		AssetImporter(AssetImporter const &) = delete;

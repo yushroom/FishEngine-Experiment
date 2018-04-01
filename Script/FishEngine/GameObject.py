@@ -120,31 +120,6 @@ class __GameObject(Object):
     @staticmethod
     def FindWithComponents(*componentTypes)->Set['Component']:
         return set.intersection(*[GameObject.FindWithComponent(t) for t in componentTypes])
-        
-    def Serialize(self, dumper):
-        super(GameObject, self).Serialize(dumper)
-        # dumper.d('m_Component', self.components)
-        dumper.d('m_PrefabParentObject', None)
-        dumper.d('m_PrefabInternal', self.GetPrefabInternal())
-        dumper.d('m_Component', [{'component': c} for c in self.components ])
-        dumper.d('m_Name', self.name)
-        dumper.d('m_IsActive', self.activeSelf)
-
-    def Deserialize(self, loader):
-        super().Deserialize(loader)
-        for comp in loader.d['m_Component']:
-            self.AddComponent(comp)
-        self.name = loader.d['m_Name']
-        self.SetActive(loader.d['m_IsActive'])
-
-    def Clone(self)->'GameObject':
-        from . import Component
-        cloned = GameObject(self.name)
-        for c in FishEngineInternal.GameObject_GetAllComponents(cloned.cpp):
-            Component.WrapCPP(c)
-        for child in cloned.transform.children:
-            pass
-        return cloned
 
 
 def GameObject__new__(cls, name):
@@ -158,8 +133,6 @@ GameObject.__new__ = GameObject__new__
 GameObject.__init__ = GameObject__init__
 GameObject.ClassID = FishEngineInternal.GameObjectClassID()
 # GameObject.transform = __GameObject.transform
-GameObject.Serialize = __GameObject.Serialize
-GameObject.Deserialize = __GameObject.Deserialize
 GameObject.components = __GameObject.components
 GameObject.activeSelf = __GameObject.activeSelf
 GameObject.CreatePrimitive = __GameObject.CreatePrimitive

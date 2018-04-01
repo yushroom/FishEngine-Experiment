@@ -1,6 +1,6 @@
 #include <FishEngine/Prefab.hpp>
 #include <FishEngine/GameObject.hpp>
-#include <FishEngine/Serialization/CloneArchive.hpp>
+#include <FishEngine/CloneObject.hpp>
 #include <FishEngine/CreateObject.hpp>
 
 #include <map>
@@ -22,26 +22,11 @@ namespace FishEngine
 
 	Prefab* Prefab::Instantiate()
 	{
-		// first pass
-		CollectObjectsArchive archive;
-		archive.SerializeObject(this);
-
-		std::map<Object*, Object*> memo;
-		for (auto obj : archive.m_Objects)
-		{
-			int classID = obj->GetClassID();
-			Object* cloned = CreateEmptyObjectByClassID(classID);
-			memo[obj] = cloned;
-		}
-
-		auto instance = (Prefab*)memo[this];
-		instance->m_IsPrefabParent = false;
-		instance->m_ParentPrefab = this;
-		return instance;
+		return dynamic_cast<Prefab*>( CloneObject(this) );
 	}
 
 
-	Prefab* Prefab::Instantiate(const PrefabModification& modification)
+	Prefab* Prefab::InstantiateWithModification(const PrefabModification& modification)
 	{
 		Prefab* instance = Instantiate();
 		return instance;

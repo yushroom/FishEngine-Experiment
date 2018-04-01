@@ -4,7 +4,7 @@ from timing import timing
 import demo1, demo2
 from collections import OrderedDict
 
-from FishEditor import AssetDataBase, EditorApplication
+from FishEditor import EditorApplication
 
 import sys, yaml
 
@@ -38,7 +38,6 @@ def Update():
 def Clean():
     # Material.StaticClean()
     MeshManager.StaticClean()
-    AssetDataBase.StaticClean()
     Script.StaticClean()
     
 def Reload():
@@ -47,16 +46,15 @@ def Reload():
     importlib.reload(FishEngine)
     importlib.reload(demo2)
 
-from FishEditor import UnitySceneImporter, SceneDumper
 from FishEngine import GameObject, Object
 
-def Save():
-    objs = Object.FindObjectsOfType(GameObject)
-    dumper = SceneDumper()
-    dumper.Dump(objs)
+# def Save():
+#     objs = Object.FindObjectsOfType(GameObject)
+#     dumper = SceneDumper()
+#     dumper.Dump(objs)
 
-    scene = SceneManager.CreateScene("RuntimeScene")
-    SceneManager.SetActiveScene(scene)
-    scene_path = 'FishEngine_demo1.unity'
-    sceneImporter = UnitySceneImporter(scene_path)
-    sceneImporter.Import()
+#     scene = SceneManager.CreateScene("RuntimeScene")
+#     SceneManager.SetActiveScene(scene)
+#     scene_path = 'FishEngine_demo1.unity'
+#     sceneImporter = UnitySceneImporter(scene_path)
+#     sceneImporter.Import()

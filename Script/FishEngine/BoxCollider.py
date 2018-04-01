@@ -3,14 +3,7 @@ from . import Collider, Vector3
 import FishEngineInternal
 
 class __BoxCollider:
-    def Serialize(self, dumper):
-        super(BoxCollider, self).Serialize(dumper)
-        dumper.d('m_Size', self.size)
-        dumper.d('m_Center', self.center)
-
-    def Deserialize(self, loader):
-        self.size = loader['m_Size']
-        self.center = loader['m_Center']
+    pass
 
 def BoxCollider__new__(cls):
     return FishEngineInternal.CreateBoxCollider()
@@ -22,5 +15,3 @@ BoxCollider = FishEngineInternal.BoxCollider
 BoxCollider.__new__ = BoxCollider__new__
 BoxCollider.__init__ = BoxCollider__init__
 BoxCollider.ClassID = FishEngineInternal.BoxColliderClassID()
-BoxCollider.Serialize = __BoxCollider.Serialize
-BoxCollider.Deserialize = __BoxCollider.Deserialize

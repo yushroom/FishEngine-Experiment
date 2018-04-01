@@ -60,10 +60,10 @@ namespace FishEngine
 		Object::Serialize(archive);
 		archive.AddNVP("m_Modification", this->m_Modification);
 		archive.AddNVP("m_ParentPrefab", this->m_ParentPrefab);
+		archive.AddNVP("m_IsPrefabParent", this->m_IsPrefabParent);
 		if (this->m_IsPrefabParent) {
 			archive.AddNVP("m_RootGameObject", this->m_RootGameObject);
 		}
-		archive.AddNVP("m_IsPrefabParent", this->m_IsPrefabParent);
 	}
 
 

@@ -28,7 +28,7 @@ namespace FishEngine
 
 		static void Log(LogType channel, std::string const & message, const char* file, int line, const char * func);
 		
-		static void setColorMode(bool value)
+		static void SetColorMode(bool value)
 		{
 			s_colorMode = value;
 		}

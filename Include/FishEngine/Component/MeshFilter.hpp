@@ -21,8 +21,6 @@ namespace FishEngine
 
 		Mesh* GetMesh() const { return m_Mesh; }
 		void SetMesh(Mesh* mesh) { m_Mesh = mesh; }
-
-		virtual MeshFilter* Clone() const override;
 		
 	private:
 		Mesh* m_Mesh = nullptr;

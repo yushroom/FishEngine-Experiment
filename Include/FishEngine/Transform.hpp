@@ -239,8 +239,6 @@ namespace FishEngine
 		
 		void SetSiblingIndex(int index);
 		int GetSiblingIndex() const;
-		
-		Transform* Clone() const override;
 
 	protected:
 		friend class GameObject;

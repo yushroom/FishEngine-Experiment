@@ -33,10 +33,6 @@ namespace FishEngine
 		bool IsInitialized() const;
 		void Initialize(physx::PxShape* shape);
 
-		virtual Rigidbody* Clone() const override
-		{
-			abort();
-		}
 		
 		float GetMass() const { return m_Mass; }
 		void SetMass(float value) { m_Mass = value; }

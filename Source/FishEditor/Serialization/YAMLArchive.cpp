@@ -80,13 +80,11 @@ namespace FishEditor
 		}
 	}
 
-	std::vector<Object*> YAMLInputArchive::LoadAll(std::istream& )
+	std::vector<Object*> YAMLInputArchive::LoadAllFromString(const std::string& str)
 	{
-		std::string str = ReadFileAsString(path);
-
 		auto classID_fileID = GetClassIDAndFileID(str);
-		str = RemoveStripped(str);
-		m_nodes = YAML::LoadAll(str);
+		auto str2 = RemoveStripped(str);
+		m_nodes = YAML::LoadAll(str2);
 		assert(m_nodes.size() == classID_fileID.size());
 
 		for (auto&& node : m_nodes)
@@ -120,11 +118,10 @@ namespace FishEditor
 					(*this) >> modification;
 					PopNode();
 
-					LogError("[TODO] make a copy of main asset");
+					//LogError("[TODO] make a copy of main asset");
 					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
-//					Prefab* instance  = prefab->Instantiate();
-//					obj = instance;
-					obj = prefab;
+					Prefab* instance  = prefab->InstantiateWithModification(modification);
+					obj = instance;
 				}
 				objects[i] = obj;
 			}
@@ -141,6 +138,10 @@ namespace FishEditor
 			{
 				obj = CreateEmptyObjectByClassID(classID);
 			}
+			//else
+			//{
+			//	obj = objects[i];
+			//}
 
 			objects[i] = obj;
 			m_FileIDToObject[fileID] = obj;
@@ -197,6 +198,8 @@ namespace FishEditor
 				auto it = this->m_FileIDToObject.find(fileID);
 				if (it != this->m_FileIDToObject.end())
 					return it->second;
+				else
+					abort();
 			}
 		}
 
@@ -216,17 +219,46 @@ namespace FishEditor
 			auto it = done.find(o);
 			if (it == done.end())
 			{
+				int64_t fileID = o->GetLocalIdentifierInFile();
+				if (fileID == 0)
+				{
+					LogWarning("Object fileID is 0");
+					fileID = o->GetInstanceID();
+				}
+
 				done.insert(o);
 				NewLine();
-				fout << Format("--- !u!{} &{}\n", o->GetClassID(), o->GetInstanceID());
+				fout << Format("--- !u!{} &{}\n", o->GetClassID(), fileID);
 				beginOfLine = true;
-				this->BeforeKey();
-				Serialize(o->GetClassName());
-				this->AfterKey();
+				this->MapKey(o->GetClassName());
 				o->Serialize(*this);
 				this->AfterValue();
 			}
 		}
+	}
+
+	void YAMLOutputArchive::SerializeObject(Object* t)
+	{
+		
+		std::string s;
+		int64_t fileID = t->GetLocalIdentifierInFile();
+		if (fileID == 0)
+		{
+			LogWarning("Object fileID is 0");
+			fileID = t->GetInstanceID();
+		}
+		if (t->Is<Mesh>() || t->Is<Material>())
+		{
+			std::string guid = AssetDatabase::GetGUIDFromInstanceID(t->GetInstanceID());
+			s = Format("{{fileID: {}, guid: {}}}", fileID, guid);
+		}
+		else
+		{
+			s = Format("{{fileID: {}}}", fileID);
+			todo.push_back(t);
+		}
+		
+		Serialize(s);
 	}
 
 }

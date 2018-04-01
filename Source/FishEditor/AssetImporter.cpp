@@ -32,6 +32,14 @@ namespace FishEditor
 	}
 
 
+	AssetImporter::~AssetImporter()
+	{
+		for (auto&& p : m_FileIDToObject)
+		{
+			//delete p.second;
+		}
+	}
+
 	void AssetImporter::SetAssetPath(const std::string& value)
 	{
 		m_AssetPath = CorrectAssetPath(value);
@@ -124,5 +132,6 @@ namespace FishEditor
 	void AssetImporter::AddImporter(AssetImporter* importer, const std::string& guid)
 	{
 		s_GUIDToImporter[guid] = importer;
+		importer->m_GUID = guid;
 	}
 }

@@ -29,7 +29,5 @@ namespace FishEngine
 		}
 		
 		void Update();
-
-		virtual RectTransform* Clone() const override;
 	};
 }

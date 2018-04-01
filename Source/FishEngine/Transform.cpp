@@ -160,16 +160,7 @@ namespace FishEngine
 			m_IsDirty = true;
 		}
 	}
-	
-	Transform* Transform::Clone() const
-	{
-		auto cloned = new Transform();
-		cloned->m_LocalPosition = this->m_LocalPosition;
-		cloned->m_LocalRotation = this->m_LocalRotation;
-		cloned->m_LocalScale = this->m_LocalScale;
-		cloned->m_IsDirty = true;
-		return cloned;
-	}
+
 	
 	void Transform::SetSiblingIndex(int index)
 	{

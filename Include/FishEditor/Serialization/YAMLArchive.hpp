@@ -23,7 +23,7 @@ namespace FishEditor
 	public:
 		YAMLInputArchive() = default;
 
-		std::vector<Object*> LoadAll(std::istream& is);
+		std::vector<Object*> LoadAllFromString(const std::string& str);
 
 
 		Object* GetObjectByFileID(int64_t fileID)
@@ -177,7 +177,6 @@ namespace FishEditor
 		virtual void Serialize(double t) override				{ fout << t; }
 		virtual void Serialize(bool t) override					{ fout << t; }
 		virtual void Serialize(std::string const & t) override	{ fout << t; }
-		virtual void Serialize(const char* t) override			{ fout << t; }
 		virtual void SerializeNullPtr() override				{ fout << "{fileID: 0}"; }
 
 
@@ -194,19 +193,20 @@ namespace FishEditor
 		//	fout << Format("{{x:{}, y:{}, z:{}, w:{}}}", t.x, t.y, t.x, t.w);
 		//}
 
-		void BeforeKey() override
+		void MapKey(const char* name) override
 		{
 			NewLine();
 			Indent();
 			//state = State::MapKey;
-		}
-		void AfterKey() override
-		{
+
+			Serialize(name);
+
 			fout << ": ";
 			indent += 2;
 			//state = State::MapValue;
 			beginOfLine = false;
 		}
+
 		void AfterValue() override
 		{
 			indent -= 2;
@@ -248,12 +248,7 @@ namespace FishEditor
 		}
 
 
-		void SerializeObject(Object* t) override
-		{
-			todo.push_back(t);
-			std::string s = Format("{{fileID: {}}}", t->GetInstanceID());
-			Serialize(s);
-		}
+		void SerializeObject(Object* t) override;
 
 		void Indent()
 		{

@@ -17,11 +17,6 @@ namespace FishEngine
 		DeclareObject(Collider, 56);
 
 		Collider(int classID, const char* className) : Component(classID, className) { }
-
-		virtual Collider* Clone() const override
-		{
-			abort();
-		}
 		
 		void Start();
 

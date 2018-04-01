@@ -39,28 +39,13 @@ namespace FishEngine
 
 	public:
 
-		const std::string& GetName() const
-		{
-			return m_Name;
-		}
-		void SetName(const std::string& name)
-		{
-			m_Name = name;
-		}
+		const std::string& GetName() const{ return m_Name; }
+		void SetName(const std::string& name) { m_Name = name; }
 
-		int GetInstanceID() const
-		{
-			return m_InstanceID;
-		}
-		int GetClassID() const
-		{
-			return m_ClassID;
-		}
+		int GetInstanceID() const { return m_InstanceID; }
+		int GetClassID() const { return m_ClassID; }
 
-		const char* GetClassName() const
-		{
-			return m_ClassName;
-		}
+		const char* GetClassName() const { return m_ClassName; }
 		
 		//void SetPyObject(const pybind11::object& obj)
 		//{
@@ -91,15 +76,9 @@ namespace FishEngine
 		}
 		
 	public:
-		static int GetInstanceCounter()
-		{
-			return s_InstanceCounter;
-		}
+		static int GetInstanceCounter() { return s_InstanceCounter; }
 		
-		static int GetDeleteCounter()
-		{
-			return s_DeleteCounter;
-		}
+		static int GetDeleteCounter() { return s_DeleteCounter; }
 		
 		template<class T>
 		static T* FindObjectOfType()

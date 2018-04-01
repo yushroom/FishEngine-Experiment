@@ -34,7 +34,7 @@ namespace FishEditor
 
 		YAMLInputArchive archive;
 
-		auto objects = archive.LoadAll(path);
+		auto objects = archive.LoadAllFromString(path);
 		auto mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
 		auto mainObject = archive.GetObjectByFileID(mainObjectFileID);
 		m_MainAsset = mainObject;
@@ -42,10 +42,11 @@ namespace FishEditor
 		if (mainObject->GetClassID() == Prefab::ClassID)
 		{
 			Prefab* prefab = mainObject->As<Prefab>();
-			for (auto &&p : archive.GetFileIDToObject())
-			{
-				prefab->AddObject(p.first, p.second);
-			}
+			//for (auto &&p : archive.GetFileIDToObject())
+			//{
+			//	prefab->AddObject(p.first, p.second);
+			//}
+			prefab->m_FileIDToObject = archive.GetFileIDToObject();
 		}
 	}
 }

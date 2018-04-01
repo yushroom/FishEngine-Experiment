@@ -34,6 +34,7 @@ namespace FishEditor
 		static std::string GUIDToAssetPath(const std::string& guid);
 
 		static std::string GetAssetPathFromInstanceID(int instanceID);
+		static std::string GetGUIDFromInstanceID(int instanceID);
 
 
 		static void AddAssetPathAndGUIDPair(const std::string& path, const std::string& guid);

@@ -1,7 +1,7 @@
 from FishEngine import *
 import yaml
 from collections import OrderedDict
-from FishEditor import AssetDataBase, SceneDumper
+# from FishEditor import AssetDataBase, SceneDumper
 from Rotator2 import Rotator2
 from FishEditor import EditorApplication
 
