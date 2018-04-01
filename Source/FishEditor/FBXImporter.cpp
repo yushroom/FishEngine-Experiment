@@ -450,6 +450,7 @@ std::string UpdateFileIDMap(std::map<std::string, FishEngine::GameObject*>& file
 			postfix++;
 		}
 	}
+
 	return ret;
 }
 
@@ -569,6 +570,7 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 
 void FishEditor::FBXImporter::Import()
 {
+	assert(!m_Imported);
 	auto fullpath = this->GetFullPath();
 //	auto oldScene = SceneManager::GetActiveScene();
 
@@ -675,13 +677,13 @@ void FishEditor::FBXImporter::Import()
 		//go->GetTransform()->SetRootOrder(count / 2);
 
 		auto name = go->GetName();
-		m_fileIDToObject[fileID] = go;
+		m_FileIDToObject[fileID] = go;
 		m_Assets[classID][name] = go;
 		for (auto comp : go->GetAllComponents())
 		{
 			classID = comp->GetClassID();
 			fileID = classID * 100000 + count;
-			m_fileIDToObject[fileID] = comp;
+			m_FileIDToObject[fileID] = comp;
 			m_Assets[classID][name] = go;
 		}
 		count += 2;
@@ -693,12 +695,13 @@ void FishEditor::FBXImporter::Import()
 		int classID = Mesh::ClassID;
 		int fileID = classID*100000 + count;
 		auto name = mesh->GetName();
-		m_fileIDToObject[fileID] = mesh;
+		m_FileIDToObject[fileID] = mesh;
 		m_Assets[classID][name] = mesh;
 		count += 2;
 	}
-
+	m_model.m_prefab->m_FileIDToObject = m_FileIDToObject;
 
 	this->m_MainAsset = m_model.m_prefab;
+	m_Imported = true;
 }
 

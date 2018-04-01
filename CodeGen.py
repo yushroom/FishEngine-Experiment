@@ -164,14 +164,14 @@ namespace FishEngine
 {
 % for c in ClassInfo:
 	// ${c['className']}
-	InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
+	static InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
 	% endfor
 		return archive;
 	}
-	OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
+	static OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
@@ -245,5 +245,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-# Func(schema, template2)
-Func(object_schema, template1)
+Func(schema, template2)
+# Func(object_schema, template1)

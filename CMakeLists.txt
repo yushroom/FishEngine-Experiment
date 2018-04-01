@@ -106,7 +106,7 @@ else()
     # FILE(GLOB lib1 ${PhysX_ROOT_DIR}/Lib/osx64/*)
     FILE(GLOB PhysXSDK_LIBRARIES ${PhysX_ROOT_DIR}/Lib/osx64/*.a ${PhysX_ROOT_DIR}/../PxShared/lib/osx64/*.a)
 endif()
-message("PhysXSDK_LIBRARIES" ${PhysXSDK_LIBRARIES})
+#message("PhysXSDK_LIBRARIES" ${PhysXSDK_LIBRARIES})
 
 
 set(NANOVG_DIR "${CMAKE_CURRENT_LIST_DIR}/ThirdParty/nanovg/nanovg")

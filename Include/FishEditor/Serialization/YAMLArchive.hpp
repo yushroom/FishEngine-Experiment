@@ -23,20 +23,27 @@ namespace FishEditor
 	public:
 		YAMLInputArchive() = default;
 
-		std::vector<Object*> LoadAll(const std::string& path);
-		
-		virtual Object* DeserializeObject() override
+		std::vector<Object*> LoadAll(std::istream& is);
+
+
+		Object* GetObjectByFileID(int64_t fileID)
 		{
-			auto current = CurrentNode();
-			uint64_t fileID = current["fileID"].as<uint64_t>();
-			if (fileID != 0)
-			{
-				auto it = m_FileIDToObject.find(fileID);
-				if (it != m_FileIDToObject.end())
-					return it->second;
-			}
-			return nullptr;
+			return m_FileIDToObject[fileID];
 		}
+
+		const std::map<int64_t, Object*>& GetFileIDToObject() const
+		{
+			return m_FileIDToObject;
+		};
+
+	protected:
+
+		bool Skip() override
+		{
+			return !CurrentNode();
+		}
+
+		virtual Object* DeserializeObject() override;
 		
 		virtual void Deserialize(short & t) override			{ t = CurrentNode().as<short>(); }
 		virtual void Deserialize(unsigned short & t) override	{ t = CurrentNode().as<unsigned short>(); }
@@ -76,8 +83,8 @@ namespace FishEditor
 			auto node = current[name];
 			if (!node)
 			{
-				LogError(Format("Key [{}] not found!", name));
-				abort();
+				LogWarning(Format("Key [{}] not found!", name));
+//				abort();
 			}
 			PushNode(node);
 		}
@@ -130,10 +137,6 @@ namespace FishEditor
 			return m_workingNodes.top();
 		}
 
-		Object* GetObjectByFileID(int64_t fileID)
-		{
-			return m_FileIDToObject[fileID];
-		}
 
 	protected:
 		std::vector<YAML::Node>		m_nodes;
@@ -141,7 +144,11 @@ namespace FishEditor
 		YAML::Node					m_currentNode;
 		std::stack<YAML::Node>		m_workingNodes;
 		YAML::const_iterator		m_sequenceiterator;
+
+		// local
 		std::map<int64_t, Object*>	m_FileIDToObject;
+
+//		std::map<std::string, >
 	};
 
 
@@ -149,7 +156,7 @@ namespace FishEditor
 	class YAMLOutputArchive : public OutputArchive
 	{
 	public:
-		explicit YAMLOutputArchive(std::ofstream& fout) : fout(fout)
+		explicit YAMLOutputArchive(std::ostream& fout) : fout(fout)
 		{
 			fout << "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n";
 		}
@@ -265,7 +272,7 @@ namespace FishEditor
 
 		std::vector<Object*> todo;
 		std::set<Object*> done;
-		std::ofstream& fout;
+		std::ostream& fout;
 		//YAML::Emitter fout;
 		int indent = 0;
 		

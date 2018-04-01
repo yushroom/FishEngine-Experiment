@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../AssetImporter.hpp"
+#include <FishEngine/Scene.hpp>
 
 namespace FishEditor
 {
@@ -9,6 +10,7 @@ namespace FishEditor
 		InjectClassName(DefaultAsset, 1029);
 	};
 
+	// scene importer, supported ext: .unity
 	class DefaultImporter : public AssetImporter
 	{
 	public:
@@ -19,5 +21,13 @@ namespace FishEditor
 		}
 
 		virtual void Import() override;
+	
+		FishEngine::Scene* GetScene() const
+		{
+			return m_Scene;
+		}
+		
+	private:
+		FishEngine::Scene*	m_Scene = nullptr;
 	};
 }

@@ -8,6 +8,11 @@
 
 #include <cassert>
 
+namespace FishEditor
+{
+	class DefaultImporter;
+}
+
 namespace FishEngine
 {
 //	class GameObject;
@@ -88,6 +93,7 @@ namespace FishEngine
 		friend class Transform;
 		friend class GameObject;
 		friend class SceneManager;
+		friend class FishEditor::DefaultImporter;
 
 		std::vector<Transform*> m_RootTransforms;
 		

@@ -18,7 +18,7 @@ def OrderedDict_representer(dumper, data):
     return dumper.represent_dict(data.items())
 
 def Start():
-    AssetDataBase.StaticInit()
+    # AssetDataBase.StaticInit()
     yaml.add_representer(OrderedDict, OrderedDict_representer)
     yaml.add_representer(Vector3, Vector3_representer)
     yaml.add_representer(Quaternion, Quaternion_representer)

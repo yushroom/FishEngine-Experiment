@@ -18,6 +18,9 @@ namespace FishEditor
 			return s_AssetRootDir;
 		}
 
+		static void StaticInit();
+		static void StaticClean();
+
 
 
 		// Returns the main asset object at assetPath.
@@ -32,11 +35,12 @@ namespace FishEditor
 
 		static std::string GetAssetPathFromInstanceID(int instanceID);
 
-		static void StaticClean();
 
 		static void AddAssetPathAndGUIDPair(const std::string& path, const std::string& guid);
 
 		static std::string GetAssetRootDir() { return s_AssetRootDir->path.string(); }
+
+		static FishEngine::Object* GetAssetByGUIDAndFileID(const std::string& guid, int64_t fileID);
 
 	private:
 		friend class EditorApplication;

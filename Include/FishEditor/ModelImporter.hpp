@@ -14,6 +14,8 @@
 
 namespace FishEditor
 {
+	class AssetDatabase;
+
 	// Vertex normal generation options for ModelImporter.
 	enum class ModelImporterNormals
 	{
@@ -83,7 +85,7 @@ namespace FishEditor
 		constexpr static int ClassID = 1040;
 		constexpr static const char* ClassName = "ModelImporter";
 		
-		ModelImporter(int classID, const char* className) : AssetImporter(classID, className) { }
+		ModelImporter(int classID=ClassID, const char* className=ClassName) : AssetImporter(classID, className) { }
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		
@@ -108,7 +110,17 @@ namespace FishEditor
 			m_importTangents = importTangents;
 		}
 
+		const std::map<int64_t, FishEngine::Object*>& GetFileIDToObject() const
+		{
+			return m_FileIDToObject;
+		}
+
+		virtual void Import() override { }
+
 	protected:
+		friend class AssetDatabase;
+
+//		std::map<int64_t, FishEngine::Object*> m_FileIDToObject;
 
 		float GetScale()
 		{

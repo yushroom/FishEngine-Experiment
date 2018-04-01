@@ -19,7 +19,8 @@ namespace FishEngine
 		std::list<Object*> todo;
 	};
 
-	FishEngine::Prefab* Prefab::Instantiate()
+
+	Prefab* Prefab::Instantiate()
 	{
 		// first pass
 		CollectObjectsArchive archive;
@@ -36,6 +37,13 @@ namespace FishEngine
 		auto instance = (Prefab*)memo[this];
 		instance->m_IsPrefabParent = false;
 		instance->m_ParentPrefab = this;
+		return instance;
+	}
+
+
+	Prefab* Prefab::Instantiate(const PrefabModification& modification)
+	{
+		Prefab* instance = Instantiate();
 		return instance;
 	}
 }

@@ -218,7 +218,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	class_<SceneManager>(m, "SceneManager")
 		.def_static("CreateScene", &SceneManager::CreateScene, return_value_policy::reference)
 		.def_static("GetActiveScene", &SceneManager::GetActiveScene, return_value_policy::reference)
-		.def_static("SetActiveScene", &SceneManager::SetActiveScene);
+		.def_static("SetActiveScene", &SceneManager::SetActiveScene, return_value_policy::reference);
 
 
 

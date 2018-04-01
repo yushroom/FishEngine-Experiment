@@ -15,10 +15,7 @@ namespace FishEngine
 	public:
 		DeclareObject(Transform, 4);
 
-		Transform() : Component(Transform::ClassID, ClassName)
-		{
-			LOGF;
-		}
+		Transform();
 		
 	public:
 		

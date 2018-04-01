@@ -35,7 +35,7 @@ namespace FishEngine
 	}
 	
 //	Mesh* FromTextFile(std::istream & is)
-	Mesh* Mesh::FromTextFile(const char* str)
+	Mesh* Mesh::FromTextFile(const std::string &str)
 	{
 		std::istringstream is(str);
 //		auto mesh = MakeShared<Mesh>();

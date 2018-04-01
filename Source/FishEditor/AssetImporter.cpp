@@ -94,6 +94,7 @@ namespace FishEditor
 			importer->m_GUID = guid;
 			importer->m_AssetTimeStamp = timeCreated;
 			importer->m_AssetPath = path;
+			importer->Import();
 
 			AssetDatabase::AddAssetPathAndGUIDPair(path, guid);
 			AddImporter(importer, guid);

@@ -34,15 +34,16 @@ def Start():
     # project_path = r'D:\program\github\MonumentVally-Demo\Assets'
     # projectImporter = UnityProjectImporter(project_path+'/Assets')
     # EditorApplication.OpenProject(project_path+'/Assets')
-    project_path = r'D:\workspace\unity\FishEngine'
-    # project_path = r'/Users/yushroom/program/Unity/FishEngine/Assets'
-    # project_path = '/Users/yushroom/program/Unity/FishEngine/Assets'
+    # project_path = r'D:\workspace\unity\FishEngine'
+    project_path = r'/Users/yushroom/program/Unity/FishEngine'
     # projectImporter = UnityProjectImporter(project_path+'')
     EditorApplication.OpenProject(project_path)
 
     scene_path = 'Assets/TestPhysics.unity'
-    importer = FishEditorInternal.AssetImporter.GetAtPath(scene_path)
-    importer.Import()
+    # importer = FishEditorInternal.AssetImporter.GetAtPath(scene_path)
+    # importer.Import()
+    scene = FishEditorInternal.EditorSceneManager.OpenScene(scene_path, FishEditorInternal.OpenSceneMode.Single)
+    FishEngineInternal.SceneManager.SetActiveScene(scene)
 
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
     # scene_path = os.path.join(project_path, 'Assets/TestPhysics.unity')

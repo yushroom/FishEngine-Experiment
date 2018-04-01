@@ -38,5 +38,14 @@ namespace FishEditor
 		auto mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
 		auto mainObject = archive.GetObjectByFileID(mainObjectFileID);
 		m_MainAsset = mainObject;
+
+		if (mainObject->GetClassID() == Prefab::ClassID)
+		{
+			Prefab* prefab = mainObject->As<Prefab>();
+			for (auto &&p : archive.GetFileIDToObject())
+			{
+				prefab->AddObject(p.first, p.second);
+			}
+		}
 	}
 }

@@ -83,6 +83,12 @@ namespace FishEngine
 		{
 			return dynamic_cast<T*>(this) != nullptr;
 		}
+
+		template<class T>
+		T* As()
+		{
+			return dynamic_cast<T*>(this);
+		}
 		
 	public:
 		static int GetInstanceCounter()

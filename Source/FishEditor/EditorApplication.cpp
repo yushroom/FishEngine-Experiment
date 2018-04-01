@@ -82,6 +82,7 @@ namespace FishEditor
 		m_app = new EditorInternalApp();
 //		m_app->Init();
 		FishEngine::Init();
+		AssetDatabase::StaticInit();
 		FishEngine::Start();
 	}
 
@@ -112,10 +113,10 @@ namespace FishEditor
 		auto scene = FishEngine::SceneManager::GetActiveScene();
 		m_currentScene = scene;
 
-		auto app = py::module::import("app");
-		app.attr("Save")();
-//		scene = scene->Clone();
-//		FishEngine::SceneManager::SetActiveScene(scene);
+//		auto app = py::module::import("app");
+//		app.attr("Save")();
+		scene = scene->Clone();
+		FishEngine::SceneManager::SetActiveScene(scene);
 		
 		Selection::SetActiveTransform(nullptr);
 		FishEngine::PhysicsSystem::GetInstance().Init();

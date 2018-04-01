@@ -1,5 +1,5 @@
 /build/
-/bin/Debug
+/bin
 __pycache__/
 .vscode/
 *.pyc
@@ -8,3 +8,9 @@ __pycache__/
 /ThirdParty/glm
 /.idea/
 /cmake-build-debug/
+
+
+/Project/*/Library
+/Project/*/UnityPackageManager
+/Project/*/*.sln
+

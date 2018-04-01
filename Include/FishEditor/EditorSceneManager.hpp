@@ -40,9 +40,9 @@ namespace FishEditor
 	{
 	public:
 
-		static FishEngine::Scene* NewScene(const NewSceneSetup& setup, NewSceneMode mode = NewSceneMode::Single)
-		{
-
-		}
+		static FishEngine::Scene* NewScene(NewSceneSetup setup, NewSceneMode mode = NewSceneMode::Single);
+		
+		// scenePath	The path of the Scene. This should be relative to the Project folder; for example, "Assets/MyScenes/MyScene.unity".
+		static FishEngine::Scene* OpenScene(const std::string& scenePath, OpenSceneMode mode = OpenSceneMode::Single);
 	};
 }

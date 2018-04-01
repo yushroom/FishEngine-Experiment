@@ -5,6 +5,7 @@
 
 namespace FishEditor
 {
+	// supported ext: .prefab, .mat
 	class NativeFormatImporter : public AssetImporter
 	{
 	public:

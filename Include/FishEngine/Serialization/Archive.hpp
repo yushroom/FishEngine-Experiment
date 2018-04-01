@@ -7,6 +7,7 @@
 #include "../Math/Quaternion.hpp"
 //#include "Math/Matrix4x4.hpp"
 #include "../Util/StringFormat.hpp"
+#include "../Debug.hpp"
 
 #include <set>
 #include <vector>
@@ -31,7 +32,10 @@ namespace FishEngine
 		void AddNVP(const char* name, T& t)
 		{
 			this->MapKey(name);
-			(*this) >> t;
+			if (!this->Skip())
+				(*this) >> t;
+			else
+				LogWarning(std::string("skip ") + name);
 			this->AfterValue();
 		}
 		
@@ -94,6 +98,9 @@ namespace FishEngine
 
 	protected:
 		// override these methods
+
+		// if should skip next node, return true
+		virtual bool Skip() { return false; }
 
 		virtual void Deserialize(short & t) = 0;
 		virtual void Deserialize(unsigned short & t) = 0;

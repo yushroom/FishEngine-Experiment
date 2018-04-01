@@ -9,3 +9,8 @@
 namespace fs = boost::filesystem;
 //#endif
 typedef fs::path Path;
+
+namespace FishEditor
+{
+	std::string ReadFileAsString(const std::string &path);
+}

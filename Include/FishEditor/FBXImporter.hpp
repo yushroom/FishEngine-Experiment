@@ -10,6 +10,7 @@
 #include <string>
 #include <map>
 #include <FishEngine/Debug.hpp>
+#include <FishEngine/Prefab.hpp>
 
 namespace FishEngine
 {
@@ -76,8 +77,8 @@ namespace FishEditor
 
 		FishEngine::Object* GetObjectByFileID(int fileID)
 		{
-			auto it = m_fileIDToObject.find(fileID);
-			if (it == m_fileIDToObject.end())
+			auto it = m_FileIDToObject.find(fileID);
+			if (it == m_FileIDToObject.end())
 			{
 				LogError("fileID not found!");
 				return nullptr;
@@ -91,13 +92,10 @@ namespace FishEditor
 				assetName = m_model.name;
 			int classID = fileID / 100000;
 			auto obj = m_Assets[classID][assetName];
-			m_fileIDToObject[fileID] = obj;
+			m_FileIDToObject[fileID] = obj;
+			m_model.m_prefab->m_FileIDToObject = m_FileIDToObject;
 		}
 
-		const std::map<int, FishEngine::Object*>& GetFileIDToObject() const
-		{
-			return m_fileIDToObject;
-		}
 		
 	protected:
 		FishEngine::Mesh* ParseMesh(fbxsdk::FbxMesh* fbxMesh);
@@ -106,7 +104,7 @@ namespace FishEditor
 
 //		std::vector<std::pair<int, FishEngine::Object*>> m_fileIDToRecycleName;
 
-		std::map<int, FishEngine::Object*> m_fileIDToObject;
+
 
 		// {ClassID: {name: assetObject}}
 		std::map<int, std::map<std::string, FishEngine::Object*>> m_Assets;

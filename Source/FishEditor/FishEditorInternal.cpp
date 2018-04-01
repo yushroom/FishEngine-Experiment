@@ -2,6 +2,7 @@
 #include <FishEditor/FBXImporter.hpp>
 #include <FishEditor/Serialization/DefaultImporter.hpp>
 #include <FishEditor/Serialization/NativeFormatImporter.hpp>
+#include <FishEditor/EditorSceneManager.hpp>
 
 #include <FishEngine/GameObject.hpp>
 
@@ -53,7 +54,7 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 		.def_property("assetPath", &AssetImporter::GetAssetPath, &AssetImporter::SetAssetPath)
 		.def_property("gUID", &AssetImporter::GetGUID, &AssetImporter::SetGUID)
 		.def_property("assetTimeStamp", &AssetImporter::GetAssetTimeStamp, &AssetImporter::SetAssetTimeStamp)
-		.def("GetAtPath", &AssetImporter::GetAtPath)
+		.def("GetAtPath", &AssetImporter::GetAtPath, return_value_policy::reference)
 		.def("Import", &AssetImporter::Import)
 	;
 
@@ -77,6 +78,17 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 		.def("GetObjectByFileID", &FBXImporter::GetObjectByFileID, return_value_policy::reference)
 		.def("GetRootGameObject", &FBXImporter::GetRootGameObject, return_value_policy::reference)
 		.def("UpdateFileID", &FBXImporter::UpdateFileID)
+	;
+
+	py::enum_<OpenSceneMode>(m, "OpenSceneMode")
+		.value("Single", OpenSceneMode::Single)
+		.value("Additive", OpenSceneMode::Additive)
+		.value("AdditiveWithoutLoading", OpenSceneMode::AdditiveWithoutLoading)
+		.export_values();
+
+
+	class_<EditorSceneManager>(m, "EditorSceneManager")
+		.def("OpenScene", &EditorSceneManager::OpenScene, return_value_policy::reference)
 	;
 }
 

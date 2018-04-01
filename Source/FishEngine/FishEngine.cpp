@@ -42,7 +42,7 @@ namespace FishEngine
 			{
 				 if (comp->GetClassID() == Script::ClassID)
 				 {
-					 auto s = static_cast<Script*>(comp);
+					 auto s = dynamic_cast<Script*>(comp);
 					 s->Start();
 				 }
 			}
@@ -55,7 +55,7 @@ namespace FishEngine
 		{
 			if (comp->GetClassID() == Script::ClassID)
 			{
-				auto s = static_cast<Script*>(comp);
+				auto s = dynamic_cast<Script*>(comp);
 				s->Update();
 			}
 		}

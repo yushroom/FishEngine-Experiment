@@ -43,7 +43,7 @@ namespace FishEngine
 		// Recalculate the bounding volume of the Mesh from the vertices.
 		void RecalculateBounds();
 		
-		static Mesh* FromTextFile(const char* str);
+		static Mesh* FromTextFile(const std::string &str);
 		
 	private:
 		int						m_subMeshCount = 1;

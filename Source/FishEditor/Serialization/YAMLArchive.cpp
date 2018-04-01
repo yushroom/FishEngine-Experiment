@@ -8,6 +8,10 @@
 
 #include <FishEngine/CreateObject.hpp>
 
+#include <FishEngine/Serialization/Serialize.hpp>
+
+#include <boost/algorithm/string.hpp>
+
 
 namespace FishEditor
 {
@@ -19,7 +23,7 @@ namespace FishEditor
 		auto words_begin =
 			std::sregex_iterator(s.begin(), s.end(), pattern);
 		auto words_end = std::sregex_iterator();
-		int count = std::distance(words_begin, words_end);
+		auto count = std::distance(words_begin, words_end);
 		pairs.reserve(count);
 		for (std::sregex_iterator i = words_begin; i != words_end; ++i)
 		{
@@ -29,6 +33,14 @@ namespace FishEditor
 			pairs.emplace_back(classID, fileID);
 		}
 		return pairs;
+	}
+
+	std::string RemoveStripped(const std::string& s)
+	{
+		std::regex pattern(R"((--- !u!\d+ &\d+) stripped)");
+		std::string out = s;
+		std::regex_replace(out.begin(), s.begin(), s.end(), pattern, "$1");
+		return out;
 	}
 
 
@@ -68,20 +80,55 @@ namespace FishEditor
 		}
 	}
 
-	std::vector<Object*> YAMLInputArchive::LoadAll(const std::string& path)
+	std::vector<Object*> YAMLInputArchive::LoadAll(std::istream& )
 	{
-		std::ifstream is(path);
-		assert(is.good());
-		std::stringstream buffer;
-		buffer << is.rdbuf();
-		auto classID_fileID = GetClassIDAndFileID(buffer.str());
-		m_nodes = YAML::LoadAll(buffer.str());
+		std::string str = ReadFileAsString(path);
+
+		auto classID_fileID = GetClassIDAndFileID(str);
+		str = RemoveStripped(str);
+		m_nodes = YAML::LoadAll(str);
 		assert(m_nodes.size() == classID_fileID.size());
 
 		for (auto&& node : m_nodes)
 			PatchNode(node);
 
 		std::vector<Object*> objects(m_nodes.size());
+
+		// step 1: instantiate prefabs
+		for (int i = 0; i < m_nodes.size(); ++i)
+		{
+			int classID = classID_fileID[i].first;
+			int64_t fileID = classID_fileID[i].second;
+			if (classID == Prefab::ClassID)
+			{
+				Object* obj = nullptr;
+				auto&& node = m_nodes[i];
+				auto&& parentPrefab = node.begin()->second["m_ParentPrefab"];
+				auto parentFileID = parentPrefab["fileID"].as<int64_t>();
+
+				if (parentFileID == 0)	// this prefab is a definition
+				{
+					obj = CreateEmptyObject<Prefab>();
+				}
+				else	// this prefab is a ref/instance
+				{
+					std::string guid = parentPrefab["guid"].as<std::string>();
+					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
+					auto&& modificationNode = node.begin()->second["m_Modification"];
+					PrefabModification modification;
+					PushNode(modificationNode);
+					(*this) >> modification;
+					PopNode();
+
+					LogError("[TODO] make a copy of main asset");
+					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
+//					Prefab* instance  = prefab->Instantiate();
+//					obj = instance;
+					obj = prefab;
+				}
+				objects[i] = obj;
+			}
+		}
 
 		for (int i = 0; i < m_nodes.size(); ++i)
 		{
@@ -90,32 +137,15 @@ namespace FishEditor
 			
 			Object* obj = nullptr;
 			
-			if (classID == Prefab::ClassID)
-			{
-				auto&& node = m_nodes[i];
-				auto&& parentPrefab = node.begin()->second["m_ParentPrefab"];
-				auto parentFileID = parentPrefab["fileID"].as<int64_t>();
-				if (parentFileID == 0)
-				{
-					obj = CreateEmptyObject<Prefab>();
-				}
-				else
-				{
-					std::string guid = parentPrefab["guid"].as<std::string>();
-					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
-					//LogError("[TODO] make a copy of main asset");
-					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
-					Prefab* instance  = prefab->Instantiate();
-					obj = instance;
-				}
-			}
-			else
+			if (classID != Prefab::ClassID)
 			{
 				obj = CreateEmptyObjectByClassID(classID);
 			}
 
 			objects[i] = obj;
 			m_FileIDToObject[fileID] = obj;
+			if (obj != nullptr)
+				obj->SetLocalIdentifierInFile(fileID);
 		}
 
 		for (int i = 0; i < m_nodes.size(); ++i)
@@ -136,7 +166,42 @@ namespace FishEditor
 		return objects;
 	}
 
+	bool YAMLNodeHasKey(const YAML::Node& node, const char* key)
+	{
+		assert(node.IsMap());
+		for (auto it = node.begin(); it != node.end(); ++it)
+		{
+			if (it->first.as<std::string>() == key)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
+
+	Object* YAMLInputArchive::DeserializeObject()
+	{
+		auto current = CurrentNode();
+		int64_t fileID = current["fileID"].as<int64_t>();
+
+		if (YAMLNodeHasKey(current, "guid"))	// extern fileID
+		{
+			auto guid = current["guid"].as<std::string>();
+//			LogWarning(guid);
+			return AssetDatabase::GetAssetByGUIDAndFileID(guid, fileID);
+		}
+		else {	// local fileID
+			if (fileID != 0)
+			{
+				auto it = this->m_FileIDToObject.find(fileID);
+				if (it != this->m_FileIDToObject.end())
+					return it->second;
+			}
+		}
+
+		return nullptr;
+	}
 
 
 	void YAMLOutputArchive::Dump(Object* obj)

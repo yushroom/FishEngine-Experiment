@@ -5,6 +5,13 @@
 
 namespace FishEngine
 {
+	Transform::Transform() : Component(Transform::ClassID, ClassName)
+	{
+		LOGF;
+		auto scene = SceneManager::GetActiveScene();
+//		scene->AddRootTransform(this);
+	}
+
 	Transform::~Transform()
 	{
 		LOGF;

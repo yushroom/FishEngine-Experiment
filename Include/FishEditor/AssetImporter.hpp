@@ -4,6 +4,7 @@
 
 #include <FishEngine/Object.hpp>
 #include <unordered_map>
+#include <map>
 
 namespace FishEditor
 {
@@ -63,12 +64,30 @@ namespace FishEditor
 			return m_MainAsset;
 		}
 
+		const std::map<int64_t, FishEngine::Object*>& GetFileIDToObject() const
+		{
+			return m_FileIDToObject;
+		}
+
+		Object* GetObjectByFileID(int64_t fileID)
+		{
+			auto it = m_FileIDToObject.find(fileID);
+			assert(it != m_FileIDToObject.end());
+//			return this->m_FileIDToObject[fileID];
+			return it->second;
+		}
+
 	protected:
+		friend class AssetDatabase;
+
 		static std::unordered_map<std::string, AssetImporter*> s_GUIDToImporter;
 
 		std::string m_AssetPath;
 		std::string m_GUID;
 		uint32_t m_AssetTimeStamp;
+
+		bool m_Imported = false;
+		std::map<int64_t, FishEngine::Object*> m_FileIDToObject;
 
 		// For example an imported model has a game object as its root and several Meshes
 		// and child game objects in expanded state. The root game object is the main asset
