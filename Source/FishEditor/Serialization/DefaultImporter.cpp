@@ -26,10 +26,12 @@ namespace FishEditor
 //		auto&& transforms = m_Scene->FindComponents<Transform>();
 		std::vector<Transform*> transforms;
 		for (auto o : objects) {
-			if (o != nullptr && o->GetClassID() == Transform::ClassID) {
-				auto t = o->As<Transform>();
+			// do not use Transform here, since some transforms, whose GameObject is instantiate by prefab,
+			// may not be in objects
+			if (o != nullptr && o->GetClassID() == GameObject::ClassID) {
+				auto t = o->As<GameObject>()->GetTransform();
 				if (t->GetParent() == nullptr)
-					transforms.push_back(o->As<Transform>());
+					transforms.push_back(t);
 			}
 		}
 		sort(transforms.begin(), transforms.end(), [](Transform* a, Transform* b){

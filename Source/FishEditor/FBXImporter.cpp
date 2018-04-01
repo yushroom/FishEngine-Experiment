@@ -571,8 +571,13 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 void FishEditor::FBXImporter::Import()
 {
 	assert(!m_Imported);
+
 	auto fullpath = this->GetFullPath();
-//	auto oldScene = SceneManager::GetActiveScene();
+	auto fileName = boost::filesystem::path(fullpath).stem().string();
+
+	Scene* oldScene = SceneManager::GetActiveScene();
+	Scene* modelScene = SceneManager::CreateScene(fileName);
+	SceneManager::SetActiveScene(modelScene);
 
 	// Initialize the SDK manager. This object handles memory management.
 	FbxManager * lSdkManager = FbxManager::Create();
@@ -658,8 +663,6 @@ void FishEditor::FBXImporter::Import()
 		lRootNode = lRootNode->GetChild(0);
 	}
 	m_model.m_rootGameObject = ParseNode(lRootNode);
-	auto p = boost::filesystem::path(fullpath);
-	auto fileName = p.stem().string();
 	m_model.name = fileName;
 	m_model.m_rootGameObject->SetName(fileName);
 	m_model.m_prefab->SetRootGameObject(m_model.m_rootGameObject);
@@ -701,7 +704,10 @@ void FishEditor::FBXImporter::Import()
 	}
 	m_model.m_prefab->m_FileIDToObject = m_FileIDToObject;
 
+	m_FileIDToObject[Prefab::ClassID * 100000] = m_model.m_prefab;
+
 	this->m_MainAsset = m_model.m_prefab;
 	m_Imported = true;
+	SceneManager::SetActiveScene(oldScene);
 }
 

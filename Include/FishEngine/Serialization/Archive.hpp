@@ -28,14 +28,18 @@ namespace FishEngine
 	class InputArchive
 	{
 	public:
+
+		InputArchive() = default;
+		InputArchive(InputArchive&) = delete;
+		InputArchive& operator=(InputArchive&) = delete;
+
 		template<class T>
 		void AddNVP(const char* name, T& t)
 		{
-			this->MapKey(name);
-			if (!this->Skip())
+			if (this->MapKey(name))
 				(*this) >> t;
-			else
-				LogWarning(std::string("skip ") + name);
+//			else
+//				LogWarning(std::string("skip ") + name);
 			this->AfterValue();
 		}
 		
@@ -100,7 +104,7 @@ namespace FishEngine
 		// override these methods
 
 		// if should skip next node, return true
-		virtual bool Skip() { return false; }
+//		virtual bool Skip() { return false; }
 
 		virtual void Deserialize(short & t) = 0;
 		virtual void Deserialize(unsigned short & t) = 0;
@@ -118,14 +122,15 @@ namespace FishEngine
 		virtual Object* DeserializeObject() = 0;
 
 		// Map
-		virtual void MapKey(const char* name) = 0;
-		virtual void AfterValue() = 0;
+		// if should skip next node, return false
+		virtual bool MapKey(const char* name) = 0;
+		virtual void AfterValue() {}
 
 		// Sequence
 		virtual int BeginSequence() = 0;		// return sequence size
-		virtual void BeginSequenceItem() = 0;
-		virtual void AfterSequenceItem() = 0;
-		virtual void EndSequence() = 0;
+		virtual void BeginSequenceItem() {}
+		virtual void AfterSequenceItem() {}
+		virtual void EndSequence() {}
 
 	protected:
 		template<class T>
@@ -143,6 +148,12 @@ namespace FishEngine
 	class OutputArchive
 	{
 	public:
+
+		OutputArchive() = default;
+		OutputArchive(OutputArchive&) = delete;
+		OutputArchive& operator=(OutputArchive&) = delete;
+
+
 		template<class T>
 		void AddNVP(const char* name, T&& t)
 		{

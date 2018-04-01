@@ -3,6 +3,8 @@
 #include <FishEngine/CloneObject.hpp>
 #include <FishEngine/CreateObject.hpp>
 
+#include <FishEngine/Serialization/UpdateValueArchive.hpp>
+
 #include <map>
 
 namespace FishEngine
@@ -22,13 +24,43 @@ namespace FishEngine
 
 	Prefab* Prefab::Instantiate()
 	{
-		return dynamic_cast<Prefab*>( CloneObject(this) );
+		std::map<Object*, Object*> memo;
+		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
+		for (auto&& p : m_FileIDToObject)
+		{
+			auto fileID = p.first;
+			auto origin = p.second;
+			auto cloned_ = memo[origin];
+			cloned->m_FileIDToObject[fileID] = cloned_;
+		}
+		return cloned;
 	}
 
 
 	Prefab* Prefab::InstantiateWithModification(const PrefabModification& modification)
 	{
-		Prefab* instance = Instantiate();
-		return instance;
+//		Prefab* instance = Instantiate();
+		std::map<Object*, Object*> memo;
+		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
+		for (auto&& p : m_FileIDToObject)
+		{
+			auto fileID = p.first;
+			auto origin = p.second;
+			auto cloned_ = memo[origin];
+			cloned->m_FileIDToObject[fileID] = cloned_;
+		}
+//		return cloned;
+
+		UpdateValueArchive archive;
+		cloned->GetRootGameObject()->GetTransform()->SetParent( modification.m_TransformParent, false);
+		for (auto& mod : modification.m_Modifications )
+		{
+			assert(mod.target != nullptr);
+			Object * target =  memo[mod.target];
+			archive.UpdateValue(target, mod.propertyPath, mod.value, mod.objectReference);
+		}
+
+		assert(modification.m_RemovedComponents.empty());
+		return cloned;
 	}
 }

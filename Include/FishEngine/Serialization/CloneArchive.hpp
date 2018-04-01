@@ -79,7 +79,7 @@ namespace FishEngine
 		//virtual void AfterValue() {}
 
 		//// Sequence
-		virtual void BeginSequence(int size)
+		virtual void BeginSequence(int size) override
 		{
 			m_SequenceSize.push_back(size);
 		}
@@ -137,9 +137,10 @@ namespace FishEngine
 		}
 
 		// Map
-		virtual void MapKey(const char* name) override {
+		virtual bool MapKey(const char* name) override {
 			assert(values.m_MapKeys.front() == std::string(name));
 			values.m_MapKeys.pop_front();
+			return true;
 		}
 		virtual void AfterValue() override {}
 
@@ -153,7 +154,4 @@ namespace FishEngine
 		virtual void AfterSequenceItem() override {}
 		virtual void EndSequence() override {}
 	};
-
-
-	Object* CloneObject(Object* obj);
 }

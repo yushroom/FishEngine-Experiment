@@ -3,13 +3,13 @@
 
 namespace FishEngine
 {
-	Object* CloneObject(Object* obj)
+	Object* CloneObject(Object* obj, std::map<Object*, Object*>& memo)
 	{
 		// first pass
 		CollectObjectsArchive archive;
 		archive.SerializeObject(obj);
 
-		std::map<Object*, Object*> memo;
+//		std::map<Object*, Object*> memo;
 		for (auto obj : archive.m_Objects)
 		{
 			int classID = obj->GetClassID();

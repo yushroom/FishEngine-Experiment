@@ -112,6 +112,8 @@ namespace FishEditor
 				{
 					std::string guid = parentPrefab["guid"].as<std::string>();
 					std::string assetPath = AssetDatabase::GUIDToAssetPath(guid);
+					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
+
 					auto&& modificationNode = node.begin()->second["m_Modification"];
 					PrefabModification modification;
 					PushNode(modificationNode);
@@ -119,9 +121,8 @@ namespace FishEditor
 					PopNode();
 
 					//LogError("[TODO] make a copy of main asset");
-					Prefab* prefab = dynamic_cast<Prefab*>( AssetDatabase::LoadMainAssetAtPath(assetPath));
 					Prefab* instance  = prefab->InstantiateWithModification(modification);
-					obj = instance;
+					obj = instance->GetRootGameObject();
 				}
 				objects[i] = obj;
 			}
@@ -138,10 +139,10 @@ namespace FishEditor
 			{
 				obj = CreateEmptyObjectByClassID(classID);
 			}
-			//else
-			//{
-			//	obj = objects[i];
-			//}
+			else
+			{
+				obj = objects[i];
+			}
 
 			objects[i] = obj;
 			m_FileIDToObject[fileID] = obj;
@@ -155,8 +156,9 @@ namespace FishEditor
 			assert(node.IsMap());
 			auto className = node.begin()->first.as<std::string>();
 			Object* obj = objects[i];
+			int classID = classID_fileID[i].first;
 
-			if (obj != nullptr)
+			if (obj != nullptr && classID != Prefab::ClassID)
 			{
 				assert(className == obj->GetClassName());
 				PushNode(node.begin()->second);

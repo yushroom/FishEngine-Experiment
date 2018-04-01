@@ -26,9 +26,13 @@ def Start():
     if platform.system() == 'Windows':
         project_path = r'D:\workspace\unity\FishEngine'
         scene_path = 'Assets/TestPhysics.unity'
-    else
+    else:
         project_path = r'/Users/yushroom/program/Unity/FishEngine'
         scene_path = 'Assets/TestPhysics.unity'
+    EditorApplication.OpenProject(project_path)
+    scene = FishEditorInternal.EditorSceneManager.OpenScene(scene_path, FishEditorInternal.OpenSceneMode.Single)
+    FishEngineInternal.SceneManager.SetActiveScene(scene)
+
     # scenes = []
     # with open('scenes.json') as f:
     #     scenes = json.load(f)
@@ -43,11 +47,10 @@ def Start():
     
     # project_path = r'/Users/yushroom/program/Unity/FishEngine'
     # projectImporter = UnityProjectImporter(project_path+'')
-    EditorApplication.OpenProject(project_path)
+    
     # importer = FishEditorInternal.AssetImporter.GetAtPath(scene_path)
     # importer.Import()
-    scene = FishEditorInternal.EditorSceneManager.OpenScene(scene_path, FishEditorInternal.OpenSceneMode.Single)
-    FishEngineInternal.SceneManager.SetActiveScene(scene)
+    
 
     # scene_path = os.path.join(project_path, 'scene', "01.unity")
     # scene_path = os.path.join(project_path, 'Assets/TestPhysics.unity')

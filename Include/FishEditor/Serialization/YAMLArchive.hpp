@@ -38,10 +38,10 @@ namespace FishEditor
 
 	protected:
 
-		bool Skip() override
-		{
-			return !CurrentNode();
-		}
+//		bool Skip() override
+//		{
+//			return !CurrentNode();
+//		}
 
 		virtual Object* DeserializeObject() override;
 		
@@ -76,7 +76,7 @@ namespace FishEditor
 //		}
 
 		// Map
-		virtual void MapKey(const char* name) override
+		virtual bool MapKey(const char* name) override
 		{
 			auto current = CurrentNode();
 			assert(current.IsMap());
@@ -87,6 +87,8 @@ namespace FishEditor
 //				abort();
 			}
 			PushNode(node);
+
+			return !(!node);
 		}
 
 		virtual void AfterValue() override
