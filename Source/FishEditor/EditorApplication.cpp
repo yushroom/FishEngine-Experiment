@@ -184,7 +184,7 @@ namespace FishEditor
 
 		m_IsPlaying = false;
 		auto scene = FishEngine::SceneManager::GetActiveScene();
-		scene->Clean();
+//		scene->Clean();
 		delete scene;
 		FishEngine::SceneManager::SetActiveScene(m_currentScene);
 //		scene = FishEngine::SceneManager::GetActiveScene();

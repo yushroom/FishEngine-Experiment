@@ -32,6 +32,8 @@ namespace FishEngine
 		m_triangleCount = static_cast<uint32_t>(triangles.size() / 3);
 		m_subMeshIndexOffset.push_back(m_triangleCount);
 		RecalculateBounds();
+
+		AssetManager::GetInstance().AddAsset(this);
 	}
 	
 //	Mesh* FromTextFile(std::istream & is)

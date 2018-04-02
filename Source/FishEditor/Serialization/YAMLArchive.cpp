@@ -213,9 +213,12 @@ namespace FishEditor
 			if (obj != nullptr && classID == GameObject::ClassID)
 			{
 				assert(className == obj->GetClassName());
-				PushNode(node.begin()->second);
-				obj->Deserialize(*this);
-				PopNode();
+				if (obj->As<GameObject>()->GetPrefabInternal() == nullptr)	// not a prefab instance
+				{
+					PushNode(node.begin()->second);
+					obj->Deserialize(*this);
+					PopNode();
+				}
 			}
 		}
 

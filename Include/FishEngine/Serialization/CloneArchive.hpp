@@ -3,6 +3,7 @@
 #include <FishEngine/Serialization/Archive.hpp>
 #include <set>
 #include <vector>
+#include <FishEngine/Prefab.hpp>
 
 namespace FishEngine
 {
@@ -11,7 +12,14 @@ namespace FishEngine
 	public:
 		void Collect(Object* obj)
 		{
+			if (obj->Is<Prefab>())
+				return;
 			this->SerializeObject(obj);
+		}
+
+		void CollectPrefab(Prefab* prefab)
+		{
+			prefab->Serialize(*this);
 		}
 
 	protected:

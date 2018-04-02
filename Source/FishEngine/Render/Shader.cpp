@@ -86,6 +86,8 @@ namespace FishEngine
 		{
 			glDeleteProgram(m_GLProgram);
 		}
+
+		AssetManager::GetInstance().RemoveAsset(this);
 	}
 	
 	Shader* Shader::FromString(const std::string& vs, const std::string& fs)

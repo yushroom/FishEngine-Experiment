@@ -31,8 +31,8 @@ FBXImporter::~FBXImporter()
 	{
 		delete mesh;
 	}
-	if (m_model.m_prefab != nullptr)
-		delete m_model.m_prefab;
+//	if (m_model.m_prefab != nullptr)
+//		delete m_model.m_prefab;
 }
 
 

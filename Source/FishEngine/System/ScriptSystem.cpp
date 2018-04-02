@@ -319,7 +319,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def(init<>())
 		.def_property("shader", &Material::GetShader, &Material::SetShader, return_value_policy::reference)
 		//.def_property_readonly_static("defaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
-		.def_static("GetDefaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
+		//.def_static("GetDefaultMaterial", &Material::GetDefaultMaterial, return_value_policy::reference)
 		//.def_property_readonly_static("errorMaterial", &Material::GetErrorMaterial, return_value_policy::reference)
 		;
 

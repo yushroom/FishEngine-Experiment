@@ -4,6 +4,7 @@
 #include <FishEngine/CreateObject.hpp>
 
 #include <FishEngine/Serialization/UpdateValueArchive.hpp>
+#include <FishEngine/Serialization/CloneArchive.hpp>
 
 #include <map>
 
@@ -24,29 +25,60 @@ namespace FishEngine
 
 	Prefab* Prefab::Instantiate()
 	{
-		std::map<Object*, Object*> memo;
-		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
-		for (auto&& p : m_FileIDToObject)
-		{
-			auto fileID = p.first;
-			auto origin = p.second;
-			auto cloned_ = memo[origin];
-			cloned->m_FileIDToObject[fileID] = cloned_;
-		}
-		return cloned;
+//		std::map<Object*, Object*> memo;
+//		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
+//		for (auto&& p : m_FileIDToObject)
+//		{
+//			auto fileID = p.first;
+//			auto origin = p.second;
+//			auto cloned_ = memo[origin];
+//			if (cloned_->Is<GameObject>())
+//			{
+//				cloned_->As<GameObject>()->SetPrefabParentObject(origin->As<GameObject>());
+//			}
+//			else if (cloned_->Is<Component>())
+//			{
+//				cloned_->As<Component>()->SetPrefabParentObject(origin->As<Component>());
+//			}
+//			cloned->m_FileIDToObject[fileID] = cloned_;
+//		}
+//		return cloned;
+		PrefabModification modification;
+		return InstantiateWithModification(modification);
 	}
 
 
 	Prefab* Prefab::InstantiateWithModification(const PrefabModification& modification)
 	{
+		LogInfo(Format("Instantiate prefab: {}", this->GetInstanceID()));
 //		Prefab* instance = Instantiate();
 		std::map<Object*, Object*> memo;
-		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
+		Prefab* cloned = new Prefab();
+		memo[this] = cloned;
+//		auto cloned = dynamic_cast<Prefab*>( CloneObject(this, memo) );
+
+		std::vector<Object*> objects;
+		{
+			CollectObjectsArchive archive;
+			archive.CollectPrefab(this);
+			for (auto obj : archive.m_Objects)
+				objects.push_back(obj);
+		}
+//		CloneObject(this, memo);
+		CloneObjects(objects, memo);
 		for (auto&& p : m_FileIDToObject)
 		{
 			auto fileID = p.first;
 			auto origin = p.second;
 			auto cloned_ = memo[origin];
+			if (cloned_->Is<GameObject>())
+			{
+				cloned_->As<GameObject>()->SetPrefabParentObject(origin->As<GameObject>());
+			}
+			else if (cloned_->Is<Component>())
+			{
+				cloned_->As<Component>()->SetPrefabParentObject(origin->As<Component>());
+			}
 			cloned->m_FileIDToObject[fileID] = cloned_;
 		}
 //		return cloned;

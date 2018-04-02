@@ -7,6 +7,7 @@
 #include "../Math/Matrix4x4.hpp"
 #include "../Math/Bounds.hpp"
 #include "BoneWeight.hpp"
+#include "../Asset.hpp"
 
 namespace FishEngine
 {
@@ -19,11 +20,13 @@ namespace FishEngine
 		Mesh() : Object(Mesh::ClassID, ClassName)
 		{
 			LOGF;
+			AssetManager::GetInstance().AddAsset(this);
 		}
 		
 		~Mesh()
 		{
 			LOGF;
+			AssetManager::GetInstance().RemoveAsset(this);
 		}
 		
 		Mesh(std::vector<Vector3>	&& vertices,

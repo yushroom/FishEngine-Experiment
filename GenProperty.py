@@ -6,7 +6,7 @@ def GenCPPProperty(type, name):
 
     # print '+++++++++++++'
     # print('')
-    if type in ('int', 'float', 'bool', 'uint32_t') or type.endswith('*'):
+    if type in ('int', 'float', 'bool', 'uint32_t', 'bool') or type.endswith('*'):
     # print '==== v1'
         print('{0} Get{1}() const {{ return m_{1}; }}'.format(type, pretty_name))
         print('void Set{1}({0} value) {{ m_{1} = value; }}'.format(type, pretty_name))
@@ -38,11 +38,12 @@ def GenPythonProperty(type, name):
 
 
 
-klass = 'AssetImporter'
+klass = 'Prefab'
 s = '''
-    std::string m_AssetPath;
-    std::string m_GUID;
-    uint32_t m_AssetTimeStamp;
+        PrefabModification          m_Modification;
+        Prefab*                    m_ParentPrefab = nullptr;
+        GameObject*                m_RootGameObject = nullptr;
+        bool                        m_IsPrefabParent = true;
 '''
 s = s.strip().split('\n')
 s = [x.strip() for x in s]

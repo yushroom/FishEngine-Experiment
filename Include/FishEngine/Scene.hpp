@@ -105,6 +105,7 @@ namespace FishEngine
 		std::string m_Path;
 
 		static int s_Counter;
+		bool m_Cleaning = false;
 	};
 	
 	

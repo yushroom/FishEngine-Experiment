@@ -20,7 +20,7 @@ namespace FishEditor
 		static void SetActiveObject(FishEngine::Object* obj)
 		{
 			s_ActiveObject = obj;
-			puts("SetActiveObject");
+//			puts("SetActiveObject");
 			OnSelectionChanged();
 		}
 

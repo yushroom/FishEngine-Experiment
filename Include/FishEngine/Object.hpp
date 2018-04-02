@@ -66,7 +66,8 @@ namespace FishEngine
 		template<class T>
 		bool Is()
 		{
-			return dynamic_cast<T*>(this) != nullptr;
+			static_assert(std::is_base_of<Object, T>::value, "T must be subclass of Object");
+			return (m_ClassID == T::ClassID) || dynamic_cast<T*>(this) != nullptr;
 		}
 
 		template<class T>

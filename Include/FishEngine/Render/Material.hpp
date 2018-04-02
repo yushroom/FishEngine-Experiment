@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include "../Object.hpp"
+#include "../Asset.hpp"
 
 namespace FishEngine
 {
@@ -15,6 +16,7 @@ namespace FishEngine
 		Material() : Object(Material::ClassID, ClassName)
 		{
 //			LOGF;
+			AssetManager::GetInstance().AddAsset(this);
 		}
 		Material(const Material&) = delete;
 		const Material& operator=(const Material&) = delete;
@@ -22,6 +24,7 @@ namespace FishEngine
 		~Material()
 		{
 //			LOGF;
+			AssetManager::GetInstance().RemoveAsset(this);
 		}
 		
 		Shader* GetShader() const

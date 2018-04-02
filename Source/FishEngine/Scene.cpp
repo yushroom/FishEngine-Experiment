@@ -21,6 +21,7 @@ namespace FishEngine
 
 	Scene::~Scene()
 	{
+		this->Clean();
 		auto& m = SceneManager::s_HandleToScene;
 		m.erase(m.find(m_Handle));
 		if (SceneManager::s_ActiveScene == this)
@@ -39,6 +40,8 @@ namespace FishEngine
 	
 	void Scene::AddRootTransform(Transform* t)
 	{
+		if (m_Cleaning)
+			return;
 		m_RootTransforms.push_back(t);
 //		t->m_RootOrder = m_RootTransforms.size() - 1;
 	}
@@ -70,12 +73,14 @@ namespace FishEngine
 //		}
 		//m_rootTransforms.clear();
 //		for (auto t : m_rootTransforms)
+		m_Cleaning = true;
 		for (int i = (int)m_RootTransforms.size()-1; i >= 0; --i)
 		{
 			auto t = m_RootTransforms[i];
 			delete t->GetGameObject();
 		}
 		m_RootTransforms.clear();
+		m_Cleaning = false;
 	}
 	
 	Scene* Scene::Clone()
@@ -92,12 +97,34 @@ namespace FishEngine
 		cloned->m_Path = this->m_Path;
 		cloned->m_RootTransforms.reserve(this->m_RootTransforms.size());
 
+		CollectObjectsArchive archive;
 		std::vector<Object*> objects;
 		for (auto t : m_RootTransforms)
 		{
 			auto go = t->GetGameObject();
 			objects.push_back(go);
+			archive.Collect(go);
 		}
+
+		for (auto o : archive.m_Objects)
+		{
+			if (o->Is<GameObject>())
+			{
+				auto go = o->As<GameObject>();
+				if (go->GetPrefabParentObject() != nullptr)
+					memo[go->GetPrefabParentObject()] = nullptr;
+				if (go->GetPrefabParentObject() != nullptr)
+					memo[go->GetPrefabParentObject()] = nullptr;
+			}
+			else if (o->Is<Component>())
+			{
+				auto comp = o->As<Component>();
+				if (comp->GetPrefabParentObject() != nullptr)
+					memo[comp->GetPrefabParentObject()] = nullptr;
+			}
+//			objects.push_back(o);
+		}
+
 //		std::map<Object*, Object*> memo;
 		auto clonedObjects = CloneObjects(objects, memo);
 
@@ -105,6 +132,11 @@ namespace FishEngine
 		{
 			cloned->m_RootTransforms.push_back(o->As<GameObject>()->GetTransform());
 		}
+//
+//		for (auto t : m_RootTransforms)
+//		{
+//			cloned->m_RootTransforms.push_back(memo[t]->As<Transform>());
+//		}
 
 		SceneManager::SetActiveScene(old);
 		return cloned;

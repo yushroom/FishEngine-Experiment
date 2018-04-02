@@ -6,6 +6,7 @@
 
 #include <pybind11/embed.h>
 #include <FishEngine/Debug.hpp>
+#include <FishEngine/Prefab.hpp>
 
 namespace FishEngine
 {
@@ -31,6 +32,7 @@ namespace FishEngine
 		{
 			// empty
 		}
+//		printf("GameObject::GameObject %s, %d\n", m_Name.c_str(), GetInstanceID());
 	}
 	
 //	// for python
@@ -58,11 +60,18 @@ namespace FishEngine
 	GameObject::~GameObject()
 	{
 //		LOGF;
-//		printf("~GameObject %s\n", m_name.c_str());
+//		printf("~GameObject %s, %d\n", m_Name.c_str(), GetInstanceID());
 		for (auto comp : m_Component)
 		{
 			if (comp->GetClassID() != Script::ClassID)
 				delete comp;
+		}
+		if (this->m_PrefabInternal != nullptr)
+		{
+			if (this->m_PrefabInternal->GetRootGameObject() == this)
+			{
+				delete this->m_PrefabInternal;
+			}
 		}
 		//delete m_transform;
 		//m_transform = nullptr;

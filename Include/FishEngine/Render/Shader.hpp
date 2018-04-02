@@ -3,6 +3,7 @@
 #include <string>
 #include <FishEngine/FishEngine.hpp>
 #include <FishEngine/Object.hpp>
+#include "../Asset.hpp"
 
 namespace FishEngine
 {
@@ -21,6 +22,7 @@ namespace FishEngine
 		Shader() : Object(Shader::ClassID, ClassName)
 		{
 			LOGF;
+			AssetManager::GetInstance().AddAsset(this);
 		}
 		Shader(const Shader&) = delete;
 		const Shader& operator=(const Shader&) = delete;

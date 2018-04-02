@@ -37,18 +37,21 @@ namespace FishEngine
 		DeclareObject(Prefab, 1001);
 
 		Prefab() : Object(ClassID, ClassName) {
-
+			printf("Prefab::Prefab, instanceID=%d\n", this->GetInstanceID());
 		}
 
-		GameObject* GetRootGameObject() const
-		{
-			return m_RootGameObject;
+		virtual ~Prefab() {
+//			printf("delete prefab: %d\n", this->GetInstanceID());
 		}
 
-		void SetRootGameObject(GameObject* root)
-		{
-			m_RootGameObject = root;
-		}
+//		const PrefabModification& GetModification() const { return m_Modification; }
+//		void SetModification(const PrefabModification& value) { m_Modification = value; }
+
+		Prefab* GetParentPrefab() const { return m_ParentPrefab; }
+//		void SetParentPrefab(Prefab* value) { m_ParentPrefab = value; }
+
+		GameObject* GetRootGameObject() const { return m_RootGameObject; }
+		void SetRootGameObject(GameObject* value) { m_RootGameObject = value; }
 
 		Prefab* Instantiate();
 

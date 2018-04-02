@@ -81,6 +81,12 @@ void Float3(const char* label, T* o, Getter getter, void(T::*setter)(const Vecto
 	}
 }
 
+void Int(const char* label, int value)
+{
+	auto int_str = std::to_string(value);
+	FishGUI::Text(label, int_str);
+}
+
 template<class T, class Getter>
 void Int(const char* label, T* o, Getter getter)
 {
@@ -95,9 +101,19 @@ void DrawObject(Object* o)
 	Int("Local Identifier In File", o, &Object::GetLocalIdentifierInFile);
 }
 
-void DrawTransform(Transform* value)
+void DrawComponent(Component* value)
 {
 	DrawObject(value);
+	auto m_PrefabInternal = value->GetPrefabInternal();
+	Int("m_PrefabInternal", m_PrefabInternal == nullptr ? 0 : m_PrefabInternal->GetInstanceID());
+	auto m_PrefabParentObject = value->GetPrefabParentObject();
+	Int("m_PrefabParentObject", m_PrefabParentObject == nullptr ? 0 : m_PrefabParentObject->GetInstanceID());
+}
+
+void DrawTransform(Transform* value)
+{
+	Int("GO IntanceID", value->GetGameObject(), &Object::GetInstanceID);
+	DrawComponent(value);
 	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
 	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
 	Float3("Scale", value, &Transform::GetLocalScale, &Transform::SetLocalScale);
@@ -115,7 +131,7 @@ void DrawTransform(Transform* value)
 
 void DrawCamera(Camera* c)
 {
-	DrawObject(c);
+	DrawComponent(c);
 	float znear = c->GetNearClipPlane();
 	float zfar = c->GetFarClipPlane();
 	float fov = c->GetFieldOfView();
@@ -138,12 +154,12 @@ void DrawCamera(Camera* c)
 
 void DrawLight(Light* l)
 {
-	DrawObject(l);
+	DrawComponent(l);
 }
 
 void DrawMeshRenderer(MeshRenderer* mr)
 {
-	DrawObject(mr);
+	DrawComponent(mr);
 	Material* mat = mr->GetMaterial();
 	std::string name = (mat == nullptr ? "None(Material)" : mat->GetName());
 	FishGUI::InputText("Material", name);
@@ -151,7 +167,7 @@ void DrawMeshRenderer(MeshRenderer* mr)
 
 void DrawMeshFilter(MeshFilter* mf)
 {
-	DrawObject(mf);
+	DrawComponent(mf);
 	auto mesh = mf->GetMesh();
 	std::string meshName = (mesh == nullptr ? "None(Mesh)" : mesh->GetName());
 	FishGUI::InputText("Mesh", meshName);
@@ -159,14 +175,14 @@ void DrawMeshFilter(MeshFilter* mf)
 
 void DrawBoxCollider(BoxCollider* value)
 {
-	DrawObject(value);
+	DrawComponent(value);
 	Float3("Center", value, &BoxCollider::GetCenter, &BoxCollider::SetCenter);
 	Float3("Size", value, &BoxCollider::GetSize, &BoxCollider::SetSize);
 }
 
 void DrawSphereCollider(SphereCollider* value)
 {
-	DrawObject(value);
+	DrawComponent(value);
 	Float3("Center", value, &SphereCollider::GetCenter, &SphereCollider::SetCenter);
 	Float("Radius", value, &SphereCollider::GetRadius, &SphereCollider::SetRadius);
 }
@@ -174,7 +190,7 @@ void DrawSphereCollider(SphereCollider* value)
 
 void DrawRigidbody(Rigidbody* r)
 {
-	DrawObject(r);
+	DrawComponent(r);
 	Float("Mass", r, &Rigidbody::GetMass, &Rigidbody::SetMass);
 	Float("Drag", r, &Rigidbody::GetDrag, &Rigidbody::SetDrag);
 	Float("Angular Drag", r, &Rigidbody::GetAngularDrag, &Rigidbody::SetAngularDrag);

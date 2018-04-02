@@ -25,15 +25,15 @@ namespace FishEngine
 		GameObject* GetGameObject() const { return m_GameObject; }
 //		void SetGameObject(GameObject* gameoObject);
 
-		Prefab* GetPrefabParentObject() const { return m_PrefabParentObject; }
-		void SetPrefabParentObject(Prefab* value) { m_PrefabParentObject = value; }
+		Component* GetPrefabParentObject() const { return m_PrefabParentObject; }
+		void SetPrefabParentObject(Component* value) { m_PrefabParentObject = value; }
 
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
 	protected:
 		friend class GameObject;
-		Prefab * m_PrefabParentObject = nullptr;
+		Component * m_PrefabParentObject = nullptr;
 		Prefab * m_PrefabInternal = nullptr;
 		GameObject* m_GameObject = nullptr;
 	};

@@ -3,6 +3,13 @@
 
 namespace FishEngine
 {
+//	template<class K, class V>
+//	bool MapHasKey(const std::map<K, V>& dict, const K& key)
+//	{
+//		auto pos = dict.find(key);
+//
+//	};
+//
 	std::vector<Object*> CloneObjects(std::vector<Object*> objects, std::map<Object*, Object*>& memo)
 	{
 		// step 1: collect all objects
@@ -10,14 +17,31 @@ namespace FishEngine
 		for (auto obj : objects)
 			archive.Collect(obj);
 
+
+		int size = archive.m_Objects.size();
 		for (auto o : archive.m_Objects)
 		{
+			auto pos = memo.find(o);
+			if (pos != memo.end())
+				continue;
+
 			int classID = o->GetClassID();
+			if (classID == GameObject::ClassID)
+			{
+//				printf("Clone GameObject %s %d\n", o->GetName().c_str(), o->GetInstanceID());
+			}
+//			Object* cloned = nullptr;
+//			if (classID != Prefab::ClassID)
+//				cloned = CreateEmptyObjectByClassID(classID);
 			Object* cloned = CreateEmptyObjectByClassID(classID);
+
 			if (cloned == nullptr)
 				memo[o] = o;	// mesh, material...
 			else
+			{
 				memo[o] = cloned;
+//				printf("Cloned[%s] %d <- %d\n", cloned->GetClassName(), cloned->GetInstanceID(), o->GetInstanceID());
+			}
 		}
 
 		CloneOutputArchive out;
@@ -29,6 +53,8 @@ namespace FishEngine
 				continue;
 			auto cloned = memo[o];
 			if (cloned == o)		// mesh, material...
+				continue;
+			if (cloned == nullptr) // prefab instance
 				continue;
 			o->Serialize(out);
 			CloneInputArchive in(out, memo);
@@ -42,6 +68,8 @@ namespace FishEngine
 				continue;
 			auto cloned = memo[o];
 			if (cloned == o)		// mesh, material...
+				continue;
+			if (cloned == nullptr) // prefab instance
 				continue;
 			o->Serialize(out);
 			CloneInputArchive in(out, memo);

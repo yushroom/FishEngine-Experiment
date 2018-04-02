@@ -15,9 +15,9 @@ namespace FishEngine
 
 	inline Object* CreateEmptyObjectByClassID(int classID)
 	{
-		if (classID == Prefab::ClassID)
-			return CreateEmptyObject<Prefab>();
-		else if (classID == GameObject::ClassID)
+//		if (classID == Prefab::ClassID)
+//			return CreateEmptyObject<Prefab>();
+		if (classID == GameObject::ClassID)
 			return CreateEmptyObject<GameObject>();
 		else if (classID == Transform::ClassID)
 			return CreateEmptyObject<Transform>();

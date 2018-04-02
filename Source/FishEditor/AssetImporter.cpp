@@ -34,10 +34,10 @@ namespace FishEditor
 
 	AssetImporter::~AssetImporter()
 	{
-		for (auto&& p : m_FileIDToObject)
-		{
-			//delete p.second;
-		}
+//		for (auto&& p : m_FileIDToObject)
+//		{
+//			delete p.second;
+//		}
 	}
 
 	void AssetImporter::SetAssetPath(const std::string& value)

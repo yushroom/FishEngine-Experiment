@@ -78,10 +78,10 @@ namespace FishEngine
 	void Material::StaticClean()
 	{
 		// TODO: AssetDatabase;
-		delete s_ErrorMaterial->m_Shader;
-		delete s_ErrorMaterial;
+//		delete s_ErrorMaterial->m_Shader;
+//		delete s_ErrorMaterial;
 
-		delete s_DefaultMaterial->m_Shader;
-		delete s_DefaultMaterial;
+//		delete s_DefaultMaterial->m_Shader;
+//		delete s_DefaultMaterial;
 	}
 }

@@ -86,19 +86,28 @@ namespace FishEngine
 		Material::StaticClean();
 		SceneManager::StaticClean();
 		ScriptSystem::GetInstance().Clean();	// put this after Scene::Clean
+		AssetManager::GetInstance().ClearAll();
 		
 		// check memory leak
 		int a = Object::GetInstanceCounter();
 		int b = Object::GetDeleteCounter();
 		if (a != b)
 		{
-			LogError(Format("Memory Leak in FishEngine::Clean(): [{}] objects created but only [{}] objects deleted\n", a, b));
+			LogError(Format("Memory Leak in FishEngine::Clean(): [{}] objects created but only [{}] objects deleted", a, b));
 			
 			for (auto& p : Object::GetAllObjects())
 			{
 				if (p.second.size() != 0)
 				{
-					LogError(Format("Class[ID:{}, name:{}] has {} obj\n", p.first, GetNameByClassID(p.first), p.second.size()));
+					int instanceID = (*p.second.begin())->GetInstanceID();
+					LogError(Format("Class[ID:{}, name:{}] has {} obj", p.first, GetNameByClassID(p.first), p.second.size()));
+					if (p.first == GameObject::ClassID)
+					{
+						for (auto go : p.second)
+						{
+							printf("GameObject %s, %d\n", go->GetName().c_str(), go->GetInstanceID());
+						}
+					}
 				}
 			}
 			throw std::runtime_error("Memory Leak!");
