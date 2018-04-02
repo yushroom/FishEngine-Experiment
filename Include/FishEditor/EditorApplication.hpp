@@ -11,6 +11,7 @@ class EditorInternalApp;
 namespace FishEngine
 {
 	class Scene;
+	class Object;
 }
 
 namespace FishEditor
@@ -18,6 +19,10 @@ namespace FishEditor
 	class EditorApplication final
 	{
 	public:
+
+		// noncopyable
+		EditorApplication(const EditorApplication&) = delete;
+		EditorApplication& operator=(const EditorApplication&) = delete;
 
 		static EditorApplication & GetInstance()
 		{
@@ -41,15 +46,16 @@ namespace FishEditor
 	private:
 
 		EditorApplication() = default;
-		EditorApplication(const EditorApplication&) = delete;
-		EditorApplication& operator=(const EditorApplication&) = delete;
 
-		EditorInternalApp * m_app;
+
+		EditorInternalApp * m_app = nullptr;
 		bool m_IsPlaying = false;
 
 		FishEngine::Scene * m_currentScene = nullptr;	// scene in editor
 		
 		std::string m_ApplicationPath;
 //		FileNode* m_AssetRootDir = nullptr;
+
+		std::map<FishEngine::Object*, FishEngine::Object*> m_SceneObjectMemo;
 	};
 }

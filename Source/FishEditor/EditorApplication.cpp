@@ -9,7 +9,7 @@
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/Scene.hpp>
-
+#include <FishEngine/Transform.hpp>
 #include <FishEditor/Selection.hpp>
 #include <FishEditor/AssetDatabase.hpp>
 #include <FishEditor/GameView.hpp>
@@ -18,8 +18,9 @@
 #include <pybind11/embed.h>
 #include <FishEngine/Application.hpp>
 
-
 namespace py = pybind11;
+
+using namespace FishEngine;
 
 class EditorInternalApp : public FishEngine::AbstractGameApp
 {
@@ -115,10 +116,17 @@ namespace FishEditor
 
 //		auto app = py::module::import("app");
 //		app.attr("Save")();
-		scene = scene->Clone();
+//		std::map<Object*, Object*> memo;
+		m_SceneObjectMemo.clear();
+		scene = scene->CloneWithMemo(m_SceneObjectMemo);
 		FishEngine::SceneManager::SetActiveScene(scene);
-		
-		Selection::SetActiveTransform(nullptr);
+
+		auto selectTransform = Selection::GetActiveTransform();
+		if (selectTransform != nullptr)
+		{
+			auto cloned = m_SceneObjectMemo[selectTransform]->As<Transform>();
+			Selection::SetActiveTransform(cloned);
+		}
 		FishEngine::PhysicsSystem::GetInstance().Init();
 		FishEngine::PhysicsSystem::GetInstance().Start();
 	}
@@ -126,6 +134,23 @@ namespace FishEditor
 	void EditorApplication::Stop()
 	{
 		FishEngine::PhysicsSystem::GetInstance().Clean();
+
+		auto t = Selection::GetActiveTransform();
+
+		if (t != nullptr)
+		{
+			Object* originalT = nullptr;
+			for (auto&& p : m_SceneObjectMemo)
+			{
+				if (p.second == t)
+				{
+					originalT = p.first;
+					break;
+				}
+			}
+			Selection::SetActiveObject(originalT);
+		}
+
 
 		m_IsPlaying = false;
 		auto scene = FishEngine::SceneManager::GetActiveScene();
@@ -135,8 +160,6 @@ namespace FishEditor
 //		scene = FishEngine::SceneManager::GetActiveScene();
 		//auto app = py::module::import("app");
 		//app.attr("Restore")();
-		
-		Selection::SetActiveTransform(nullptr);
 	}
 
 	void EditorApplication::Pause()

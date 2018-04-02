@@ -41,6 +41,7 @@ namespace FishEngine
 		void Clean();
 		
 		Scene* Clone();
+		Scene* CloneWithMemo(std::map<Object*, Object*>& memo);
 		
 		template<class T>
 		T* FindComponent()

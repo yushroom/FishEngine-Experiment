@@ -80,6 +80,12 @@ namespace FishEngine
 	
 	Scene* Scene::Clone()
 	{
+		std::map<Object*, Object*> memo;
+		return this->CloneWithMemo(memo);
+	}
+
+	Scene* Scene::CloneWithMemo(std::map<Object*, Object*>& memo)
+	{
 		Scene* old = SceneManager::GetActiveScene();
 		Scene* cloned = SceneManager::CreateScene(this->m_Name + "-cloned");
 		SceneManager::SetActiveScene(cloned);
@@ -92,7 +98,7 @@ namespace FishEngine
 			auto go = t->GetGameObject();
 			objects.push_back(go);
 		}
-		std::map<Object*, Object*> memo;
+//		std::map<Object*, Object*> memo;
 		auto clonedObjects = CloneObjects(objects, memo);
 
 		for (auto o : clonedObjects)
