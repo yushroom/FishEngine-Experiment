@@ -9,28 +9,43 @@ namespace FishEngine
 		CollectObjectsArchive archive;
 		archive.SerializeObject(obj);
 
-//		std::map<Object*, Object*> memo;
-		for (auto obj : archive.m_Objects)
+		for (auto o : archive.m_Objects)
 		{
-			int classID = obj->GetClassID();
+			int classID = o->GetClassID();
 			Object* cloned = CreateEmptyObjectByClassID(classID);
 			if (cloned == nullptr)
-				memo[obj] = obj;	// mesh, material...
+				memo[o] = o;	// mesh, material...
 			else
-				memo[obj] = cloned;
+				memo[o] = cloned;
 		}
 
 		CloneOutputArchive out;
 
+		// clone GameObjects first
 		for (auto o : archive.m_Objects)
 		{
+			if (o->GetClassID() != GameObject::ClassID)
+				continue;
 			auto cloned = memo[o];
 			if (cloned == o)		// mesh, material...
 				continue;
 			o->Serialize(out);
 			CloneInputArchive in(out, memo);
 			cloned->Deserialize(in);
-			out.AssertEmpty();
+			out.AssertEmpty();	// make sure all serialized properties are deserialized
+		}
+
+		for (auto o : archive.m_Objects)
+		{
+			if (o->GetClassID() == GameObject::ClassID)
+				continue;
+			auto cloned = memo[o];
+			if (cloned == o)		// mesh, material...
+				continue;
+			o->Serialize(out);
+			CloneInputArchive in(out, memo);
+			cloned->Deserialize(in);
+			out.AssertEmpty();	// make sure all serialized properties are deserialized
 		}
 
 		auto cloned = memo[obj];

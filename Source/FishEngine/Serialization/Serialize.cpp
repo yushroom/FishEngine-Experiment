@@ -72,10 +72,8 @@ namespace FishEngine
 		Object::Deserialize(archive);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
-		GameObject* gameObject = this->m_GameObject;
-		archive.AddNVP("m_GameObject", gameObject);
-//		this->SetGameObject( gameObject );
-		gameObject->AddComponent(this);
+		archive.AddNVP("m_GameObject", this->m_GameObject);
+		this->m_GameObject->AddComponent(this);
 	}
 
 	void Component::Serialize(OutputArchive& archive) const

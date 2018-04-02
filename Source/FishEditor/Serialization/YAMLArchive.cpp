@@ -201,6 +201,24 @@ namespace FishEditor
 //			}
 //		}
 
+		// deserialize GameObjects from archive
+		for (int i = 0; i < m_nodes.size(); ++i)
+		{
+			auto&& node = m_nodes[i];
+			assert(node.IsMap());
+			auto className = node.begin()->first.as<std::string>();
+			Object* obj = objects[i];
+			int classID = classID_fileID[i].first;
+
+			if (obj != nullptr && classID == GameObject::ClassID)
+			{
+				assert(className == obj->GetClassName());
+				PushNode(node.begin()->second);
+				obj->Deserialize(*this);
+				PopNode();
+			}
+		}
+
 
 		// deserialize from archive
 		for (int i = 0; i < m_nodes.size(); ++i)
@@ -211,7 +229,7 @@ namespace FishEditor
 			Object* obj = objects[i];
 			int classID = classID_fileID[i].first;
 
-			if (obj != nullptr && classID != Prefab::ClassID)
+			if (obj != nullptr && classID != GameObject::ClassID && classID != Prefab::ClassID)
 			{
 				assert(className == obj->GetClassName());
 				PushNode(node.begin()->second);
