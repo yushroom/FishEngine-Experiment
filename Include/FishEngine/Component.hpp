@@ -22,10 +22,8 @@ namespace FishEngine
 		}
 		
 		Transform* GetTransform() const;
-		GameObject* GetGameObject() const
-		{
-			return m_GameObject;
-		}
+		GameObject* GetGameObject() const { return m_GameObject; }
+//		void SetGameObject(GameObject* gameoObject);
 
 		Prefab* GetPrefabParentObject() const { return m_PrefabParentObject; }
 		void SetPrefabParentObject(Prefab* value) { m_PrefabParentObject = value; }

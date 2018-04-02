@@ -23,7 +23,7 @@ namespace FishEngine
 		Object::Deserialize(archive);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
-		decltype(m_Component) components;
+		auto components = this->m_Component;
 		archive.AddNVP("m_Component", components);
 		for (auto comp : components)
 		{
@@ -72,7 +72,10 @@ namespace FishEngine
 		Object::Deserialize(archive);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
-		archive.AddNVP("m_GameObject", this->m_GameObject);
+		GameObject* gameObject = this->m_GameObject;
+		archive.AddNVP("m_GameObject", gameObject);
+//		this->SetGameObject( gameObject );
+		gameObject->AddComponent(this);
 	}
 
 	void Component::Serialize(OutputArchive& archive) const

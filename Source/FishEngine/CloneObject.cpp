@@ -5,7 +5,7 @@ namespace FishEngine
 {
 	Object* CloneObject(Object* obj, std::map<Object*, Object*>& memo)
 	{
-		// first pass
+		// step 1: collect all objects
 		CollectObjectsArchive archive;
 		archive.SerializeObject(obj);
 

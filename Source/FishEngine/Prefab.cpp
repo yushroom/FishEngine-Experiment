@@ -53,13 +53,16 @@ namespace FishEngine
 
 		UpdateValueArchive archive;
 		cloned->GetRootGameObject()->GetTransform()->SetParent( modification.m_TransformParent, false);
-		for (auto& mod : modification.m_Modifications )
+		cloned->m_Modification = modification;
+//		for (auto& mod : modification.m_Modifications )
+		for (int i = 0; i < modification.m_Modifications.size(); ++i)
 		{
+			auto& mod = modification.m_Modifications[i];
 			assert(mod.target != nullptr);
 			Object * target =  memo[mod.target];
 			archive.UpdateValue(target, mod.propertyPath, mod.value, mod.objectReference);
+			cloned->m_Modification.m_Modifications[i].target = target;
 		}
-
 		assert(modification.m_RemovedComponents.empty());
 		return cloned;
 	}

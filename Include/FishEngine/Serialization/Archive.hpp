@@ -69,10 +69,12 @@ namespace FishEngine
 		InputArchive& operator>>(std::vector<T>& t)
 		{
 			int size = BeginSequence();
+//			t.clear();
+			t.resize(size);
 			for (int i = 0; i < size; ++i)
 			{
 				T item = GetSequenceItem<T>();
-				t.push_back(item);
+				t[i] = item;
 			}
 			EndSequence();
 			return *this;
@@ -82,6 +84,7 @@ namespace FishEngine
 		InputArchive& operator>>(std::list<T>& t)
 		{
 			int size = BeginSequence();
+			t.clear();
 			for (int i = 0; i < size; ++i)
 			{
 				T item = GetSequenceItem<T>();

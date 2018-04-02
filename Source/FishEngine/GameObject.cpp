@@ -5,6 +5,7 @@
 #include <FishEngine/Scene.hpp>
 
 #include <pybind11/embed.h>
+#include <FishEngine/Debug.hpp>
 
 namespace FishEngine
 {
@@ -70,17 +71,25 @@ namespace FishEngine
 	void GameObject::AddComponent(Component* comp)
 	{
 		if (comp == nullptr)
+		{
+			LogWarning("the component is nullptr");
 			return;
+		}
 		if (comp->m_GameObject != nullptr)
 		{
 			assert(comp->m_GameObject == this);
 		}
 		if (comp->GetClassID() == Transform::ClassID)
 		{
-			assert(m_Transform == nullptr);
+			if (m_Transform != nullptr)
+				assert(m_Transform == comp);
 			m_Transform = (Transform*)comp;
 		}
-		m_Component.push_back(comp);
+
+		// do not add it twice!
+		auto pos = std::find(m_Component.begin(), m_Component.end(), comp);
+		if (pos == m_Component.end())
+			m_Component.push_back(comp);
 		comp->m_GameObject = this;
 	}
 

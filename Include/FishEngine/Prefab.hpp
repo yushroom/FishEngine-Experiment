@@ -21,7 +21,7 @@ namespace FishEngine
 		Object* 		target = nullptr;
 		std::string 	propertyPath;
 		std::string 	value;
-		Object*		objectReference = nullptr;
+		Object*			objectReference = nullptr;
 	};
 	
 	struct PrefabModification

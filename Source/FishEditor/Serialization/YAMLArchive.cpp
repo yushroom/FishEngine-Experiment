@@ -13,6 +13,21 @@
 #include <boost/algorithm/string.hpp>
 
 
+
+bool YAMLNodeHasKey(const YAML::Node& node, const char* key)
+{
+	assert(node.IsMap());
+	for (auto it = node.begin(); it != node.end(); ++it)
+	{
+		if (it->first.as<std::string>() == key)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 namespace FishEditor
 {
 	std::vector<std::pair<int, int64_t>> GetClassIDAndFileID(const std::string& s)
@@ -93,6 +108,7 @@ namespace FishEditor
 		std::vector<Object*> objects(m_nodes.size());
 
 		// step 1: instantiate prefabs
+		std::map<int64_t, Prefab*> fileIDToPrefab;
 		for (int i = 0; i < m_nodes.size(); ++i)
 		{
 			int classID = classID_fileID[i].first;
@@ -122,14 +138,19 @@ namespace FishEditor
 
 					//LogError("[TODO] make a copy of main asset");
 					Prefab* instance  = prefab->InstantiateWithModification(modification);
+					fileIDToPrefab[fileID] = instance;
 					obj = instance->GetRootGameObject();
+//					obj = instance;
 				}
 				objects[i] = obj;
+				m_FileIDToObject[fileID] = obj;
 			}
 		}
 
+		// step 2: clone all objects (except ref to prefab)
 		for (int i = 0; i < m_nodes.size(); ++i)
 		{
+			auto&& node = m_nodes[i].begin()->second;
 			int classID = classID_fileID[i].first;
 			int64_t fileID = classID_fileID[i].second;
 			
@@ -137,7 +158,21 @@ namespace FishEditor
 			
 			if (classID != Prefab::ClassID)
 			{
-				obj = CreateEmptyObjectByClassID(classID);
+				bool done = false;
+				if (YAMLNodeHasKey(node, "m_PrefabParentObject"))
+				{
+					auto id1 = node["m_PrefabParentObject"]["fileID"].as<int64_t>();
+					if (id1 != 0)
+					{
+						auto id2 = node["m_PrefabInternal"]["fileID"].as<int64_t>();
+						auto prefab = fileIDToPrefab[id2];
+						assert(prefab != nullptr);
+						obj = prefab->GetObjectByFileID(id1);
+						done = true;
+					}
+				}
+				if (!done)
+					obj = CreateEmptyObjectByClassID(classID);
 			}
 			else
 			{
@@ -150,6 +185,24 @@ namespace FishEditor
 				obj->SetLocalIdentifierInFile(fileID);
 		}
 
+		// add component to gameObject
+//		for (int i = 0; i < m_nodes.size(); ++i)
+//		{
+//			auto&& node = m_nodes[i].begin()->second;
+//			int classID = classID_fileID[i].first;
+//			int64_t fileID = classID_fileID[i].second;
+//
+//			if (classID == GameObject::ClassID)
+//			{
+//				if (YAMLNodeHasKey(node, "m_Component"))
+//				{
+//
+//				}
+//			}
+//		}
+
+
+		// deserialize from archive
 		for (int i = 0; i < m_nodes.size(); ++i)
 		{
 			auto&& node = m_nodes[i];
@@ -169,18 +222,6 @@ namespace FishEditor
 		return objects;
 	}
 
-	bool YAMLNodeHasKey(const YAML::Node& node, const char* key)
-	{
-		assert(node.IsMap());
-		for (auto it = node.begin(); it != node.end(); ++it)
-		{
-			if (it->first.as<std::string>() == key)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
 
 
 	Object* YAMLInputArchive::DeserializeObject()

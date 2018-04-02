@@ -9,4 +9,11 @@ namespace FishEngine
 	{
 		return m_GameObject->GetTransform();
 	}
+
+//	void Component::SetGameObject(GameObject* gameoObject)
+//	{
+//		assert(gameoObject != nullptr);
+//		gameoObject->AddComponent(this);
+//		m_GameObject = gameoObject;
+//	}
 }
