@@ -9,14 +9,9 @@ namespace FishEngine
 	class CollectObjectsArchive : public OutputArchive
 	{
 	public:
-		void SerializeObject(Object* t) override
+		void Collect(Object* obj)
 		{
-			auto it = m_Objects.find(t);
-			if (it == m_Objects.end())
-			{
-				m_Objects.insert(t);
-				t->Serialize(*this);
-			}
+			this->SerializeObject(obj);
 		}
 
 	protected:
@@ -33,6 +28,15 @@ namespace FishEngine
 		virtual void Serialize(bool t) override {}
 		virtual void Serialize(std::string const & t) override {}
 		virtual void SerializeNullPtr() override {}	// nullptr
+		void SerializeObject(Object* t) override
+		{
+			auto it = m_Objects.find(t);
+			if (it == m_Objects.end())
+			{
+				m_Objects.insert(t);
+				t->Serialize(*this);
+			}
+		}
 
 		void MapKey(const char* name) override {}
 

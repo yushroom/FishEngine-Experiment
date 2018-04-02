@@ -12,28 +12,29 @@ namespace FishEditor
 	public:
 		Selection() = delete;
 
-		static void SetActiveObject(FishEngine::Object* obj)
-		{
-			s_ActiveObject = obj;
-			OnSelectionChanged();
-		}
-
 		static FishEngine::Object* GetActiveObject()
 		{
 			return s_ActiveObject;
 		}
 
+		static void SetActiveObject(FishEngine::Object* obj)
+		{
+			s_ActiveObject = obj;
+			puts("SetActiveObject");
+			OnSelectionChanged();
+		}
+
+
 		static FishEngine::Transform* GetActiveTransform()
 		{
-			if (s_ActiveObject != nullptr && s_ActiveObject->GetClassID() == FishEngine::Transform::ClassID)
-				return static_cast<FishEngine::Transform*>(s_ActiveObject);
+			if (s_ActiveObject != nullptr)
+				return s_ActiveObject->As<FishEngine::Transform>();
 			return nullptr;
 		}
 		
 		static void SetActiveTransform(FishEngine::Transform* t)
 		{
-			s_ActiveObject = t;
-			OnSelectionChanged();
+			SetActiveObject(t);
 		}
 		
 		static boost::signals2::signal<void(void)> OnSelectionChanged;

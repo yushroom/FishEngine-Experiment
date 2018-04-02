@@ -3,7 +3,8 @@
 #include <FishEngine/Transform.hpp>
 
 #include <FishEngine/CloneObject.hpp>
-
+#include <FishEngine/Serialization/CloneArchive.hpp>
+#include <algorithm>
 
 namespace FishEngine
 {
@@ -39,35 +40,14 @@ namespace FishEngine
 	void Scene::AddRootTransform(Transform* t)
 	{
 		m_RootTransforms.push_back(t);
-		t->m_RootOrder = m_RootTransforms.size() - 1;
+//		t->m_RootOrder = m_RootTransforms.size() - 1;
 	}
 	
 	void Scene::RemoveRootTransform(Transform* t)
 	{
-//		int oldsize = m_rootTransforms.size();
-//		std::remove(m_rootTransforms.begin(), m_rootTransforms.end(), t);
-//		assert(oldsize-1 == m_rootTransforms.size());
-
-		int oldsize = (int)m_RootTransforms.size();
-		for (auto it = m_RootTransforms.begin(); it != m_RootTransforms.end(); ++it)
-		{
-			if (t == *it)
-			{
-				m_RootTransforms.erase(it);
-				break;
-			}
-		}
-		assert(oldsize-1 == m_RootTransforms.size());
-		
-//		auto it = m_rootTransforms.begin();
-//		std::advance(it, t->m_RootOrder);
-//		assert(*it == t);
-//		m_rootTransforms.erase(it);
-		
-//		for (int i = 0; i < m_rootTransforms.size(); ++i)
-//		{
-//			m_rootTransforms[i]->m_RootOrder = i;
-//		}
+		auto pos = std::find(m_RootTransforms.begin(), m_RootTransforms.end(), t);
+		assert(pos != m_RootTransforms.end());
+		m_RootTransforms.erase(pos);
 	}
 	
 //	void CleanRecursively(Transform* t)
@@ -101,17 +81,23 @@ namespace FishEngine
 	Scene* Scene::Clone()
 	{
 		Scene* old = SceneManager::GetActiveScene();
-		Scene* cloned = new Scene;
+		Scene* cloned = SceneManager::CreateScene(this->m_Name + "-cloned");
 		SceneManager::SetActiveScene(cloned);
-		cloned->m_Name = this->m_Name + "-cloned";
 		cloned->m_Path = this->m_Path;
 		cloned->m_RootTransforms.reserve(this->m_RootTransforms.size());
 
-		for (int i = 0; i < m_RootTransforms.size(); ++i)
+		std::vector<Object*> objects;
+		for (auto t : m_RootTransforms)
 		{
-			auto go = m_RootTransforms[i]->GetGameObject();
-			auto cloned_go = CloneObject(go)->As<GameObject>();
-			cloned->AddRootTransform(cloned_go->GetTransform());
+			auto go = t->GetGameObject();
+			objects.push_back(go);
+		}
+		std::map<Object*, Object*> memo;
+		auto clonedObjects = CloneObjects(objects, memo);
+
+		for (auto o : clonedObjects)
+		{
+			cloned->m_RootTransforms.push_back(o->As<GameObject>()->GetTransform());
 		}
 
 		SceneManager::SetActiveScene(old);

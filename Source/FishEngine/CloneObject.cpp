@@ -3,11 +3,12 @@
 
 namespace FishEngine
 {
-	Object* CloneObject(Object* obj, std::map<Object*, Object*>& memo)
+	std::vector<Object*> CloneObjects(std::vector<Object*> objects, std::map<Object*, Object*>& memo)
 	{
 		// step 1: collect all objects
 		CollectObjectsArchive archive;
-		archive.SerializeObject(obj);
+		for (auto obj : objects)
+			archive.Collect(obj);
 
 		for (auto o : archive.m_Objects)
 		{
@@ -48,7 +49,18 @@ namespace FishEngine
 			out.AssertEmpty();	// make sure all serialized properties are deserialized
 		}
 
-		auto cloned = memo[obj];
-		return cloned;
+//		auto cloned = memo[obj];
+		std::vector<Object*> result;
+		result.reserve(objects.size());
+		for (auto obj : objects)
+			result.push_back(memo[obj]);
+		return result;
+	}
+
+	Object* CloneObject(Object* obj, std::map<Object*, Object*>& memo)
+	{
+		std::vector<Object*> objects = {obj};
+		auto result = CloneObjects(objects, memo);
+		return result[0];
 	}
 }
