@@ -7,7 +7,7 @@
 #include <UnityToolBar.hpp>
 
 #include "ProjectView.hpp"
-#include "HierarchyView.hpp"
+#include <FishEditor/UI/HierarchyView.hpp>
 #include "InspectorView.hpp"
 
 #include <FishEditor/FishEditor.hpp>
@@ -84,6 +84,8 @@ try
 	auto game = new FishEditor::GameView();
 	auto assetStore = new IMWidget2("Asset Store");
 	auto project = new ProjectView();
+
+	FishEditor::EditorApplication::GetInstance().SetHierarchyView(hierarchy);
 
 	EditorLayoutType layoutType = EditorLayoutType::eDefault;
 

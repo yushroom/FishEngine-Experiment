@@ -1,4 +1,4 @@
-#include "HierarchyView.hpp"
+#include <FishEditor/UI/HierarchyView.hpp>
 
 #include <FishGUI/ModelView/TreeWidget.hpp>
 

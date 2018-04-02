@@ -5,8 +5,8 @@
 
 #include <boost/signals2/signal.hpp>
 
-
 class EditorInternalApp;
+class HierarchyView;
 
 namespace FishEngine
 {
@@ -16,6 +16,8 @@ namespace FishEngine
 
 namespace FishEditor
 {
+
+
 	class EditorApplication final
 	{
 	public:
@@ -43,6 +45,11 @@ namespace FishEditor
 
 		boost::signals2::signal<void()> OnProjectOpened;
 
+		void SetHierarchyView(HierarchyView* hierarchyView)
+		{
+			m_HierarchyView = hierarchyView;
+		}
+
 	private:
 
 		EditorApplication() = default;
@@ -56,6 +63,7 @@ namespace FishEditor
 		std::string m_ApplicationPath;
 //		FileNode* m_AssetRootDir = nullptr;
 
+		HierarchyView* m_HierarchyView = nullptr;
 		std::map<FishEngine::Object*, FishEngine::Object*> m_SceneObjectMemo;
 	};
 }

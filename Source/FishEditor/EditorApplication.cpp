@@ -18,6 +18,8 @@
 #include <pybind11/embed.h>
 #include <FishEngine/Application.hpp>
 
+#include <FishEditor/UI/HierarchyView.hpp>
+
 namespace py = pybind11;
 
 using namespace FishEngine;
@@ -107,6 +109,16 @@ namespace FishEditor
 		gameView->m_Framebuffer.Unbind();
 	}
 
+
+	Object* GetOrDefault(const std::map<Object*, Object*>& dict, Object* key)
+	{
+		auto pos = dict.find(key);
+		if (pos == dict.end())
+			return nullptr;
+		return pos->second;
+	}
+
+
 	void EditorApplication::Play()
 	{
 //		m_app->Start();
@@ -127,9 +139,19 @@ namespace FishEditor
 			auto cloned = m_SceneObjectMemo[selectTransform]->As<Transform>();
 			Selection::SetActiveTransform(cloned);
 		}
+
+		std::set<Transform*> unfolded;
+		for (auto& o : m_HierarchyView->m_unfolded)
+		{
+			unfolded.insert(m_SceneObjectMemo[o]->As<Transform>());
+		}
+		m_HierarchyView->m_unfolded = unfolded;
+
+
 		FishEngine::PhysicsSystem::GetInstance().Init();
 		FishEngine::PhysicsSystem::GetInstance().Start();
 	}
+
 
 	void EditorApplication::Stop()
 	{
@@ -137,19 +159,27 @@ namespace FishEditor
 
 		auto t = Selection::GetActiveTransform();
 
+		std::map<Object*, Object*> inverseMap;
+		for (auto&& p : m_SceneObjectMemo)
+		{
+			inverseMap[p.second] = p.first;
+		}
+
 		if (t != nullptr)
 		{
-			Object* originalT = nullptr;
-			for (auto&& p : m_SceneObjectMemo)
-			{
-				if (p.second == t)
-				{
-					originalT = p.first;
-					break;
-				}
-			}
+			auto originalT = GetOrDefault(inverseMap, t);
 			Selection::SetActiveObject(originalT);
 		}
+
+		std::set<Transform*> unfolded;
+		for (auto& o : m_HierarchyView->m_unfolded)
+		{
+			auto oo = GetOrDefault(inverseMap, o);
+			if (oo != nullptr)
+				unfolded.insert(oo->As<Transform>());
+		}
+		m_HierarchyView->m_unfolded = unfolded;
+
 
 
 		m_IsPlaying = false;
