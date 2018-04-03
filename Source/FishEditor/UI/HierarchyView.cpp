@@ -43,6 +43,26 @@ public:
 	{
 		return item->GetGameObject()->GetName();
 	}
+
+	virtual NVGcolor TextColor(T item) const override
+	{
+		FishEngine::Color c(0, 0, 0, 1);
+		bool isPrefab = item->GetGameObject()->GetPrefabInternal() != nullptr;
+		bool active = item->GetGameObject()->IsActiveInHierarchy();
+		if (isPrefab)
+		{
+			if (active)
+				c = FishEngine::Color(10, 47, 134, 255) / 255;
+			else
+				c = FishEngine::Color(84, 106, 158, 255) / 255;
+		}
+		else
+		{
+			if (!active)
+				c = FishEngine::Color(84, 84, 84, 255) / 255;
+		}
+		return NVGcolor{{c.r, c.g, c.b, 1.0f}};
+	}
 };
 
 
