@@ -29,3 +29,4 @@ ENDMACRO(SETUP_TEST)
 
 add_subdirectory(./Demo)
 add_subdirectory(./TestSerialization)
+add_subdirectory(./ShaderCompiler)

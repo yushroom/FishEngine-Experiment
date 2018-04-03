@@ -18,3 +18,5 @@
 #include <FishEngine/Render/Shader.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Render/Mesh.hpp>
+
+#include <FishEngine/Render/RenderSettings.hpp>

@@ -98,6 +98,8 @@ namespace FishEditor
 				auto defaultImporter = new DefaultImporter();
 				importer = defaultImporter;
 			}
+//			if (importer == nullptr)
+//				return nullptr;
 			assert(importer != nullptr);
 			importer->m_GUID = guid;
 			importer->m_AssetTimeStamp = timeCreated;

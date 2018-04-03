@@ -5,9 +5,12 @@
 
 namespace FishEditor
 {
-	class DefaultAsset
+	class DefaultAsset : public FishEngine::Object
 	{
 		InjectClassName(DefaultAsset, 1029);
+		DefaultAsset() : Object(ClassID, ClassName) {
+
+		}
 	};
 
 	// scene importer, supported ext: .unity

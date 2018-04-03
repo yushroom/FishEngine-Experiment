@@ -69,6 +69,7 @@ namespace FishEngine
 	void Material::StaticInit()
 	{
 		s_ErrorMaterial = new Material();
+		s_ErrorMaterial->SetName("Default-Error");
 		s_ErrorMaterial->m_Shader = Shader::FromString(error_vs, error_fs);
 
 		s_DefaultMaterial = new Material();

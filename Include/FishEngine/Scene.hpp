@@ -5,6 +5,7 @@
 #include <map>
 #include "GameObject.hpp"
 #include "Transform.hpp"
+#include <FishEngine/Render/RenderSettings.hpp>
 
 #include <cassert>
 
@@ -17,6 +18,8 @@ namespace FishEngine
 {
 //	class GameObject;
 //	class Transform;
+
+	class RenderSettings;
 	
 	class Scene
 	{
@@ -83,6 +86,12 @@ namespace FishEngine
 		{
 			return m_Name;
 		}
+
+		RenderSettings* GetRenderSettings() const
+		{
+			return m_RenderSettings;
+		}
+
 	
 	private:
 		Scene();
@@ -97,15 +106,16 @@ namespace FishEngine
 		friend class FishEditor::DefaultImporter;
 
 		std::vector<Transform*> m_RootTransforms;
+		RenderSettings* 		m_RenderSettings = nullptr;
 		
-		int m_Handle = 0;	// 0 is invalid
-		std::string m_Name;
+		int 					m_Handle = 0;	// 0 is invalid
+		std::string 			m_Name;
 		
 		// relative path of the scene. Like: "Assets/MyScenes/MyScene.unity".
-		std::string m_Path;
+		std::string 			m_Path;
 
-		static int s_Counter;
-		bool m_Cleaning = false;
+		static int 				s_Counter;
+		bool 					m_Cleaning = false;
 	};
 	
 	

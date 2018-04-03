@@ -15,6 +15,15 @@ constexpr int BoneWeightIndex = 5;
 
 namespace FishEngine
 {
+
+	Mesh* Mesh::m_Cube = nullptr;
+	Mesh* Mesh::m_Cylinder = nullptr;
+	Mesh* Mesh::m_Sphere = nullptr;
+	Mesh* Mesh::m_Capsule = nullptr;
+	Mesh* Mesh::m_Plane = nullptr;
+	Mesh* Mesh::m_Quad = nullptr;
+	Mesh* Mesh::m_SkyboxSphere = nullptr;
+
 	Mesh::Mesh(std::vector<Vector3>	&& vertices,
 			   std::vector<Vector3>	&& normals,
 			   std::vector<Vector2>	&& uv,

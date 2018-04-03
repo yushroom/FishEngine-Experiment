@@ -17,6 +17,12 @@ schema = '''
 	y
 	z
 	w
+@Color
+	r
+	g
+	b
+	a
+
 @Modification
 	target: nullptr;
 	propertyPath
@@ -110,6 +116,34 @@ object_schema = '''
 	# m_Constraints: 0
 	# m_CollisionDetection: 0
 
+@RenderSettings: Object
+  m_ObjectHideFlags: 0
+  # serializedVersion: 8
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  # m_HaloTexture: {fileID: 0}
+  # m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  # m_DefaultReflectionMode: 0
+  # m_DefaultReflectionResolution: 128
+  # m_ReflectionBounces: 1
+  # m_ReflectionIntensity: 1
+  # m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 '''
 
 '''
@@ -245,5 +279,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-Func(schema, template2)
-# Func(object_schema, template1)
+# Func(schema, template2)
+Func(object_schema, template1)

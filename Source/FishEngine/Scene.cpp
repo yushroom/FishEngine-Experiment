@@ -21,6 +21,7 @@ namespace FishEngine
 
 	Scene::~Scene()
 	{
+		delete m_RenderSettings;
 		this->Clean();
 		auto& m = SceneManager::s_HandleToScene;
 		m.erase(m.find(m_Handle));
@@ -99,6 +100,7 @@ namespace FishEngine
 
 		CollectObjectsArchive archive;
 		std::vector<Object*> objects;
+		archive.Collect(m_RenderSettings);
 		for (auto t : m_RootTransforms)
 		{
 			auto go = t->GetGameObject();

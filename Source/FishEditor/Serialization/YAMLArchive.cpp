@@ -122,7 +122,8 @@ namespace FishEditor
 
 				if (parentFileID == 0)	// this prefab is a definition
 				{
-					obj = CreateEmptyObject<Prefab>();
+//					obj = CreateEmptyObject<Prefab>();
+					obj = nullptr;
 				}
 				else	// this prefab is a ref/instance
 				{
@@ -162,9 +163,9 @@ namespace FishEditor
 				if (YAMLNodeHasKey(node, "m_PrefabParentObject"))
 				{
 					auto id1 = node["m_PrefabParentObject"]["fileID"].as<int64_t>();
-					if (id1 != 0)
+					auto id2 = node["m_PrefabInternal"]["fileID"].as<int64_t>();
+					if (id1 != 0 && id2 != 0)
 					{
-						auto id2 = node["m_PrefabInternal"]["fileID"].as<int64_t>();
 						auto prefab = fileIDToPrefab[id2];
 						assert(prefab != nullptr);
 						obj = prefab->GetObjectByFileID(id1);

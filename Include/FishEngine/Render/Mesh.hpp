@@ -67,6 +67,7 @@ namespace FishEngine
 		// The size of the array is either the same as vertexCount or empty.
 		// Each vertex can be affected by up to 4 different bones.All 4 bone weights should sum up to 1.
 		std::vector<BoneWeight> m_boneWeights;
+
 		
 	public:
 		bool m_skinned = false; // temp
@@ -89,6 +90,15 @@ namespace FishEngine
 		unsigned int m_animationOutputPositionVBO = 0;
 		unsigned int m_animationOutputNormalVBO = 0;
 		unsigned int m_animationOutputTangentVBO = 0;
+
+
+		static Mesh* m_Cube;
+		static Mesh* m_Cylinder;
+		static Mesh* m_Sphere;
+		static Mesh* m_Capsule;
+		static Mesh* m_Plane;
+		static Mesh* m_Quad;
+		static Mesh* m_SkyboxSphere;
 		
 	private:
 		void GenerateBuffer();

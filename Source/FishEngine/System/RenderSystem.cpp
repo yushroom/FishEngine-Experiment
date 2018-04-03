@@ -12,6 +12,7 @@
 #include <FishEngine/Scene.hpp>
 
 #include <FishEngine/Render/Material.hpp>
+#include <FishEngine/Render/Mesh.hpp>
 
 namespace FishEngine
 {
@@ -19,22 +20,33 @@ namespace FishEngine
 	{
 		glCheckError();
 		glViewport(0, 0, Screen::GetWidth(), Screen::GetHeight());
-		glCheckError();
 		glClearColor(0.2f, 0.3f, 0.3f, 1);
-		glCheckError();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glCheckError();
 		
 		glFrontFace(GL_CW);
-		glCheckError();
 		glEnable(GL_DEPTH_TEST);
-		glCheckError();
 		glEnable(GL_CULL_FACE);
-		glCheckError();
+		glCullFace(GL_BACK);
 
 		auto scene = SceneManager::GetActiveScene();
 		auto camera = scene->FindComponent<Camera>();
 		auto light = scene->FindComponent<Light>();
+
+		// TODO: render skybox at the end
+		// skybox
+		{
+			Scene* scene = SceneManager::GetActiveScene();
+			Material* mat = scene->GetRenderSettings()->GetSkyboxMaterial();
+			if (mat != nullptr)
+			{
+				glCullFace(GL_FRONT);
+				Matrix4x4 objectToWorld = Matrix4x4::TRS(camera->GetTransform()->GetPosition(), Quaternion(), Vector3(100, 100, 100));
+				Graphics::DrawMesh(Mesh::m_SkyboxSphere, mat, -1, camera, objectToWorld, light);
+				glCullFace(GL_BACK);
+			}
+		}
+
+
 		if (camera == nullptr || light == nullptr)
 		{
 			puts("camera or light is None");

@@ -230,12 +230,12 @@ ProjectView::ProjectView() : Widget("Project")
 	m_FileList->OnSelectedFileChanged.connect([](FileNode* node) {
 		if (node != nullptr)
 		{
-			if (!node->guid.empty())
-			{
-				//auto path = FishEditor::AssetDatabase::GUIDToAssetPath(node->guid);
-				auto importer = FishEditor::AssetImporter::GetByGUID(node->guid);
-				FishEditor::Selection::SetActiveObject(importer);
-			}
+//			if (!node->guid.empty())
+//			{
+//				//auto path = FishEditor::AssetDatabase::GUIDToAssetPath(node->guid);
+//				auto importer = FishEditor::AssetImporter::GetByGUID(node->guid);
+//				FishEditor::Selection::SetActiveObject(importer);
+//			}
 		}
 		else
 		{

@@ -4,6 +4,7 @@
 #include <FishEngine/Math/Vector3.hpp>
 #include <FishEngine/Math/Vector4.hpp>
 #include <FishEngine/Math/Quaternion.hpp>
+#include <FishEngine/Color.hpp>
 #include <FishEngine/Prefab.hpp>
 
 #include <FishEngine/Serialization/Archive.hpp>
@@ -73,6 +74,24 @@ namespace FishEngine
 		archive.AddNVP("y", t.y);
 		archive.AddNVP("z", t.z);
 		archive.AddNVP("w", t.w);
+		return archive;
+	}
+
+	// Color
+	static InputArchive& operator>>(InputArchive& archive, Color& t)
+	{
+		archive.AddNVP("r", t.r);
+		archive.AddNVP("g", t.g);
+		archive.AddNVP("b", t.b);
+		archive.AddNVP("a", t.a);
+		return archive;
+	}
+	static OutputArchive& operator<<(OutputArchive& archive, const Color& t)
+	{
+		archive.AddNVP("r", t.r);
+		archive.AddNVP("g", t.g);
+		archive.AddNVP("b", t.b);
+		archive.AddNVP("a", t.a);
 		return archive;
 	}
 

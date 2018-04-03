@@ -4,6 +4,7 @@
 
 #include <FishEditor/Path.hpp>
 #include <algorithm>
+#include <FishEngine/Render/RenderSettings.hpp>
 
 using namespace FishEngine;
 
@@ -28,7 +29,17 @@ namespace FishEditor
 		for (auto o : objects) {
 			// do not use Transform here, since some transforms, whose GameObject is instantiate by prefab,
 			// may not be in objects
-			if (o != nullptr && o->GetClassID() == GameObject::ClassID) {
+
+			if (o == nullptr)
+				continue;
+
+			if (o->Is<RenderSettings>())
+			{
+				assert(scene->m_RenderSettings == nullptr);
+				scene->m_RenderSettings = o->As<RenderSettings>();
+			}
+
+			if (o->GetClassID() == GameObject::ClassID) {
 				auto t = o->As<GameObject>()->GetTransform();
 				if (t->GetParent() == nullptr)
 					transforms.push_back(t);

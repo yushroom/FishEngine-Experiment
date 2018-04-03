@@ -20,7 +20,7 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 {
 	fileName = path.stem().string();
 
-	std::string guid;
+//	std::string guid;
 	auto meta_file = fs::path(path.string() + ".meta");
 	if (fs::exists(meta_file))
 	{
@@ -29,10 +29,10 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 		auto nodes = YAML::LoadAll(fin);
 		auto&& node = nodes.front();
 		auto meta_created_time = node["timeCreated"].as<uint32_t>();
-		guid = node["guid"].as<std::string>();
+		this->guid = node["guid"].as<std::string>();
 
 		auto rel = fs::relative(path, FishEngine::Application::GetInstance().GetDataPath()+"/..");
-		AssetDatabase::AddAssetPathAndGUIDPair(rel.string(), guid);
+		AssetDatabase::AddAssetPathAndGUIDPair(rel.string(), this->guid);
 	}
 	else
 	{
@@ -55,7 +55,6 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 
 			auto n = new FileNode(p);
 			n->parent = this;
-			n->guid = guid;
 			if (fs::is_directory(p))
 			{
 				n->isDir = true;

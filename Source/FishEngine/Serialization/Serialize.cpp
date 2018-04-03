@@ -264,4 +264,54 @@ namespace FishEngine
 		archive.AddNVP("m_UseGravity", this->m_UseGravity);
 		archive.AddNVP("m_IsKinematic", this->m_IsKinematic);
 	}
+
+
+	// RenderSettings
+	void RenderSettings::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
+		archive.AddNVP("m_Fog", this->m_Fog);
+		archive.AddNVP("m_FogColor", this->m_FogColor);
+		archive.AddNVP("m_FogMode", this->m_FogMode);
+		archive.AddNVP("m_FogDensity", this->m_FogDensity);
+		archive.AddNVP("m_LinearFogStart", this->m_LinearFogStart);
+		archive.AddNVP("m_LinearFogEnd", this->m_LinearFogEnd);
+		archive.AddNVP("m_AmbientSkyColor", this->m_AmbientSkyColor);
+		archive.AddNVP("m_AmbientEquatorColor", this->m_AmbientEquatorColor);
+		archive.AddNVP("m_AmbientGroundColor", this->m_AmbientGroundColor);
+		archive.AddNVP("m_AmbientIntensity", this->m_AmbientIntensity);
+		archive.AddNVP("m_AmbientMode", this->m_AmbientMode);
+		archive.AddNVP("m_SubtractiveShadowColor", this->m_SubtractiveShadowColor);
+		archive.AddNVP("m_SkyboxMaterial", this->m_SkyboxMaterial);
+		archive.AddNVP("m_HaloStrength", this->m_HaloStrength);
+		archive.AddNVP("m_FlareStrength", this->m_FlareStrength);
+		archive.AddNVP("m_FlareFadeSpeed", this->m_FlareFadeSpeed);
+		archive.AddNVP("m_Sun", this->m_Sun);
+		archive.AddNVP("m_IndirectSpecularColor", this->m_IndirectSpecularColor);
+	}
+
+	void RenderSettings::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
+		archive.AddNVP("m_Fog", this->m_Fog);
+		archive.AddNVP("m_FogColor", this->m_FogColor);
+		archive.AddNVP("m_FogMode", this->m_FogMode);
+		archive.AddNVP("m_FogDensity", this->m_FogDensity);
+		archive.AddNVP("m_LinearFogStart", this->m_LinearFogStart);
+		archive.AddNVP("m_LinearFogEnd", this->m_LinearFogEnd);
+		archive.AddNVP("m_AmbientSkyColor", this->m_AmbientSkyColor);
+		archive.AddNVP("m_AmbientEquatorColor", this->m_AmbientEquatorColor);
+		archive.AddNVP("m_AmbientGroundColor", this->m_AmbientGroundColor);
+		archive.AddNVP("m_AmbientIntensity", this->m_AmbientIntensity);
+		archive.AddNVP("m_AmbientMode", this->m_AmbientMode);
+		archive.AddNVP("m_SubtractiveShadowColor", this->m_SubtractiveShadowColor);
+		archive.AddNVP("m_SkyboxMaterial", this->m_SkyboxMaterial);
+		archive.AddNVP("m_HaloStrength", this->m_HaloStrength);
+		archive.AddNVP("m_FlareStrength", this->m_FlareStrength);
+		archive.AddNVP("m_FlareFadeSpeed", this->m_FlareFadeSpeed);
+		archive.AddNVP("m_Sun", this->m_Sun);
+		archive.AddNVP("m_IndirectSpecularColor", this->m_IndirectSpecularColor);
+	}
 }

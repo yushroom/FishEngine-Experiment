@@ -5,6 +5,8 @@
 #include <regex>
 #include <FishEngine/Util/StringFormat.hpp>
 #include <FishEngine/Render/Mesh.hpp>
+#include <FishEngine/Render/Material.hpp>
+#include <FishEngine/Render/Shader.hpp>
 #include <FishEditor/ModelImporter.hpp>
 #include <FishEditor/Serialization/NativeFormatImporter.hpp>
 
@@ -79,6 +81,7 @@ namespace FishEditor
 					{10208, "Capsule"},
 					{10209, "Plane"},
 					{10210, "Quad"},
+					{10250, "SkyboxSphere"}	// new
 			};
 			auto importer = new ModelImporter();
 			importer->SetGUID(guid);
@@ -97,6 +100,7 @@ namespace FishEditor
 				//prefab->AddObject(fileID, mesh);
 				AssetDatabase::s_AssetInstanceIDToImporter[mesh->GetInstanceID()] = importer;
 			}
+			Mesh::m_SkyboxSphere = importer->m_FileIDToObject[10250]->As<Mesh>();
 
 			AssetImporter::AddImporter(importer, guid);
 		}
@@ -106,12 +110,30 @@ namespace FishEditor
 			const char *guid = "0000000000000000f000000000000000";
 			auto importer = new NativeFormatImporter();
 			importer->SetGUID(guid);
-			auto mat = FishEngine::Material::GetDefaultMaterial();
-			mat->SetLocalIdentifierInFile(10303);
-			importer->m_MainAsset = mat;
-			importer->m_FileIDToObject[10303] = mat;
+			importer->m_MainAsset = nullptr;
 			AssetImporter::AddImporter(importer, guid);
-			AssetDatabase::s_AssetInstanceIDToImporter[mat->GetInstanceID()] = importer;
+			// default material
+			{
+				int fileID = 10303;
+				auto mat = FishEngine::Material::GetDefaultMaterial();
+				mat->SetLocalIdentifierInFile(fileID);
+				mat->SetName("Default-Material");
+				importer->m_FileIDToObject[fileID] = mat;
+				AssetDatabase::s_AssetInstanceIDToImporter[mat->GetInstanceID()] = importer;
+			}
+			// Skybox-Procedural
+			{
+				int fileID = 10304;
+				std::string SkyBox_Procedural = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/SkyBox-Procedural.shader");
+				std::string vs = "#version 410 core\n#define VERTEX\n" + SkyBox_Procedural;
+				std::string fs = "#version 410 core\n#define FRAGMENT\n" + SkyBox_Procedural;
+				auto shader = FishEngine::Shader::FromString(vs, fs);
+				auto mat = new Material();
+				mat->SetShader(shader);
+				mat->SetName("Default-Skybox");
+				importer->m_FileIDToObject[fileID] = mat;
+				AssetDatabase::s_AssetInstanceIDToImporter[mat->GetInstanceID()] = importer;
+			}
 		}
 	}
 
@@ -150,7 +172,7 @@ namespace FishEditor
 		if (guid == "0000000000000000f000000000000000")
 		{
 			//LogWarning("0000000000000000f000000000000000");
-			assert(fileID == 10303);
+			assert(fileID == 10303 || fileID == 10304);
 		}
 		auto importer = AssetImporter::GetByGUID(guid);	// maybe internal assset
 		if (importer == nullptr)
