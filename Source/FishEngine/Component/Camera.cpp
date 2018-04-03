@@ -39,6 +39,10 @@ namespace FishEngine
 			}
 			m_isDirty = false;
 		}
+//		m_projectMatrix[2][0] = -m_projectMatrix[2][0];
+//		m_projectMatrix[2][1] = -m_projectMatrix[2][1];
+//		m_projectMatrix[2][2] = -m_projectMatrix[2][2];
+//		m_projectMatrix[2][3] = -m_projectMatrix[2][3];
 		return m_projectMatrix;
 	}
 
@@ -69,7 +73,13 @@ namespace FishEngine
 
 	Matrix4x4 Camera::GetWorldToCameraMatrix() const
 	{
-		return GetTransform()->GetWorldToLocalMatrix();
+//		return GetTransform()->GetWorldToLocalMatrix();
+		auto w2l = GetTransform()->GetWorldToLocalMatrix();
+//		w2l[2][0] = -w2l[2][0];
+//		w2l[2][1] = -w2l[2][1];
+//		w2l[2][2] = -w2l[2][2];
+//		w2l[2][3] = -w2l[2][3];
+		return w2l;
 	}
 
 //	void Camera::OnDrawGizmos()

@@ -97,22 +97,22 @@ void Int(const char* label, T* o, Getter getter)
 
 void DrawObject(Object* o)
 {
-	Int("Instance ID", o, &Object::GetInstanceID);
-	Int("Local Identifier In File", o, &Object::GetLocalIdentifierInFile);
+//	Int("Instance ID", o, &Object::GetInstanceID);
+//	Int("Local Identifier In File", o, &Object::GetLocalIdentifierInFile);
 }
 
 void DrawComponent(Component* value)
 {
 	DrawObject(value);
-	auto m_PrefabInternal = value->GetPrefabInternal();
-	Int("m_PrefabInternal", m_PrefabInternal == nullptr ? 0 : m_PrefabInternal->GetInstanceID());
-	auto m_PrefabParentObject = value->GetPrefabParentObject();
-	Int("m_PrefabParentObject", m_PrefabParentObject == nullptr ? 0 : m_PrefabParentObject->GetInstanceID());
+//	auto m_PrefabInternal = value->GetPrefabInternal();
+//	Int("m_PrefabInternal", m_PrefabInternal == nullptr ? 0 : m_PrefabInternal->GetInstanceID());
+//	auto m_PrefabParentObject = value->GetPrefabParentObject();
+//	Int("m_PrefabParentObject", m_PrefabParentObject == nullptr ? 0 : m_PrefabParentObject->GetInstanceID());
 }
 
 void DrawTransform(Transform* value)
 {
-	Int("GO IntanceID", value->GetGameObject(), &Object::GetInstanceID);
+//	Int("GO IntanceID", value->GetGameObject(), &Object::GetInstanceID);
 	DrawComponent(value);
 	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
 	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
@@ -194,8 +194,8 @@ void DrawRigidbody(Rigidbody* r)
 	Float("Mass", r, &Rigidbody::GetMass, &Rigidbody::SetMass);
 	Float("Drag", r, &Rigidbody::GetDrag, &Rigidbody::SetDrag);
 	Float("Angular Drag", r, &Rigidbody::GetAngularDrag, &Rigidbody::SetAngularDrag);
-	Float("Use Gravity", r, &Rigidbody::GetUseGravity, &Rigidbody::SetUseGravity);
-	Float("Is Kinematic", r, &Rigidbody::GetIsKinematic, &Rigidbody::SetIsKinematic);
+	Bool("Use Gravity", r, &Rigidbody::GetUseGravity);
+	Bool("Is Kinematic", r, &Rigidbody::GetIsKinematic);
 }
 
 

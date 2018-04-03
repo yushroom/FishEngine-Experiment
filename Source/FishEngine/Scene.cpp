@@ -100,7 +100,7 @@ namespace FishEngine
 
 		CollectObjectsArchive archive;
 		std::vector<Object*> objects;
-		archive.Collect(m_RenderSettings);
+//		archive.Collect(m_RenderSettings);
 		for (auto t : m_RootTransforms)
 		{
 			auto go = t->GetGameObject();
@@ -134,6 +134,8 @@ namespace FishEngine
 		{
 			cloned->m_RootTransforms.push_back(o->As<GameObject>()->GetTransform());
 		}
+//		cloned->m_RenderSettings = memo[this->m_RenderSettings]->As<RenderSettings>();
+		cloned->m_RenderSettings = CloneObject(this->m_RenderSettings)->As<RenderSettings>();
 //
 //		for (auto t : m_RootTransforms)
 //		{

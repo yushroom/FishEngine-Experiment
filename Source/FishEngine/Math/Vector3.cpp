@@ -1,6 +1,7 @@
 #include <FishEngine/Math/Vector3.hpp>
 //#include <FishEngine/Time.hpp>
 #include <FishEngine/Math/Quaternion.hpp>
+#include <FishEngine/Util/StringFormat.hpp>
 
 using  namespace FishEngine;
 
@@ -16,6 +17,11 @@ const Vector3 Vector3::zero		( 0,  0,  0);
 const Vector3 Vector3::xAxis	( 1,  0,  0);
 const Vector3 Vector3::yAxis	( 0,  1,  0);
 const Vector3 Vector3::zAxis	( 0,  0,  1);
+
+std::string Vector3::ToString() const
+{
+	return Format("Vector3({}, {}, {})", x, y, z);
+}
 
 Vector3 Vector3::Project(const Vector3& vector, const Vector3& onNormal)
 {

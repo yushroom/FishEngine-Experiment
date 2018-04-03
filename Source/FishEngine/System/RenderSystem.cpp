@@ -32,20 +32,6 @@ namespace FishEngine
 		auto camera = scene->FindComponent<Camera>();
 		auto light = scene->FindComponent<Light>();
 
-		// TODO: render skybox at the end
-		// skybox
-		{
-			Scene* scene = SceneManager::GetActiveScene();
-			Material* mat = scene->GetRenderSettings()->GetSkyboxMaterial();
-			if (mat != nullptr)
-			{
-				glCullFace(GL_FRONT);
-				Matrix4x4 objectToWorld = Matrix4x4::TRS(camera->GetTransform()->GetPosition(), Quaternion(), Vector3(100, 100, 100));
-				Graphics::DrawMesh(Mesh::m_SkyboxSphere, mat, -1, camera, objectToWorld, light);
-				glCullFace(GL_BACK);
-			}
-		}
-
 
 		if (camera == nullptr || light == nullptr)
 		{
@@ -84,5 +70,23 @@ namespace FishEngine
 			}
 		}
 		glCheckError();
+
+
+		// Skybox
+		{
+			Scene* scene = SceneManager::GetActiveScene();
+			Material* mat = scene->GetRenderSettings()->GetSkyboxMaterial();
+			if (mat != nullptr)
+			{
+//				glCullFace(GL_FRONT);
+				glDisable(GL_CULL_FACE);
+				glDepthMask(GL_FALSE);
+//				Matrix4x4 objectToWorld = Matrix4x4::TRS(camera->GetTransform()->GetPosition(), Quaternion(), Vector3(20, 20, 20));
+				Matrix4x4 objectToWorld = Matrix4x4::Scale(camera->GetFarClipPlane());
+				Graphics::DrawMesh(Mesh::m_SkyboxSphere, mat, -1, camera, objectToWorld, light);
+				glDepthMask(GL_TRUE);
+//				glCullFace(GL_BACK);
+			}
+		}
 	}
 }
