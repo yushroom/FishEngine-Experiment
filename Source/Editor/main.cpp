@@ -3,8 +3,8 @@
 #include <FishGUI/FishGUI.hpp>
 #include <FishGUI/Window.hpp>
 
-#include <UnityLayout.hpp>
-#include <UnityToolBar.hpp>
+#include "UnityLayout.hpp"
+#include "UnityToolBar.hpp"
 
 #include "ProjectView.hpp"
 #include <FishEditor/UI/HierarchyView.hpp>
@@ -180,11 +180,11 @@ try
 	});
 	
 	toolBar->OnPause.connect([&editorApp](){
-		editorApp.Pause();
+		editorApp.SetIsPaused(true);
 	});
 	
 	toolBar->OnResume.connect([&editorApp](){
-		editorApp.Resume();
+		editorApp.SetIsPaused(false);
 	});
 	
 //	toolBar->OnNextFrame.connect([&editorApp]{

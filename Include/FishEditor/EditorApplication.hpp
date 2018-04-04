@@ -40,8 +40,13 @@ namespace FishEditor
 
 		void Play();
 		void Stop();
-		void Pause();
-		void Resume();
+
+
+		bool GetIsPlaying() const { return m_IsPlaying; }
+		void SetIsPlaying(bool value) { m_IsPlaying = value; }
+
+		bool GetIsPaused() const { return m_IsPaused; }
+		void SetIsPaused(bool value) { m_IsPaused = value; }
 
 		boost::signals2::signal<void()> OnProjectOpened;
 
@@ -57,6 +62,7 @@ namespace FishEditor
 
 		EditorInternalApp * m_app = nullptr;
 		bool m_IsPlaying = false;
+		bool m_IsPaused = false;
 
 		FishEngine::Scene * m_currentScene = nullptr;	// scene in editor
 		

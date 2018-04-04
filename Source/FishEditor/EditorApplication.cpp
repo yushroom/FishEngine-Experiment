@@ -94,7 +94,7 @@ namespace FishEditor
 		auto gameView = GameView::GetCurrent();
 		gameView->m_Framebuffer.Bind();
 		
-		if (m_IsPlaying)
+		if (m_IsPlaying && !m_IsPaused)
 		{
 			FishEngine::Update();
 		}
@@ -107,6 +107,7 @@ namespace FishEditor
 		FishEngine::UISystem::GetInstance().AfterDraw();
 		
 		gameView->m_Framebuffer.Unbind();
+
 	}
 
 
@@ -190,15 +191,5 @@ namespace FishEditor
 //		scene = FishEngine::SceneManager::GetActiveScene();
 		//auto app = py::module::import("app");
 		//app.attr("Restore")();
-	}
-
-	void EditorApplication::Pause()
-	{
-		m_IsPlaying = false;
-	}
-	
-	void EditorApplication::Resume()
-	{
-		m_IsPlaying = true;
 	}
 }
