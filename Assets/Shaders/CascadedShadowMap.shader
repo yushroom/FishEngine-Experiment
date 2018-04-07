@@ -492,7 +492,7 @@ struct VS_OUT {
 		return clipPos;
 	}
 
-	#define SHOWMAP_NO_BIAS
+	// #define SHOWMAP_NO_BIAS
 
 	void main()
 	{

@@ -25,10 +25,10 @@ namespace FishEngine
 		void AttachForRead();
 		void Detach();
 
-		//unsigned int GetGLNativeFBO() const
-		//{
-		//    return m_fbo;
-		//}
+		unsigned int GetGLNativeFBO() const
+		{
+		    return m_fbo;
+		}
 
 		ColorBuffer* GetColorBuffer(int index = 0) {
 			assert(0 <= index && index <= 3);
@@ -42,6 +42,7 @@ namespace FishEngine
 		DepthBuffer*  	m_depthBuffer;
 		unsigned int    m_fbo = 0;
 
+		bool m_Initialized = false;
 		void Init();
 	};
 }

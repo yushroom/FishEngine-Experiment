@@ -98,8 +98,14 @@ def PreprocessShaderFromFile(shader_file_path):
     has_geometry = '@geometry' in shader_str
 
     Print('2. replace @vertex/@fragment/@geometry')
-    def Replace(shader_str, tag, define_begin, define_end="#endif"):
-        pos = shader_str.find(tag)
+
+    # shader_str: str
+    # shader_type: vertex/fragment/geometry
+    def Replace(shader_str, shader_type):
+        directive_tag = "@" + shader_type
+        define_begin = "#ifdef " + shader_type.upper()
+        define_end = "#endif // " + shader_type.upper()
+        pos = shader_str.find(directive_tag)
         begin = pos
         count = 1
         left_brace_pos = shader_str.find('{', pos)
@@ -130,11 +136,11 @@ def PreprocessShaderFromFile(shader_file_path):
         return shader_str
 
     if has_vert:
-        shader_str = Replace(shader_str, "@vertex", "#ifdef VERTEX")
+        shader_str = Replace(shader_str, "vertex")
     if has_geometry:
-        shader_str = Replace(shader_str, "@geometry", "#ifdef GEOMETRY")
+        shader_str = Replace(shader_str, "geometry")
     if has_frag:
-        shader_str = Replace(shader_str, "@fragment", "#ifdef FRAGMENT")
+        shader_str = Replace(shader_str, "fragment")
 
 
     Print("3. replace include files")
@@ -156,7 +162,7 @@ def PreprocessShaderFromFile(shader_file_path):
     return shader_str
 
 if __name__ == "__main__":
-    shader_path = '/Users/yushroom/program/FishEngine/Engine/Shaders/GatherScreenSpaceShadow.shader'
+    shader_path = '/Users/yushroom/program/FishEngine/Engine/Shaders/PostProcessShadow.shader'
     result = PreprocessShaderFromFile(shader_path)
     print(result)
     # s = "12345678"

@@ -13,7 +13,7 @@ namespace FishEditor
 	{
 		int w = GetWidth();
 		int h = GetHeight();
-		m_Framebuffer.EnableMSAA();
+//		m_Framebuffer.EnableMSAA();
 		m_Framebuffer.Init(w, h);
 		this->Resize(w, h);
 	}

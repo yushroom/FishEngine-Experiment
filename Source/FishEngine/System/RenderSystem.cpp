@@ -20,38 +20,8 @@
 
 namespace FishEngine
 {
-#if 1
 
-	void UpdateDepthMap(Camera* camera, Light* light, std::vector<MeshFilter*>& meshfilters)
-	{
-		glFrontFace(GL_CW);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		for (auto mf : meshfilters)
-		{
-			auto go = mf->GetGameObject();
-			if (!go->IsActiveInHierarchy())
-				continue;
-
-			auto mesh = mf->GetMesh();
-			if (mesh == nullptr)
-				continue;
-
-			auto renderer = go->GetComponent<Renderer>();
-			if (renderer == nullptr || !renderer->GetEnabled())
-			{
-				continue;
-			}
-
-			auto modelMat = go->GetTransform()->GetLocalToWorldMatrix();
-			Pipeline::UpdatePerDrawUniforms(modelMat);
-			Graphics::DrawMesh(mesh, Material::GetDefaultMaterial());
-		}
-	}
-
-	void RenderShadowMap(Camera* camera, Light* light, std::vector<MeshFilter*>& meshfilters)
+	void RenderShadowMap(Shader* shader, Camera* camera, Light* light, std::vector<MeshFilter*>& meshfilters)
 	{
 		if (light == nullptr)
 		{
@@ -156,30 +126,6 @@ namespace FishEngine
 			light->m_cascadesNear[splitInex] = z_near - near_offset;
 			light->m_cascadesFar[splitInex] = z_far + far_offset;
 
-#if 0
-			light->m_projectMatrixForShadowMap[splitInex] = Matrix4x4::Ortho(min_p.x, max_p.x, min_p.y, max_p.y, z_near, z_far);
-			light->m_viewMatrixForShadowMap[splitInex] = world_to_light;
-#elif 0
-			float scaleX = 2.0f / (max_p.x - min_p.x);
-			float scaleY = 2.0f / (max_p.y - min_p.y);
-			constexpr float scaleQuantizer = 64.0f;
-			scaleX = 1.0f / std::ceilf(1.0f / scaleX * scaleQuantizer) * scaleQuantizer;
-			scaleY = 1.0f / std::ceilf(1.0f / scaleY * scaleQuantizer) * scaleQuantizer;
-			float offsetX = -0.5f * (max_p.x + min_p.x) * scaleX;
-			float offsetY = -0.5f * (max_p.y + min_p.y) * scaleY;
-			const float halfTextureSize = 0.5f * light->m_shadowMap->width();
-			offsetX = std::ceilf(offsetX * halfTextureSize) / halfTextureSize;
-			offsetY = std::ceilf(offsetY * halfTextureSize) / halfTextureSize;
-			auto& forward = light_dir; // +z
-			auto right = Vector3::Cross(Vector3(0, 1, 0), forward); // +x
-			auto up = Vector3::Cross(forward, right); // +y
-			eye_pos += right * offsetX + up * offsetY;
-			split_centroid += right * offsetX + up * offsetY;
-			//Gizmos::DrawWireSphere(eye_pos, 0.5f);
-			world_to_light = Matrix4x4::LookAt(eye_pos, split_centroid, Vector3::up);
-			light->m_projectMatrixForShadowMap[i] = Matrix4x4::Ortho(min_p.x, max_p.x, min_p.y, max_p.y, z_near, z_far);
-			light->m_viewMatrixForShadowMap[i] = world_to_light;
-#else
 			//Debug::Log("sphereRadius: %lf", sphereRadius);
 			auto shadowCameraPos = -light_dir * sphereRadius + split_centroid;
 			auto shadowView = Matrix4x4::LookAt(shadowCameraPos, split_centroid, Vector3::up);
@@ -199,26 +145,26 @@ namespace FishEngine
 
 			light->m_projectMatrixForShadowMap[splitInex] = shadowProj;
 			light->m_viewMatrixForShadowMap[splitInex] = shadowView;
-#endif
 
 			light->m_cascadesSplitPlaneNear[splitInex] = split_near;
 			light->m_cascadesSplitPlaneFar[splitInex] = split_far;
 		}
 
-//		auto shadow_map_material = Material::builtinMaterial("CascadedShadowMap");
-		static Material* shadow_map_material = nullptr;
-		if (shadow_map_material == nullptr)
-		{
-			shadow_map_material = new Material;
-			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CascadedShadowMap.shader");
-			auto shader = Shader::FromString(str, true);
-			shadow_map_material->SetShader(shader);
-		}
+////		auto shadow_map_material = Material::builtinMaterial("CascadedShadowMap");
+//		static Material* shadow_map_material = nullptr;
+//		if (shadow_map_material == nullptr)
+//		{
+//			shadow_map_material = new Material;
+//			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CascadedShadowMap.shader");
+//			auto shader = Shader::FromString(str, true);
+//			shadow_map_material->SetShader(shader);
+//		}
 
 		Pipeline::BindLight(light);
 
 		auto shadowMap = light->m_shadowMap;
 		Pipeline::PushRenderTarget(light->m_renderTarget);
+		shader->Use();
 
 		glViewport(0, 0, shadowMap->width(), shadowMap->height());
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -229,7 +175,6 @@ namespace FishEngine
 		glCullFace(GL_BACK);
 		glEnable(GL_DEPTH_CLAMP);
 
-#if 1
 		for (auto mf : meshfilters)
 		{
 			auto go = mf->GetGameObject();
@@ -250,57 +195,10 @@ namespace FishEngine
 
 			auto modelMat = go->GetTransform()->GetLocalToWorldMatrix();
 			Pipeline::UpdatePerDrawUniforms(modelMat);
-			Graphics::DrawMesh(mesh, shadow_map_material);
+//			Graphics::DrawMesh(mesh, shadow_map_material);
+			mesh->Render(-1);
 		}
 
-#else
-		for (auto& go : m_gameObjects)
-		{
-			bool is_skinned = false;
-
-			if (!go->activeInHierarchy())
-				continue;
-
-			MeshPtr mesh;
-			auto mesh_renderer = go->GetComponent<MeshRenderer>();
-			if (mesh_renderer != nullptr)
-			{
-				if (mesh_renderer->shadowCastingMode() != ShadowCastingMode::Off)
-				{
-					auto meshFilter = go->GetComponent<MeshFilter>();
-					if (meshFilter != nullptr)
-					{
-						mesh = meshFilter->mesh();
-					}
-				}
-			}
-			else
-			{
-				auto renderer = go->GetComponent<SkinnedMeshRenderer>();
-				if (renderer != nullptr)
-				{
-					mesh = renderer->sharedMesh();
-					if (renderer->m_avatar != nullptr)
-					{
-						shadow_map_material->EnableKeyword(ShaderKeyword::SkinnedAnimation);
-						is_skinned = true;
-						Pipeline::UpdateBonesUniforms(renderer->m_matrixPalette);
-					}
-				}
-			}
-
-			if (mesh != nullptr)
-			{
-				shader->BindUniformMat4("ObjectToWorld", go->transform()->localToWorldMatrix());
-				shader->CheckStatus();
-				mesh->Render();
-				if (!is_skinned)
-				{
-					shadow_map_material->DisableKeyword(ShaderKeyword::SkinnedAnimation);
-				}
-			}
-		}
-#endif
 		glDisable(GL_DEPTH_CLAMP);
 		Pipeline::PopRenderTarget();
 #undef DEBUG_SHADOW
@@ -326,6 +224,7 @@ namespace FishEngine
 
 	void DrawTexture(Texture* shadowMap)
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		static Shader* shader = nullptr;
 		if (shader == nullptr)
 		{
@@ -340,29 +239,15 @@ namespace FishEngine
 		glCheckError();
 	}
 
-	void CollectShadows(Camera* camera, Light* light, DepthBuffer* sceneDepth)
+	void CollectShadows(Shader* shader, LayeredDepthBuffer* shadowMap, DepthBuffer* sceneDepth)
 	{
-		static Shader* shader = nullptr;
-		if (shader == nullptr)
-		{
-			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CollectScreenSpaceShadow.shader");
-			shader = Shader::FromString(str);
-		}
 		glDepthFunc(GL_ALWAYS);
 		glDepthMask(GL_FALSE);
 		glDisable(GL_CULL_FACE);
 		shader->Use();
-//		shader->BindTexture("_MainTex", sceneDepth);
 		shader->BindTexture("SceneDepthTexture", sceneDepth);
-		shader->BindTexture("CascadedShadowMap", light->m_shadowMap);
-//		glBindTexture(GL_TEXTURE_2D_ARRAY, light->m_shadowMap->GetNativeTexturePtr());
-//		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-//		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-//		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-		light->m_shadowMap->setFilterMode(FilterMode::Bilinear);
-		float shadowMapSize = static_cast<float>( light->m_shadowMap->width() );
+		shader->BindTexture("CascadedShadowMap", shadowMap);
+		float shadowMapSize = static_cast<float>( shadowMap->width() );
 		float shadowMapTexelSize = 1.0f / shadowMapSize;
 		shader->BindUniform("_ShadowMapTexture_TexelSize", Vector4(shadowMapTexelSize, shadowMapTexelSize, shadowMapSize, shadowMapSize));
 
@@ -375,7 +260,114 @@ namespace FishEngine
 		glUseProgram(0);
 	}
 
-#endif
+	void PostProcessShadow(Texture* mainColorTexture, Texture* screenShadowMap)
+	{
+		static Shader* shader = nullptr;
+		if (shader == nullptr)
+		{
+			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/PostProcessShadow.shader");
+			shader = Shader::FromString(str);
+		}
+		shader->Use();
+		// add shadow
+		glDepthFunc(GL_ALWAYS);
+		glDepthMask(GL_FALSE);
+		auto quad = Mesh::m_ScreenAlignedQuad;
+		shader->BindTexture("_MainTex", mainColorTexture);
+		shader->BindTexture("ScreenShadow", screenShadowMap);
+		quad->Render(-1);
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
+	}
+
+
+	void AddShadow(Shader* shader, ColorBuffer* mainColorBuffer, ColorBuffer* screenSpaceShadowMap)
+	{
+		glDepthFunc(GL_ALWAYS);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_CULL_FACE);
+		shader->Use();
+		shader->BindTexture("_MainTex", mainColorBuffer);
+		shader->BindTexture("ScreenShadow", screenSpaceShadowMap);
+		auto quad = Mesh::m_ScreenAlignedQuad;
+		quad->Render(-1);
+		glCheckError();
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
+		glUseProgram(0);
+	}
+
+
+	Shader* ShaderFromFile(const char* path)
+	{
+		auto str = FishEditor::ReadFileAsString(path);
+		return Shader::FromString(str);
+	}
+
+
+	RenderSystem::RenderSystem()
+	{
+		int w = Screen::GetWidth();
+		int h = Screen::GetHeight();
+		if (w <= 0)
+			w = 1;
+		if (h <= 0)
+			h = 1;
+
+		m_DepthPassRT = new RenderTarget();
+		m_SceneDepth = DepthBuffer::Create(w, h);
+		m_DepthPassRT->SetDepthBufferOnly(m_SceneDepth);
+		m_RenderDepthShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/RenderDepth.shader");
+
+		m_CollectShadowsRT = new RenderTarget();
+		m_ScreenSpaceShadowMap = ColorBuffer::Create(w, h, TextureFormat::R8);
+		m_CollectShadowsShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CollectScreenSpaceShadow.shader");
+		m_CollectShadowsRT->SetColorBufferOnly(m_ScreenSpaceShadowMap);
+
+		auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CascadedShadowMap.shader");
+		m_CSMShader = Shader::FromString(str, true);
+
+		m_MainRenderTarget = new RenderTarget();
+		m_MainColorBuffer = ColorBuffer::Create(w, h);
+		m_MainDepthBuffer = DepthBuffer::Create(w, h);
+		m_MainRenderTarget->Set(m_MainColorBuffer, m_MainDepthBuffer);
+
+		m_AddShadowShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/PostProcessShadow.shader");
+		m_AddShadowRT = new RenderTarget();
+		m_AddShadowColorBuffer = ColorBuffer::Create(w, h);
+		m_AddShadowRT->SetColorBufferOnly(m_AddShadowColorBuffer);
+	}
+
+
+	void RenderDepthPass(Shader* shader, std::vector<MeshFilter*>& meshfilters)
+	{
+		glFrontFace(GL_CW);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		for (auto mf : meshfilters)
+		{
+			auto go = mf->GetGameObject();
+			if (!go->IsActiveInHierarchy())
+				continue;
+
+			auto mesh = mf->GetMesh();
+			if (mesh == nullptr)
+				continue;
+
+			auto renderer = go->GetComponent<Renderer>();
+			if (renderer == nullptr || !renderer->GetEnabled())
+				continue;
+
+			auto modelMat = go->GetTransform()->GetLocalToWorldMatrix();
+			Pipeline::UpdatePerDrawUniforms(modelMat);
+//			Graphics::DrawMesh(mesh, Material::GetDefaultMaterial());
+			shader->Use();
+			mesh->Render(-1);
+		}
+	}
+
 
 	void RenderSystem::Update()
 	{
@@ -404,74 +396,54 @@ namespace FishEngine
 
 		auto mfs = scene->FindComponents<MeshFilter>();
 
-		GLint framebuffer = 0;
-		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &framebuffer);
+		GLint old_framebuffer = 0;
+		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &old_framebuffer);
 
-		static RenderTarget rt;
+
 		const int w = Screen::GetWidth();
 		const int h = Screen::GetHeight();
-		static auto color = ColorBuffer::Create(w, h);
-		static auto sceneDepth = DepthBuffer::Create(w, h);
-		if (rt.GetColorBuffer() == nullptr)
-			rt.Set(color, sceneDepth);
-		color->Resize(w, h);
-		sceneDepth->Resize(w, h);
-		Pipeline::PushRenderTarget(&rt);
+
+		// Pre-Z
+		m_SceneDepth->Resize(w, h);
+		Pipeline::PushRenderTarget(m_DepthPassRT);
 		glViewport(0, 0, w, h);
-		UpdateDepthMap(camera, light, mfs);
+		RenderDepthPass(m_RenderDepthShader, mfs);
 		Pipeline::PopRenderTarget();
 
 
-		RenderShadowMap(camera, light, mfs);
-//		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-//		Pipeline::BindCamera(camera);
-//		Pipeline::BindLight(light);
-
-//		glCheckError();
-//		glViewport(0, 0, Screen::GetWidth(), Screen::GetHeight());
-//		glClearColor(0.2f, 0.3f, 0.3f, 1);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-//		glFrontFace(GL_CW);
-//		glEnable(GL_DEPTH_TEST);
-//		glEnable(GL_CULL_FACE);
-//		glCullFace(GL_BACK);
-
-//		glDisable(GL_CULL_FACE);
-//		ShowShadowMap(light->m_shadowMap);
-//		ShowShadowMap(depth);
+		// ShadowMap - CSM
+		RenderShadowMap(m_CSMShader, camera, light, mfs);
 
 //		glFlush();
 
-		static RenderTarget rt2;
-		static auto color2 = ColorBuffer::Create(w, h, TextureFormat::R8);
-//		static auto depth2 = DepthBuffer::Create(w, h);
-		if (rt2.GetColorBuffer() == nullptr)
-		{
-//			rt2.Set(color2, depth2);
-			rt2.SetColorBufferOnly(color2);
-		}
-		color2->Resize(w, h);
-//		depth2->Resize(Screen::GetWidth(), Screen::GetHeight());
-		Pipeline::PushRenderTarget(&rt2);
+		// CollectShadowMap - ScreenSpaceShadowMap
+		m_ScreenSpaceShadowMap->Resize(w, h);
+		Pipeline::PushRenderTarget(m_CollectShadowsRT);
 		glViewport(0, 0, w, h);
 		glClearColor(0.f, 0.f, 0.f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		CollectShadows(camera, light, sceneDepth);
+		CollectShadows(m_CollectShadowsShader, light->m_shadowMap, m_SceneDepth);
 		Pipeline::PopRenderTarget();
 
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glCheckError();
-		glViewport(0, 0, w, h);
-		glClearColor(0.2f, 0.3f, 0.3f, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		DrawTexture(color2);
-//		ShowShadowMap(light->m_shadowMap);
-		glCheckError();
+//		// test
+//		glBindFramebuffer(GL_FRAMEBUFFER, old_framebuffer);
+//		glCheckError();
+//		glViewport(0, 0, w, h);
+//		glClearColor(0.2f, 0.3f, 0.3f, 1);
+//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+//		DrawTexture(m_ScreenSpaceShadowMap);
+////		ShowShadowMap(light->m_shadowMap);
+//		glCheckError();
 
-#if 0
-		glViewport(0, 0, Screen::GetWidth(), Screen::GetHeight());
+#if 1
+//		glBindFramebuffer(GL_FRAMEBUFFER, old_framebuffer);
+
+		m_MainDepthBuffer->Resize(w, h);
+		m_MainColorBuffer->Resize(w, h);
+
+
+		Pipeline::PushRenderTarget(m_MainRenderTarget);
+		glViewport(0, 0, w, h);
 		glClearColor(0.2f, 0.3f, 0.3f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glFrontFace(GL_CW);
@@ -511,6 +483,22 @@ namespace FishEngine
 		}
 		glCheckError();
 
+		Pipeline::PopRenderTarget();
+
+		m_AddShadowColorBuffer->Resize(w, h);
+		Pipeline::PushRenderTarget(m_AddShadowRT);
+		AddShadow(m_AddShadowShader, m_MainColorBuffer, m_ScreenSpaceShadowMap);
+		Pipeline::PopRenderTarget();
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, old_framebuffer);
+		DrawTexture(m_AddShadowColorBuffer);
+
+		// blit depth buffer
+//		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_MainRenderTarget-);
+		m_MainRenderTarget->AttachForRead();
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, old_framebuffer);
+		glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		// Skybox
 		{

@@ -51,21 +51,26 @@ namespace FishEngine
 
 	void RenderTarget::Attach()
 	{
+		assert(m_Initialized);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	}
 
 	void RenderTarget::AttachForRead()
 	{
+		assert(m_Initialized);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
 	}
 
 	void RenderTarget::Detach()
 	{
+		assert(m_Initialized);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void RenderTarget::Init()
 	{
+		assert(!m_Initialized);
+		m_Initialized = true;
 		LogInfo("RenderTarget::Init");
 		glGenFramebuffers(1, &m_fbo);
 		assert(m_fbo > 0);
