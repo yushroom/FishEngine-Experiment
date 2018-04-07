@@ -3,8 +3,9 @@
 
 #include "Behaviour.hpp"
 #include "../Color.hpp"
-//#include "RenderTexture.hpp"
-//#include "RenderBuffer.hpp"
+#include "../Render/RenderTexture.hpp"
+#include "../Render/RenderBuffer.hpp"
+#include "../Render/RenderTarget.hpp"
 //#include "Common.hpp"
 #include "../Math/Matrix4x4.hpp"
 
@@ -24,20 +25,17 @@ namespace FishEngine
 		Area,
 	};
 
+//	class LayeredDepthBuffer;
+//	class RenderTarget;
+
 	class FE_EXPORT Light : public Behaviour
 	{
 	public:
 		DeclareObject(Light, 108);
 		
-		Light() : Behaviour(Light::ClassID, ClassName)
-		{
-			LOGF;
-		}
+		Light();
 		
-		~Light()
-		{
-			LOGF;
-		}
+		~Light();
 
 //		static LightPtr Create();
 
@@ -104,31 +102,15 @@ namespace FishEngine
 		float m_shadowNearPlane = 0.2f;
 		float m_shadowStrength = 1.0f;
 
-//		Meta(NonSerializable)
-//		LayeredDepthBufferPtr m_shadowMap;
-
-//		Meta(NonSerializable)
-//		RenderTargetPtr m_renderTarget;
-
-//		Meta(NonSerializable)
-//		Matrix4x4 m_viewMatrixForShadowMap[4];
-
-//		Meta(NonSerializable)
-//		Matrix4x4 m_projectMatrixForShadowMap[4];
-
-//		Meta(NonSerializable)
-//		Vector4 m_cascadesNear;
-
-//		Meta(NonSerializable)
-//		Vector4 m_cascadesFar;
-
-//		Meta(NonSerializable)
-//		Vector4 m_cascadesSplitPlaneNear;
-
-//		Meta(NonSerializable)
-//		Vector4 m_cascadesSplitPlaneFar;
-
-//		static std::list<std::weak_ptr<Light>> m_lights;
+	public:
+		LayeredDepthBuffer* m_shadowMap;
+		RenderTarget* m_renderTarget;
+		Matrix4x4 m_viewMatrixForShadowMap[4];
+		Matrix4x4 m_projectMatrixForShadowMap[4];
+		Vector4 m_cascadesNear;
+		Vector4 m_cascadesFar;
+		Vector4 m_cascadesSplitPlaneNear;
+		Vector4 m_cascadesSplitPlaneFar;
 	};
 }
 

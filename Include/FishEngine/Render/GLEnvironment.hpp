@@ -13,10 +13,10 @@
 	#include <OpenGL/gl3ext.h>
 #endif
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 #define glCheckError() _checkOpenGLError(__FILE__,__LINE__)
-#else
-#define glCheckError()
-#endif
+//#else
+//#define glCheckError()
+//#endif
 
 FE_EXPORT void _checkOpenGLError(const char *file, int line);

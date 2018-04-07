@@ -195,6 +195,14 @@ try
 		editorApp.Update();
 	});
 
+//	auto win2 = FishGUI::NewWindow("Frame Debug", 400, 600);
+//	{
+//		auto layout = new FishGUI::SimpleLayout();
+//		auto tab = new FishGUI::TabWidget("Frame Debug");
+//		win2->SetLayout(layout);
+//		layout->SetWidget(tab);
+//	}
+
 	FishGUI::Run();
 	FishEditor::Clean();
 	FishEngine::Clean();

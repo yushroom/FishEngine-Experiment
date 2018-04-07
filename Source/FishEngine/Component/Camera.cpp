@@ -1,7 +1,7 @@
 #include <FishEngine/Component/Camera.hpp>
 #include <FishEngine/GameObject.hpp>
 #include <FishEngine/Transform.hpp>
-//#include <FishEngine/Scene.hpp>
+#include <FishEngine/Scene.hpp>
 #include <FishEngine/Screen.hpp>
 //#include <FishEngine/Gizmos.hpp>
 
@@ -82,6 +82,16 @@ namespace FishEngine
 		return w2l;
 	}
 
+	Matrix4x4 Camera::GetCameraToWorldMatrix() const
+	{
+		auto l2w = GetTransform()->GetLocalToWorldMatrix();
+//		w2l[2][0] = -w2l[2][0];
+//		w2l[2][1] = -w2l[2][1];
+//		w2l[2][2] = -w2l[2][2];
+//		w2l[2][3] = -w2l[2][3];
+		return l2w;
+	}
+
 //	void Camera::OnDrawGizmos()
 //	{
 //		Gizmos::DrawIcon(transform()->position(), "Camera");
@@ -95,21 +105,13 @@ namespace FishEngine
 //		Gizmos::setMatrix(Matrix4x4::identity);
 //	}
 
-//	CameraPtr Camera::main()
-//	{
-//		if (m_mainCamera == nullptr)
-//		{
-//			for (auto& c : m_allCameras)
-//			{
-//				if (c->tag() == "MainCamera")
-//				{
-//					m_mainCamera = c;
-//					return m_mainCamera;
-//				}
-//			}
-//		}
-//		return m_mainCamera;
-//	}
+	Camera* Camera::GetMainCamera()
+	{
+		Scene* scene = SceneManager::GetActiveScene();
+		auto camera = scene->FindComponent<Camera>();
+		assert(camera != nullptr);
+		return camera;
+	}
 //
 //
 //	CameraPtr Camera::

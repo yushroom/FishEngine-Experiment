@@ -123,10 +123,10 @@ public:
 	m.def("Create"##classname, [](){ return new classname();}, return_value_policy::reference); \
 	m.def(#classname"ClassID", []() { return classname::ClassID;  })
 
+using namespace pybind11;
+
 PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 {
-	using namespace py;
-
 	m.def("FindObjectOfType", &FindObjectOfType);
 	m.def("FindObjectsOfType", &FindObjectsOfType);
 
@@ -223,7 +223,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 
 #define DefineFunc(classname) \
-	m.def("Create" #classname, []() { return new classname(); }, return_value_policy::reference); \
+	m.def("Create" #classname, []() { return new classname(); }, pybind11::return_value_policy::reference); \
 	m.def(#classname "ClassID", []() ->int { return classname::ClassID; })
 
 	//m.def("CreateGameObject", []() { return new GameObject(); }, return_value_policy::reference);
@@ -311,7 +311,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		;
 
 	class_<Shader, Object>(m, "Shader")
-		.def_static("FromString", &Shader::FromString, return_value_policy::take_ownership)
+//		.def_static("FromString", &Shader::FromString, return_value_policy::take_ownership)
 		;
 
 	//DefineFunc(Material);
@@ -328,13 +328,20 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_property("mesh", &MeshFilter::GetMesh, &MeshFilter::SetMesh)
 	;
 
+
+	class_<Renderer, Component>(m, "Renderer")
+			.def_property("enabled", &Renderer::GetEnabled, &Renderer::SetEnabled)
+			.def_property("shadowCastingMode", &Renderer::GetCastShadows, &Renderer::SetCastShadows)
+			.def_property("receiveShadows", &Renderer::GetReceiveShadows, &Renderer::SetReceiveShadows)
+			.def_property("material", &Renderer::GetMaterial, &Renderer::SetMaterial)
+					;
+
 	DefineFunc(MeshRenderer);
-	class_<MeshRenderer, Component>(m, "MeshRenderer")
-		.def_property("material", &MeshRenderer::GetMaterial, &MeshRenderer::SetMaterial)
+	class_<MeshRenderer, Renderer>(m, "MeshRenderer")
 	;
 
 	class_<Graphics>(m, "Graphics")
-		.def_static("DrawMesh", &Graphics::DrawMesh)
+//		.def_static("DrawMesh", &Graphics::DrawMesh)
 		;
 
 	DefineFunc(Camera);

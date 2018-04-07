@@ -47,6 +47,8 @@ namespace FishEngine
 		void RecalculateBounds();
 		
 		static Mesh* FromTextFile(const std::string &str);
+
+		static void StaticInit();
 		
 	private:
 		int						m_subMeshCount = 1;
@@ -98,7 +100,9 @@ namespace FishEngine
 		static Mesh* m_Capsule;
 		static Mesh* m_Plane;
 		static Mesh* m_Quad;
+
 		static Mesh* m_SkyboxSphere;
+		static Mesh* m_ScreenAlignedQuad;
 		
 	private:
 		void GenerateBuffer();

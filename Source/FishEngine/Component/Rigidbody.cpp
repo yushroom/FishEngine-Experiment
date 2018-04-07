@@ -33,9 +33,7 @@ namespace FishEngine
 	void Rigidbody::Start()
 	{
 		auto& px = PhysxWrap::GetInstance();
-		Collider* collider = GetGameObject()->GetComponent<BoxCollider>();
-		if (collider == nullptr)
-			collider = GetGameObject()->GetComponent<SphereCollider>();
+		Collider* collider = GetGameObject()->GetComponent<Collider>();
 		if (collider != nullptr)
 			Initialize(collider->GetPhysicsShape());
 		else

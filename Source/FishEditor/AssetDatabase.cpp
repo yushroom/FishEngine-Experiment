@@ -100,6 +100,12 @@ namespace FishEditor
 				//prefab->AddObject(fileID, mesh);
 				AssetDatabase::s_AssetInstanceIDToImporter[mesh->GetInstanceID()] = importer;
 			}
+			Mesh::m_Cube = importer->m_FileIDToObject[10202]->As<Mesh>();
+			Mesh::m_Cylinder = importer->m_FileIDToObject[10206]->As<Mesh>();
+			Mesh::m_Sphere = importer->m_FileIDToObject[10207]->As<Mesh>();
+			Mesh::m_Capsule = importer->m_FileIDToObject[10208]->As<Mesh>();
+			Mesh::m_Plane = importer->m_FileIDToObject[10209]->As<Mesh>();
+			Mesh::m_Quad = importer->m_FileIDToObject[10210]->As<Mesh>();
 			Mesh::m_SkyboxSphere = importer->m_FileIDToObject[10250]->As<Mesh>();
 
 			AssetImporter::AddImporter(importer, guid);
@@ -125,9 +131,9 @@ namespace FishEditor
 			{
 				int fileID = 10304;
 				std::string SkyBox_Procedural = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/SkyBox-Procedural.shader");
-				std::string vs = "#version 410 core\n#define VERTEX\n" + SkyBox_Procedural;
-				std::string fs = "#version 410 core\n#define FRAGMENT\n" + SkyBox_Procedural;
-				auto shader = FishEngine::Shader::FromString(vs, fs);
+//				std::string vs = "#version 410 core\n#define VERTEX\n" + SkyBox_Procedural;
+//				std::string fs = "#version 410 core\n#define FRAGMENT\n" + SkyBox_Procedural;
+				auto shader = FishEngine::Shader::FromString(SkyBox_Procedural);
 				auto mat = new Material();
 				mat->SetShader(shader);
 				mat->SetName("Default-Skybox");

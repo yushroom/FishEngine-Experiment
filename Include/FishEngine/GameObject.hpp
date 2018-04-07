@@ -51,7 +51,7 @@ namespace FishEngine
 			static_assert(std::is_base_of<Component, T>::value, "T must be a Component");
 			for (Component* t : m_Component)
 			{
-				if (t->GetClassID() == T::ClassID)
+				if (t->Is<T>())
 				{
 					return dynamic_cast<T*>(t);
 				}

@@ -6,7 +6,7 @@ namespace FishEngine
 	{
 		assert(!m_Cleaning);
 		bool flag = IsAsset(asset);
-		assert(flag);
+//		assert(flag);
 		if (flag)
 		{
 			m_Assets.insert(asset);

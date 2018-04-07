@@ -34,20 +34,27 @@ namespace FishEngine
 //		}
 //	}
 
-//	Light::Light()
-//	{
+	Light::Light() : Behaviour(Light::ClassID, ClassName)
+	{
+		// TODO: QualitySettings
 //		auto shadow_map_size = QualitySettings::CalculateShadowMapSize();
-//		//constexpr uint32_t shadow_map_size = 2048;
-//
-//		m_renderTarget = std::make_shared<RenderTarget>();
-//		//m_renderTarget->Set(m_shadowMap, m_depthBuffer);
-//
-//		m_shadowMap = LayeredDepthBuffer::Create(shadow_map_size, shadow_map_size, 4, false);
-//		//m_tempColorBuffer = LayeredColorBuffer::Create(shadow_map_size, shadow_map_size, 4, TextureFormat::R32);
-//		m_shadowMap->setFilterMode(FilterMode::Bilinear);
-//		m_shadowMap->setWrapMode(TextureWrapMode::Clamp);
-//		m_renderTarget->SetDepthBufferOnly(m_shadowMap);
-//	}
+		constexpr uint32_t shadow_map_size = 1024;
+
+		m_renderTarget = new RenderTarget();
+		//m_renderTarget->Set(m_shadowMap, m_depthBuffer);
+
+		m_shadowMap = LayeredDepthBuffer::Create(shadow_map_size, shadow_map_size, 4, false);
+		//m_tempColorBuffer = LayeredColorBuffer::Create(shadow_map_size, shadow_map_size, 4, TextureFormat::R32);
+		m_shadowMap->setFilterMode(FilterMode::Bilinear);
+		m_shadowMap->setWrapMode(TextureWrapMode::Clamp);
+		m_renderTarget->SetDepthBufferOnly(m_shadowMap);
+	}
+
+	Light::~Light()
+	{
+		delete m_renderTarget;
+		delete m_shadowMap;
+	}
 
 //	LightPtr Light::Create()
 //	{

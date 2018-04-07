@@ -1,12 +1,32 @@
 #pragma once
 
 #include <cstdio>
+#include <vector>
+#include <map>
+
 #include "../Object.hpp"
 #include "../Asset.hpp"
+#include "../Color.hpp"
+#include "../Math/Vector2.hpp"
 
 namespace FishEngine
 {
 	class Shader;
+	class Texture;
+
+	struct MaterialTextureProperty
+	{
+		Texture* m_Texture;
+		Vector2 m_Scale;
+		Vector2 m_Offset;
+	};
+
+	struct MaterialProperties
+	{
+		std::vector<MaterialTextureProperty> m_TexEnvs;
+		std::vector<float> m_Floats;
+		std::vector<Color> m_COlors;
+	};
 	
 	class Material : public Object
 	{
@@ -52,6 +72,8 @@ namespace FishEngine
 		
 	protected:
 		Shader* m_Shader = nullptr;
+		std::string m_ShaderKeywords;
+		MaterialProperties m_SavedProperties;
 		
 		static Material* s_ErrorMaterial;
 		static Material* s_DefaultMaterial;

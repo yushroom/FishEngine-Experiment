@@ -18,7 +18,8 @@
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
 #include <FishEngine/ClassID.hpp>
-
+#include <FishEngine/Render/TextureSampler.hpp>
+#include <FishEngine/Render/Pipeline.hpp>
 
 namespace FishEngine
 {
@@ -27,6 +28,9 @@ namespace FishEngine
 		puts("======== Init ========");
 		//Debug::Init();
 		//Debug::SetColorMode(true);
+		TextureSampler::StaticInit();
+		Mesh::StaticInit();
+		Pipeline::StaticInit();
 		Material::StaticInit();
 		InputSystem::GetInstance().Init();
 		ScriptSystem::GetInstance().Init();

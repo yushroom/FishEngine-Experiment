@@ -90,8 +90,13 @@ object_schema = '''
 @MeshFilter: Component
 	m_Mesh: Mesh*
 
-@MeshRenderer: Component
-	m_Material: Material*
+@Renderer: Component
+	m_Enabled: 1
+	m_CastShadows: 1
+	m_ReceiveShadows: 1
+	m_Materials:
+
+@MeshRenderer: Renderer
 
 @Collider: Component
 	# m_Material: {fileID: 0}

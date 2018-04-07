@@ -1,10 +1,9 @@
-
 #include <FishEditor/EditorApplication.hpp>
 
 
 #include <FishEngine/GameApp.hpp>
 #include <FishEngine/Screen.hpp>
-//#include <FishEngine/Render/GLEnvironment.hpp>
+
 #include <FishEngine/System/RenderSystem.hpp>
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
@@ -107,7 +106,6 @@ namespace FishEditor
 		FishEngine::UISystem::GetInstance().AfterDraw();
 		
 		gameView->m_Framebuffer.Unbind();
-
 	}
 
 
@@ -156,6 +154,8 @@ namespace FishEditor
 
 	void EditorApplication::Stop()
 	{
+		if (!m_IsPlaying)
+			return;
 		FishEngine::PhysicsSystem::GetInstance().Clean();
 
 		auto t = Selection::GetActiveTransform();

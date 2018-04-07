@@ -14,9 +14,10 @@ namespace FishEngine
 			return false;
 		int classID = object->GetClassID();
 //		return classID == Mesh::ClassID ||
-//			   classID == Material::ClassID ||
-//			   classID == Shader::ClassID;
-		return classID == 43 || classID == 21 || classID == 48;
+//				classID == Material::ClassID ||
+//				classID == Shader::ClassID;
+//				classID == Texture2D::ClassID;
+		return classID == 43 || classID == 21 || classID == 48 || classID == 28;
 	}
 
 	class AssetManager

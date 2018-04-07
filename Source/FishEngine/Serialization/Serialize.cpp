@@ -187,16 +187,35 @@ namespace FishEngine
 	}
 
 
-	void MeshRenderer::Deserialize(InputArchive& archive)
+	// Renderer
+	void Renderer::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
+		archive.AddNVP("m_Enabled", this->m_Enabled);
+		archive.AddNVP("m_CastShadows", this->m_CastShadows);
+		archive.AddNVP("m_ReceiveShadows", this->m_ReceiveShadows);
 		archive.AddNVP("m_Materials", this->m_Materials);
+	}
+
+	void Renderer::Serialize(OutputArchive& archive) const
+	{
+		Component::Serialize(archive);
+		archive.AddNVP("m_Enabled", this->m_Enabled);
+		archive.AddNVP("m_CastShadows", this->m_CastShadows);
+		archive.AddNVP("m_ReceiveShadows", this->m_ReceiveShadows);
+		archive.AddNVP("m_Materials", this->m_Materials);
+	}
+
+
+	// MeshRenderer
+	void MeshRenderer::Deserialize(InputArchive& archive)
+	{
+		Renderer::Deserialize(archive);
 	}
 
 	void MeshRenderer::Serialize(OutputArchive& archive) const
 	{
-		Component::Serialize(archive);
-		archive.AddNVP("m_Materials", this->m_Materials);
+		Renderer::Serialize(archive);
 	}
 
 

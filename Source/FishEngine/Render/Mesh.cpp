@@ -23,6 +23,7 @@ namespace FishEngine
 	Mesh* Mesh::m_Plane = nullptr;
 	Mesh* Mesh::m_Quad = nullptr;
 	Mesh* Mesh::m_SkyboxSphere = nullptr;
+	Mesh* Mesh::m_ScreenAlignedQuad = nullptr;
 
 	Mesh::Mesh(std::vector<Vector3>	&& vertices,
 			   std::vector<Vector3>	&& normals,
@@ -326,6 +327,7 @@ namespace FishEngine
 		}
 		
 		glBindVertexArray(m_VAO);
+		glCheckError();
 		
 		if (subMeshIndex < 0 && subMeshIndex != -1)
 		{
@@ -341,6 +343,7 @@ namespace FishEngine
 		if (subMeshIndex == -1 || m_subMeshCount == 1)
 		{
 			glDrawElements(GL_TRIANGLES, m_triangleCount * 3, GL_UNSIGNED_INT, 0);
+			glCheckError();
 		}
 		else
 		{
@@ -359,5 +362,17 @@ namespace FishEngine
 		}
 		
 		glBindVertexArray(0);
+		glCheckError();
+	}
+
+
+	void Mesh::StaticInit()
+	{
+		std::vector<Vector3> p = { {-1,-1,0},  {1,-1,0},  {-1,1,0},  {1,1,0} };
+		std::vector<Vector3> n = { {0,0,-1},  {0,0,-1},  {0,0,-1},  {0,0,-1} };
+		std::vector<Vector2> uv = { {0,1},  {1,1},  {0,0},  {1,0} };
+		std::vector<Vector3> t = { {1,0,0},  {1,0,0},  {1,0,0},  {1,0,0} };
+		std::vector<uint32_t> index = { 2,1,0,  3,1,2 };
+		m_ScreenAlignedQuad = new Mesh(std::move(p), std::move(n), std::move(uv), std::move(t), std::move(index));
 	}
 }

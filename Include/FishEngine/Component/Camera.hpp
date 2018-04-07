@@ -66,6 +66,8 @@ namespace FishEngine
 		// Matrix that transforms from world to camera space (i.e. view matrix).
 		Matrix4x4 GetWorldToCameraMatrix() const;
 
+		Matrix4x4 GetCameraToWorldMatrix() const;
+
 		// projection matrix.
 		const Matrix4x4& GetProjectionMatrix() const;
 
@@ -84,7 +86,7 @@ namespace FishEngine
 
 		// TODO
 		// The first enabled camera tagged "MainCamera" (Read Only).
-//		static CameraPtr main();
+		static Camera* GetMainCamera();
 
 //		static CameraPtr mainGameCamera();
 		
