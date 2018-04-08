@@ -18,6 +18,12 @@
 
 #include <algorithm>
 
+#ifdef _WIN32
+#undef near
+#undef far
+#endif
+
+
 namespace FishEngine
 {
 
@@ -205,13 +211,25 @@ namespace FishEngine
 	}
 
 
+	Shader* ShaderFromFile(const char* path, bool useGeometryShader = false)
+	{
+#if _WIN32
+		std::string root = R"(D:\program\FishEngine-Experiment\Assets\Shaders\)";
+#else
+		std::string root = "/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/";
+#endif
+		auto str = FishEditor::ReadFileAsString(root + path);
+		return Shader::FromString(str, useGeometryShader);
+	}
+
+
+
 	void ShowShadowMap(Texture* shadowMap)
 	{
 		static Shader* shader = nullptr;
 		if (shader == nullptr)
 		{
-			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/DisplayCSM.shader");
-			shader = Shader::FromString(str);
+			shader = ShaderFromFile("DisplayCSM.shader");
 		}
 		glDisable(GL_CULL_FACE);
 		shader->Use();
@@ -228,8 +246,7 @@ namespace FishEngine
 		static Shader* shader = nullptr;
 		if (shader == nullptr)
 		{
-			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/DrawQuad.shader");
-			shader = Shader::FromString(str);
+			shader = ShaderFromFile("DrawQuad.shader");
 		}
 		glDisable(GL_CULL_FACE);
 		shader->Use();
@@ -265,8 +282,7 @@ namespace FishEngine
 		static Shader* shader = nullptr;
 		if (shader == nullptr)
 		{
-			auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/PostProcessShadow.shader");
-			shader = Shader::FromString(str);
+			shader = ShaderFromFile("PostProcessShadow.shader");
 		}
 		shader->Use();
 		// add shadow
@@ -298,12 +314,6 @@ namespace FishEngine
 	}
 
 
-	Shader* ShaderFromFile(const char* path)
-	{
-		auto str = FishEditor::ReadFileAsString(path);
-		return Shader::FromString(str);
-	}
-
 
 	RenderSystem::RenderSystem()
 	{
@@ -317,22 +327,21 @@ namespace FishEngine
 		m_DepthPassRT = new RenderTarget();
 		m_SceneDepth = DepthBuffer::Create(w, h);
 		m_DepthPassRT->SetDepthBufferOnly(m_SceneDepth);
-		m_RenderDepthShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/RenderDepth.shader");
+		m_RenderDepthShader = ShaderFromFile("RenderDepth.shader");
 
 		m_CollectShadowsRT = new RenderTarget();
 		m_ScreenSpaceShadowMap = ColorBuffer::Create(w, h, TextureFormat::R8);
-		m_CollectShadowsShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CollectScreenSpaceShadow.shader");
+		m_CollectShadowsShader = ShaderFromFile("CollectScreenSpaceShadow.shader");
 		m_CollectShadowsRT->SetColorBufferOnly(m_ScreenSpaceShadowMap);
 
-		auto str = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/CascadedShadowMap.shader");
-		m_CSMShader = Shader::FromString(str, true);
+		m_CSMShader = ShaderFromFile("CascadedShadowMap.shader", true);
 
 		m_MainRenderTarget = new RenderTarget();
 		m_MainColorBuffer = ColorBuffer::Create(w, h);
 		m_MainDepthBuffer = DepthBuffer::Create(w, h);
 		m_MainRenderTarget->Set(m_MainColorBuffer, m_MainDepthBuffer);
 
-		m_AddShadowShader = ShaderFromFile("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/PostProcessShadow.shader");
+		m_AddShadowShader = ShaderFromFile("PostProcessShadow.shader");
 		m_AddShadowRT = new RenderTarget();
 		m_AddShadowColorBuffer = ColorBuffer::Create(w, h);
 		m_AddShadowRT->SetColorBufferOnly(m_AddShadowColorBuffer);

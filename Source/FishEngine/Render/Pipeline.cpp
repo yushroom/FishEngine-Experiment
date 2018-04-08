@@ -12,6 +12,11 @@
 #include <FishEngine/Render/RenderTarget.hpp>
 #include <FishEngine/QualitySettings.hpp>
 
+#ifdef _WIN32
+#undef near
+#undef far
+#endif
+
 namespace FishEngine
 {
 	PerDrawUniforms     Pipeline::s_perDrawUniforms;

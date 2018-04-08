@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderBuffer.hpp"
+#include <cassert>
 
 namespace FishEngine
 {

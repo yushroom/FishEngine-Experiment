@@ -3,6 +3,7 @@
 #include "../Math/Matrix4x4.hpp"
 #include "ShaderVariables.hpp"
 #include <stack>
+#include <vector>
 
 namespace FishEngine
 {

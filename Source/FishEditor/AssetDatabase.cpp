@@ -130,7 +130,11 @@ namespace FishEditor
 			// Skybox-Procedural
 			{
 				int fileID = 10304;
+#ifdef _WIN32
+				std::string SkyBox_Procedural = FishEditor::ReadFileAsString(R"(D:\program\FishEngine-Experiment\Assets\Shaders/SkyBox-Procedural.shader)");
+#else
 				std::string SkyBox_Procedural = FishEditor::ReadFileAsString("/Users/yushroom/program/FishEngine-Experiment/Assets/Shaders/SkyBox-Procedural.shader");
+#endif
 //				std::string vs = "#version 410 core\n#define VERTEX\n" + SkyBox_Procedural;
 //				std::string fs = "#version 410 core\n#define FRAGMENT\n" + SkyBox_Procedural;
 				auto shader = FishEngine::Shader::FromString(SkyBox_Procedural);

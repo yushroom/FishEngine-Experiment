@@ -1,4 +1,5 @@
 #include <FishEngine/Asset.hpp>
+#include <cassert>
 
 namespace FishEngine
 {

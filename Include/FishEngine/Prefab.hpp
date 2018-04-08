@@ -3,6 +3,7 @@
 #include "Object.hpp"
 #include <vector>
 #include <map>
+#include <cassert>
 
 namespace FishEditor
 {

@@ -12,6 +12,11 @@
 
 #include <FishEngine/Render/GLEnvironment.hpp>
 
+#ifdef _WIN32
+#undef near
+#undef far
+#endif
+
 namespace FishEngine
 {
 	void  Graphics::DrawMesh(Mesh* mesh, Material* material, int subMeshIndex)
