@@ -1,3 +1,4 @@
+glfw commit 7ef34eb https://github.com/glfw/glfw/commit/7ef34eb06de54dd9186d3d21a401b2ef819b59e7
 pybind11 2.2.2
 folly v2018.03.05.00 https://github.com/facebook/folly/releases
 Physx 3.4 commit 5f95687 https://github.com/NVIDIAGameWorks/PhysX-3.4/commit/5f95687888581f6b18f40fa7f6c30d1eafc7a707 pr 17, 2018

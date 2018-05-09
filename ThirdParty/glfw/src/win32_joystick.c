@@ -66,8 +66,6 @@ static const GUID _glfw_GUID_RzAxis =
     {0xa36d02e3,0xc9f3,0x11cf,{0xbf,0xc7,0x44,0x45,0x53,0x54,0x00,0x00}};
 static const GUID _glfw_GUID_Slider =
     {0xa36d02e4,0xc9f3,0x11cf,{0xbf,0xc7,0x44,0x45,0x53,0x54,0x00,0x00}};
-static const GUID _glfw_GUID_Button =
-    {0xa36d02f0,0xc9f3,0x11cf,{0xbf,0xc7,0x44,0x45,0x53,0x54,0x00,0x00}};
 static const GUID _glfw_GUID_POV =
     {0xa36d02f2,0xc9f3,0x11cf,{0xbf,0xc7,0x44,0x45,0x53,0x54,0x00,0x00}};
 
@@ -79,7 +77,6 @@ static const GUID _glfw_GUID_POV =
 #define GUID_RyAxis _glfw_GUID_RyAxis
 #define GUID_RzAxis _glfw_GUID_RzAxis
 #define GUID_Slider _glfw_GUID_Slider
-#define GUID_Button _glfw_GUID_Button
 #define GUID_POV _glfw_GUID_POV
 
 // Object data array for our clone of c_dfDIJoystick
@@ -714,9 +711,9 @@ int _glfwPlatformPollJoystick(_GLFWjoystick* js, int mode)
             return GLFW_TRUE;
 
         _glfwInputJoystickAxis(js, 0, (xis.Gamepad.sThumbLX + 0.5f) / 32767.5f);
-        _glfwInputJoystickAxis(js, 1, (xis.Gamepad.sThumbLY + 0.5f) / 32767.5f);
+        _glfwInputJoystickAxis(js, 1, -(xis.Gamepad.sThumbLY + 0.5f) / 32767.5f);
         _glfwInputJoystickAxis(js, 2, (xis.Gamepad.sThumbRX + 0.5f) / 32767.5f);
-        _glfwInputJoystickAxis(js, 3, (xis.Gamepad.sThumbRY + 0.5f) / 32767.5f);
+        _glfwInputJoystickAxis(js, 3, -(xis.Gamepad.sThumbRY + 0.5f) / 32767.5f);
         _glfwInputJoystickAxis(js, 4, xis.Gamepad.bLeftTrigger / 127.5f - 1.f);
         _glfwInputJoystickAxis(js, 5, xis.Gamepad.bRightTrigger / 127.5f - 1.f);
 

@@ -175,7 +175,7 @@ GLFWbool _glfwCreateContextNSGL(_GLFWwindow* window,
         //       Info.plist for unbundled applications
         // HACK: This assumes that NSOpenGLPixelFormat will remain
         //       a straightforward wrapper of its CGL counterpart
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= 100800
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1080
         addAttrib(kCGLPFASupportsAutomaticGraphicsSwitching);
 #endif /*MAC_OS_X_VERSION_MAX_ALLOWED*/
     }
@@ -294,6 +294,12 @@ GLFWbool _glfwCreateContextNSGL(_GLFWwindow* window,
         _glfwInputError(GLFW_VERSION_UNAVAILABLE,
                         "NSGL: Failed to create OpenGL context");
         return GLFW_FALSE;
+    }
+
+    if (fbconfig->transparent)
+    {
+        GLint opaque = 0;
+        [window->context.nsgl.object setValues:&opaque forParameter:NSOpenGLCPSurfaceOpacity];
     }
 
     [window->context.nsgl.object setView:window->ns.view];
