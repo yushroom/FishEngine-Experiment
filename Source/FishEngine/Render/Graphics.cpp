@@ -39,7 +39,7 @@ namespace FishEngine
 		auto mv = camera->GetWorldToCameraMatrix() * mat;
 		auto mvp = camera->GetProjectionMatrix() * mv;
 		auto vp = camera->GetProjectionMatrix() * camera->GetWorldToCameraMatrix();
-		auto lightDir = light->GetTransform()->GetForward().normalized();
+//		auto lightDir = light->GetTransform()->GetForward().normalized();
 
 #if USE_GLM
 		auto need_transpose = GL_FALSE;
@@ -81,7 +81,7 @@ namespace FishEngine
 
 			constexpr float epsilon = 1e-6;
 			float near = camera->GetNearClipPlane();
-			float far = camera->GetFarClipPlane();
+//			float far = camera->GetFarClipPlane();
 			Matrix4x4 p;
 			if (!camera->GetOrthographic())
 				p = camera->GetProjectionMatrix();

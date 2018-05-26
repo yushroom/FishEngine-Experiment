@@ -119,8 +119,8 @@ public:
 #endif
 		static auto folder_icon = FishGUI::ImageIcon::FromFile(icons_root + "Folder@64.png");
 		static auto default_icon = FishGUI::ImageIcon::FromFile(icons_root+"DefaultAsset@64.png");
-		static auto audioclip_icon = FishGUI::ImageIcon::FromFile(icons_root+"AudioClip@64.png");
-		static auto font_icon = FishGUI::ImageIcon::FromFile(icons_root+"Font@64.png");
+//		static auto audioclip_icon = FishGUI::ImageIcon::FromFile(icons_root+"AudioClip@64.png");
+//		static auto font_icon = FishGUI::ImageIcon::FromFile(icons_root+"Font@64.png");
 		static auto material_icon = FishGUI::ImageIcon::FromFile(icons_root+"Material@64.png");
 		static auto prefab_icon = FishGUI::ImageIcon::FromFile(icons_root+"PrefabNormal@64.png");
 		static auto prefabModel_icon = FishGUI::ImageIcon::FromFile(icons_root+"PrefabModel@64.png");

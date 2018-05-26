@@ -4,84 +4,9 @@
 #include "Vector4.hpp"
 #include "Quaternion.hpp"
 
-#define USE_GLM 0
-
-#if USE_GLM
-//#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#define GLM_FORCE_LEFT_HANDED
-#include <glm/mat4x4.hpp>
-#include <glm/vec4.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#endif
 
 namespace FishEngine
 {
-#if USE_GLM
-//	typedef glm::mat4 Matrix4x4;
-	class FE_EXPORT Matrix4x4
-	{
-	public:
-		glm::mat4 m;
-		
-		Matrix4x4() : m(1.0f) {}
-		
-		const glm::vec4 operator[](int col) const { return m[col]; }
-		glm::vec4&      operator[](int col)       { return m[col]; }
-		
-		const float* data() const { return glm::value_ptr(m); }
-		float*       data()       { return glm::value_ptr(m); }
-		
-		std::string ToString() const;
-		
-		Matrix4x4 inverse() const;
-		
-		Vector3 _MultiplyPoint(float x, float y, float z) const;
-		
-		Vector3 MultiplyPoint(const Vector3& v) const;
-		
-		Quaternion ToRotation() const;
-		
-		// Sets this matrix to a translation, rotation and scaling matrix.
-		void SetTRS(const Vector3& pos, const Quaternion& q, const Vector3& s);
-		
-		// Creates a translation, rotation and scaling matrix.
-		static Matrix4x4 TRS( const Vector3& pos, const Quaternion& q, const Vector3& s);
-		
-		static void Decompose(
-							  const Matrix4x4&    transformation,
-							  Vector3*            outTranslation,
-							  Quaternion*         outRotation,
-							  Vector3*            outScale);
-		
-		// Creates an orthogonal projection matrix.
-		static Matrix4x4 Ortho(
-							   const float left,
-							   const float right,
-							   const float bottom,
-							   const float top,
-							   const float zNear,
-							   const float zFar);
-		
-		// Creates a perspective projection matrix.
-		static Matrix4x4 Perspective(
-									 const float fovy,
-									 const float aspect,
-									 const float zNear,
-									 const float zFar);
-		
-//		void             operator*=(const Matrix4x4& rhs);
-		friend Matrix4x4 operator* (const Matrix4x4& lhs, const Matrix4x4& rhs);
-//		friend Vector4   operator* (const Matrix4x4& lhs, const Vector4&   rhs);
-//		friend bool      operator==(const Matrix4x4& lhs, const Matrix4x4& rhs);
-//		friend bool      operator!=(const Matrix4x4& lhs, const Matrix4x4& rhs);
-		
-		static Matrix4x4 LookAt(
-								const Vector3& eye,
-								const Vector3& target,
-								const Vector3& up);
-	};
-#else
 	// Matrices are row major.
 	class FE_EXPORT Matrix4x4
 	{
@@ -241,9 +166,6 @@ namespace FishEngine
 			const Vector3& target,
 			const Vector3& up);
 	};
-#endif
 }
 
-#if !USE_GLM
 #include "Matrix4x4.inl"
-#endif

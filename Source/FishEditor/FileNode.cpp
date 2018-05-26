@@ -28,7 +28,7 @@ FishEditor::FileNode::FileNode(const Path & rootDir) : path(rootDir)
 		std::fstream fin(meta_file.string());
 		auto nodes = YAML::LoadAll(fin);
 		auto&& node = nodes.front();
-		auto meta_created_time = node["timeCreated"].as<uint32_t>();
+//		auto meta_created_time = node["timeCreated"].as<uint32_t>();
 		this->guid = node["guid"].as<std::string>();
 
 		auto rel = fs::relative(path, FishEngine::Application::GetInstance().GetDataPath()+"/..");

@@ -19,7 +19,7 @@ namespace FishEngine
 		if (m_Cleaning)
 			return;
 		auto pos = m_Assets.find(asset);
-		int size = m_Assets.size();
+//		int size = m_Assets.size();
 		assert(pos != m_Assets.end());
 		if (pos != m_Assets.end())
 		{
@@ -32,7 +32,7 @@ namespace FishEngine
 		m_Cleaning = true;
 		for (Object* asset : m_Assets)
 		{
-			int size = m_Assets.size();
+//			int size = m_Assets.size();
 			delete asset;
 		}
 		m_Assets.clear();

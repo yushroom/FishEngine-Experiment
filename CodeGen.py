@@ -189,7 +189,7 @@ Camera:
   m_StereoSeparation: 0.022
 '''
 
-template2 = '''#pragma once
+template1 = '''#pragma once
 
 #include <FishEngine/Math/Vector2.hpp>
 #include <FishEngine/Math/Vector3.hpp>
@@ -203,14 +203,14 @@ namespace FishEngine
 {
 % for c in ClassInfo:
 	// ${c['className']}
-	static InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
+	inline InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
 	% endfor
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
@@ -223,7 +223,7 @@ namespace FishEngine
 
 '''
 
-template1 = '''
+template2 = '''
 namespace FishEngine
 {
 % for c in ClassInfo:
@@ -284,5 +284,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-# Func(schema, template2)
-Func(object_schema, template1)
+Func(schema, template1)
+# Func(object_schema, template2)

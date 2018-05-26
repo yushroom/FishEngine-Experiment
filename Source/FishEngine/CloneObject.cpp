@@ -18,7 +18,7 @@ namespace FishEngine
 			archive.Collect(obj);
 
 
-		int size = archive.m_Objects.size();
+//		int size = archive.m_Objects.size();
 		for (auto o : archive.m_Objects)
 		{
 			auto pos = memo.find(o);

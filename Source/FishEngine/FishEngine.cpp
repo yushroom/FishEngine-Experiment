@@ -103,7 +103,7 @@ namespace FishEngine
 			{
 				if (p.second.size() != 0)
 				{
-					int instanceID = (*p.second.begin())->GetInstanceID();
+//					int instanceID = (*p.second.begin())->GetInstanceID();
 					LogError(Format("Class[ID:{}, name:{}] has {} obj", p.first, GetNameByClassID(p.first), p.second.size()));
 					if (p.first == GameObject::ClassID)
 					{

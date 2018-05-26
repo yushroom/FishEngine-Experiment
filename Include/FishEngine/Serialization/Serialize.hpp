@@ -12,13 +12,13 @@
 namespace FishEngine
 {
 	// Vector2
-	static InputArchive& operator>>(InputArchive& archive, Vector2& t)
+	inline InputArchive& operator>>(InputArchive& archive, Vector2& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Vector2& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Vector2& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -26,14 +26,14 @@ namespace FishEngine
 	}
 
 	// Vector3
-	static InputArchive& operator>>(InputArchive& archive, Vector3& t)
+	inline InputArchive& operator>>(InputArchive& archive, Vector3& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
 		archive.AddNVP("z", t.z);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Vector3& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Vector3& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -42,7 +42,7 @@ namespace FishEngine
 	}
 
 	// Vector4
-	static InputArchive& operator>>(InputArchive& archive, Vector4& t)
+	inline InputArchive& operator>>(InputArchive& archive, Vector4& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -50,7 +50,7 @@ namespace FishEngine
 		archive.AddNVP("w", t.w);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Vector4& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Vector4& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -60,7 +60,7 @@ namespace FishEngine
 	}
 
 	// Quaternion
-	static InputArchive& operator>>(InputArchive& archive, Quaternion& t)
+	inline InputArchive& operator>>(InputArchive& archive, Quaternion& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -68,7 +68,7 @@ namespace FishEngine
 		archive.AddNVP("w", t.w);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Quaternion& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Quaternion& t)
 	{
 		archive.AddNVP("x", t.x);
 		archive.AddNVP("y", t.y);
@@ -78,7 +78,7 @@ namespace FishEngine
 	}
 
 	// Color
-	static InputArchive& operator>>(InputArchive& archive, Color& t)
+	inline InputArchive& operator>>(InputArchive& archive, Color& t)
 	{
 		archive.AddNVP("r", t.r);
 		archive.AddNVP("g", t.g);
@@ -86,7 +86,7 @@ namespace FishEngine
 		archive.AddNVP("a", t.a);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Color& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Color& t)
 	{
 		archive.AddNVP("r", t.r);
 		archive.AddNVP("g", t.g);
@@ -96,7 +96,7 @@ namespace FishEngine
 	}
 
 	// Modification
-	static InputArchive& operator>>(InputArchive& archive, Modification& t)
+	inline InputArchive& operator>>(InputArchive& archive, Modification& t)
 	{
 		archive.AddNVP("target", t.target);
 		archive.AddNVP("propertyPath", t.propertyPath);
@@ -104,7 +104,7 @@ namespace FishEngine
 		archive.AddNVP("objectReference", t.objectReference);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const Modification& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const Modification& t)
 	{
 		archive.AddNVP("target", t.target);
 		archive.AddNVP("propertyPath", t.propertyPath);
@@ -114,14 +114,14 @@ namespace FishEngine
 	}
 
 	// PrefabModification
-	static InputArchive& operator>>(InputArchive& archive, PrefabModification& t)
+	inline InputArchive& operator>>(InputArchive& archive, PrefabModification& t)
 	{
 		archive.AddNVP("m_TransformParent", t.m_TransformParent);
 		archive.AddNVP("m_Modifications", t.m_Modifications);
 		archive.AddNVP("m_RemovedComponents", t.m_RemovedComponents);
 		return archive;
 	}
-	static OutputArchive& operator<<(OutputArchive& archive, const PrefabModification& t)
+	inline OutputArchive& operator<<(OutputArchive& archive, const PrefabModification& t)
 	{
 		archive.AddNVP("m_TransformParent", t.m_TransformParent);
 		archive.AddNVP("m_Modifications", t.m_Modifications);
