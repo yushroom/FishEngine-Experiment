@@ -33,7 +33,7 @@ namespace FishEngine
 
 		void Log(LogData && data)
 		{
-			m_data.emplace_back(data);
+			//m_data.emplace_back(data);
 		}
 
 	private:

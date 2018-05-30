@@ -10,6 +10,11 @@
 
 namespace FishEngine
 {
+	RenderTarget::~RenderTarget()
+	{
+		if (m_fbo != 0)
+			glDeleteFramebuffers(1, &m_fbo);
+	}
 
 	void RenderTarget::SetColorBufferOnly(ColorBuffer* colorBuffer)
 	{
