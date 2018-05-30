@@ -19,7 +19,8 @@ namespace FishEngine
 
 	Texture::~Texture()
 	{
-		glDeleteTextures(1, &m_GLNativeTexture);
+		if (m_GLNativeTexture != 0)
+			glDeleteTextures(1, &m_GLNativeTexture);
 		AssetManager::GetInstance().RemoveAsset(this);
 	}
 }
