@@ -422,6 +422,43 @@ void FishEditor::FBXImporter::BakeTransforms(FbxScene * scene)
 	//scene->GetRootNode()->ResetPivotSetAndConvertAnimation();
 }
 
+void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
+{
+	FbxNode * root = scene->GetRootNode();
+	int numAnimStacks = scene->GetSrcObjectCount<FbxAnimStack>();
+	for (int i = 0; i < numAnimStacks; ++i)
+	{
+		FbxAnimStack* animStack = scene->GetSrcObject<FbxAnimStack>(i);
+
+		m_model.m_clips.emplace_back();
+		auto & clip = m_model.m_clips.back();
+		clip.name = animStack->GetName();
+		FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
+		clip.start = (float)timeSpan.GetStart().GetSecondDouble();
+		clip.end = (float)timeSpan.GetStop().GetSecondDouble();
+		clip.sampleRate = (uint32_t)FbxTime::GetFrameRate(scene->GetGlobalSettings().GetTimeMode());
+
+		int layerCount = animStack->GetMemberCount<FbxAnimLayer>();
+		if (layerCount == 1)
+		{
+			FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(0);
+			ImportAnimations(animLayer, root, clip);
+		}
+		else
+		{
+			//abort();
+			LogError(Format("multiple animation clip in model: %1%", this->m_assetPath.string()));
+		}
+
+		for (auto clip : m_model.m_clips)
+		{
+			auto animationClip = ConvertAnimationClip(clip);
+			m_model.m_animationClips.push_back(animationClip);
+			animationClip->m_avatar = m_model.m_avatar;
+		}
+	}
+}
+
 
 std::string UpdateFileIDMap(std::map<std::string, FishEngine::GameObject*>& fileID2GO, const char* name, GameObject* go)
 {

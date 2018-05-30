@@ -6,7 +6,7 @@
 //#include "FBXImporter/FBXImportData.hpp"
 //#include <FishEngine/Path.hpp>
 //#include <FishEngine/Prefab.hpp>
-//#include <FishEngine/Animation/AnimationCurve.hpp>
+#include <FishEngine/Animation/AnimationCurve.hpp>
 #include <string>
 #include <map>
 #include <FishEngine/Debug.hpp>
@@ -33,6 +33,28 @@ namespace fbxsdk
 
 namespace FishEditor
 {
+	struct FBXBoneAnimation
+	{
+		//FBXImportNode * node;
+		FishEngine::Transform* node;
+		FishEngine::TAnimationCurve<FishEngine::Vector3> translation;
+		FishEngine::TAnimationCurve<FishEngine::Quaternion> rotation;
+		//FishEngine::TAnimationCurve<FishEngine::Vector3> eulers;
+		FishEngine::TAnimationCurve<FishEngine::Vector3> scale;
+	};
+
+	/** Animation clip containing a set of bone or blend shape animations. */
+	struct FBXAnimationClip
+	{
+		std::string name;
+		float start;
+		float end;
+		uint32_t sampleRate;
+
+		std::vector<FBXBoneAnimation> boneAnimations;
+		//std::vector<FBXBlendShapeAnimation> blendShapeAnimations;
+	};
+
 	struct ModelCollection
 	{
 		std::string name;
@@ -46,6 +68,7 @@ namespace FishEditor
 		std::unordered_map<fbxsdk::FbxMesh*, size_t> m_fbxMeshLookup; // fbxmesh -> index in m_meshes
 //		std::map<int, std::map<std::string, FishEngine::Object*>> m_objects;	// {classID: {name: Object}}
 		std::map<std::string, FishEngine::GameObject*> m_gameObjects;
+		std::vector<FBXAnimationClip> m_clips;
 	};
 	
 	class FBXImporter final : public ModelImporter
@@ -100,7 +123,9 @@ namespace FishEditor
 	protected:
 		FishEngine::Mesh* ParseMesh(fbxsdk::FbxMesh* fbxMesh);
 		FishEngine::GameObject* ParseNode(fbxsdk::FbxNode* pNode);
-		void BakeTransforms(fbxsdk::FbxScene * scene);
+		void BakeTransforms(fbxsdk::FbxScene* scene);
+		void ImportAnimations(fbxsdk::FbxScene* scene);
+		//void ImportAnimations(fbxsdk::FbxAnimLayer* layer, fbxsdk::FbxNode* node);
 
 //		std::vector<std::pair<int, FishEngine::Object*>> m_fileIDToRecycleName;
 

@@ -209,7 +209,7 @@ endif()
 add_subdirectory(./Test)
 
 
-AutoGroup(${CMAKE_CURRENT_LIST_DIR}/Include/FishEngine Util Math Render Internal Component UI System Physics Serialization)
+AutoGroup(${CMAKE_CURRENT_LIST_DIR}/Include/FishEngine Util Math Render Internal Component UI System Physics Serialization Animation)
 AutoGroup(${CMAKE_CURRENT_LIST_DIR}/Source/FishEngine Math Render Component UI System Physics Serialization)
 AutoGroup(${CMAKE_CURRENT_LIST_DIR}/Include/FishEditor Serialization)
 AutoGroup(${CMAKE_CURRENT_LIST_DIR}/Source/FishEditor Serialization)
