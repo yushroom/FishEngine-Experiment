@@ -10,6 +10,7 @@ namespace FishEngine
 	{
 	public:
 		RenderTarget() = default;
+		~RenderTarget();
 
 		void SetColorBufferOnly(ColorBuffer* colorBuffer);
 		void SetDepthBufferOnly(DepthBuffer* depthBuffer);
@@ -39,8 +40,8 @@ namespace FishEngine
 	private:
 		bool            m_useDepthBuffer = true;
 		uint32_t        m_activeColorBufferCount = 1;
-		ColorBuffer*  	m_colorBuffers[3];
-		DepthBuffer*  	m_depthBuffer;
+		ColorBuffer*  	m_colorBuffers[3] = {nullptr, nullptr, nullptr};
+		DepthBuffer*  	m_depthBuffer = nullptr;
 		unsigned int    m_fbo = 0;
 
 		bool m_Initialized = false;
