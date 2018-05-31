@@ -153,6 +153,32 @@ namespace FishEngine
 		return MultiplyVector(v.x, v.y, v.z);
 	}
 
+	inline void Matrix4x4::operator+=(const Matrix4x4& rhs)	// element-wise +
+	{
+		float* a = &this->m[0][0];
+		const float* b = &rhs.m[0][0];
+		for (int i = 0; i < 16; ++i)
+		{
+			*a += *b;
+			a++;
+			b++;
+		}
+	}
+
+	inline Matrix4x4 operator*(const Matrix4x4& lhs, const float rhs)
+	{
+		Matrix4x4 ret;
+		float* a = &ret.m[0][0];
+		const float* b = &lhs.m[0][0];
+		for (int i = 0; i < 16; ++i)
+		{
+			*a = (*b) * rhs;
+			a++;
+			b++;
+		}
+		return ret;
+	}
+
 
 	inline void Matrix4x4::operator*=(const Matrix4x4& rhs)
 	{

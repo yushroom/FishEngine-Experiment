@@ -13,6 +13,7 @@ using namespace FishEditor;
 #include <FishEngine/Component/Light.hpp>
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
+#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 #include <FishEngine/Script.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
@@ -165,6 +166,18 @@ void DrawMeshRenderer(MeshRenderer* mr)
 	FishGUI::InputText("Material", name);
 }
 
+void DrawSkinnedMeshRenderer(SkinnedMeshRenderer* mr)
+{
+	DrawComponent(mr);
+	Material* mat = mr->GetMaterial();
+	std::string name = (mat == nullptr ? "None(Material)" : mat->GetName());
+	FishGUI::InputText("Material", name);
+	
+	auto mesh = mr->GetSharedMesh();
+	std::string meshName = (mesh == nullptr ? "None(Mesh)" : mesh->GetName());
+	FishGUI::InputText("Mesh", meshName);
+}
+
 void DrawMeshFilter(MeshFilter* mf)
 {
 	DrawComponent(mf);
@@ -304,6 +317,12 @@ void Dispatch(Component* c)
 	{
 		FishGUI::Group("MeshRenderer");
 		DrawMeshRenderer((MeshRenderer*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == SkinnedMeshRenderer::ClassID)
+	{
+		FishGUI::Group("SkinnedMeshRenderer");
+		DrawSkinnedMeshRenderer((SkinnedMeshRenderer*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == BoxCollider::ClassID)

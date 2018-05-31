@@ -206,6 +206,7 @@ namespace FishEngine
 //			return m_worldToLocalMatrix;
 			return m_LocalToWorldMatrix.inverse();
 		}
+
 		
 		
 		// Matrix that transforms a point from local space into world space (Read Only).
@@ -214,6 +215,14 @@ namespace FishEngine
 			UpdateMatrix();
 			return m_LocalToWorldMatrix;
 		}
+
+		void SetLocalToWorldMatrix(const Matrix4x4& localToWorld)
+		{
+			m_LocalToWorldMatrix = localToWorld;
+			Matrix4x4::Decompose(localToWorld, &m_LocalPosition, &m_LocalRotation, &m_LocalScale);
+			MakeDirty();
+		}
+
 		
 		// Applies a rotation of zAngle degrees around the z axis, xAngle degrees around the x axis, and yAngle degrees around the y axis (in that order)
 //		void Rotate(float xAngle, float yAngle, float zAngle, Space relativeTo = Space::Self);

@@ -97,6 +97,11 @@ object_schema = '''
 	m_Materials:
 
 @MeshRenderer: Renderer
+@SkinnedMeshRenderer: Renderer
+	m_SharedMesh
+	m_Avatar
+	m_RootBone
+	
 
 @Collider: Component
 	# m_Material: {fileID: 0}
@@ -120,6 +125,11 @@ object_schema = '''
 	# m_Interpolate: 0
 	# m_Constraints: 0
 	# m_CollisionDetection: 0
+@Avatar: Object
+@Motion: Object
+@AnimationClip: Motion
+	m_avatar: Avatar*
+
 
 @RenderSettings: Object
   m_ObjectHideFlags: 0
@@ -223,7 +233,10 @@ namespace FishEngine
 
 '''
 
-template2 = '''
+template2 = '''#include <FishEngine/Serialization/Serialize.hpp>
+#include <FishEngine/Serialization/Archive.hpp>
+#include <FishEngine/FishEngine2.hpp>
+
 namespace FishEngine
 {
 % for c in ClassInfo:
@@ -284,5 +297,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-Func(schema, template1)
-# Func(object_schema, template2)
+# Func(schema, template1)
+Func(object_schema, template2)

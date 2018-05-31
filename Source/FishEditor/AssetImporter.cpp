@@ -72,7 +72,12 @@ namespace FishEditor
 			std::fstream fin(meta_file.string());
 			auto nodes = YAML::LoadAll(fin);
 			auto&& meta = nodes.front();
-			auto timeCreated = meta["timeCreated"].as<uint32_t>();
+			uint32_t timeCreated = 0;
+			try {
+				timeCreated = meta["timeCreated"].as<uint32_t>();	// 18446744011573954816 in unitychan.prefab.meta, bug?
+			} catch(std::exception const & e) {
+				LogError("error in timeCreated:");
+			}
 			auto guid = meta["guid"].as<std::string>();
 
 			AssetImporter* importer = nullptr;

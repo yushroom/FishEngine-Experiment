@@ -9,8 +9,17 @@
 #include "BoneWeight.hpp"
 #include "../Asset.hpp"
 
+#define Enable_GPU_Skinning 0
+
+namespace FishEditor
+{
+	class FBXImporter;
+}
+
 namespace FishEngine
 {
+	class SkinnedMeshRenderer;
+
 	class Mesh : public Object
 	{
 		friend class RawMesh;
@@ -34,7 +43,14 @@ namespace FishEngine
 			 std::vector<Vector2>	&& uv,
 			 std::vector<Vector3>	&& tangents,
 			 std::vector<uint32_t>	&& triangles);
-		
+
+		uint32_t GetVertexCount() const
+		{
+			return m_vertexCount;
+		}
+
+		unsigned long GetBoneCount() const { return m_boneNames.size(); }
+
 		void Clear();
 		
 		// -1: render all sub meshes
@@ -51,6 +67,9 @@ namespace FishEngine
 		static void StaticInit();
 		
 	private:
+		friend class FishEditor::FBXImporter;
+		friend class SkinnedMeshRenderer;
+
 		int						m_subMeshCount = 1;
 		std::vector<Vector3>    m_vertices;
 		std::vector<Vector3>    m_normals;
@@ -85,6 +104,8 @@ namespace FishEngine
 		unsigned int m_normalVBO = 0;
 		unsigned int m_uvVBO = 0;
 		unsigned int m_tangentVBO = 0;
+
+#if Enable_GPU_Skinning
 		unsigned int m_boneIndexVBO = 0;
 		unsigned int m_boneWeightVBO = 0;
 		unsigned int m_TFBO = 0;				// transform feedback buffer object, for Animation
@@ -92,6 +113,9 @@ namespace FishEngine
 		unsigned int m_animationOutputPositionVBO = 0;
 		unsigned int m_animationOutputNormalVBO = 0;
 		unsigned int m_animationOutputTangentVBO = 0;
+#else
+		std::vector<Vector3> m_skinnedVertices;
+#endif
 
 
 		static Mesh* m_Cube;

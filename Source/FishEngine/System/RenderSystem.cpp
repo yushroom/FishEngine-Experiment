@@ -6,6 +6,7 @@
 #include <FishEngine/Component/Light.hpp>
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
+#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 #include <FishEngine/Render/Graphics.hpp>
 #include <FishEngine/Render/GLEnvironment.hpp>
 #include <FishEngine/Render/Shader.hpp>
@@ -27,7 +28,7 @@
 namespace FishEngine
 {
 
-	void RenderShadowMap(Shader* shader, Camera* camera, Light* light, std::vector<MeshFilter*>& meshfilters)
+	void RenderShadowMap(Shader* shader, Camera* camera, Light* light, std::vector<RenderObject> const& renderObjects)
 	{
 		if (light == nullptr)
 		{
@@ -181,28 +182,13 @@ namespace FishEngine
 		glCullFace(GL_BACK);
 		glEnable(GL_DEPTH_CLAMP);
 
-		for (auto mf : meshfilters)
+		for (auto&& ro : renderObjects)
 		{
-			auto go = mf->GetGameObject();
-			if (!go->IsActiveInHierarchy())
+			if (!ro.renderer->GetEnabled() || ro.renderer->GetCastShadows() == ShadowCastingMode::Off)
 				continue;
-
-			auto mesh = mf->GetMesh();
-			if (mesh == nullptr)
-				continue;
-
-			auto renderer = go->GetComponent<Renderer>();
-			if (renderer == nullptr ||
-				!renderer->GetEnabled() ||
-				renderer->GetCastShadows() == ShadowCastingMode::Off)
-			{
-				continue;
-			}
-
-			auto modelMat = go->GetTransform()->GetLocalToWorldMatrix();
+			auto modelMat = ro.gameObject->GetTransform()->GetLocalToWorldMatrix();
 			Pipeline::UpdatePerDrawUniforms(modelMat);
-//			Graphics::DrawMesh(mesh, shadow_map_material);
-			mesh->Render(-1);
+			ro.mesh->Render(-1);
 		}
 
 		glDisable(GL_DEPTH_CLAMP);
@@ -348,32 +334,75 @@ namespace FishEngine
 	}
 
 
-	void RenderDepthPass(Shader* shader, std::vector<MeshFilter*>& meshfilters)
+	void RenderDepthPass(Shader* shader, std::vector<RenderObject> const& renderObjects)
 	{
 		glFrontFace(GL_CW);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		for (auto mf : meshfilters)
+
+		shader->Use();
+		for (auto&& ro : renderObjects)
 		{
-			auto go = mf->GetGameObject();
+			auto& modelMat = ro.gameObject->GetTransform()->GetLocalToWorldMatrix();
+			Pipeline::UpdatePerDrawUniforms(modelMat);
+			shader->Use();
+			ro.mesh->Render(-1);
+		}
+	}
+
+	void RenderSystem::GetRenderObjects()
+	{
+		this->m_RenderObjects.clear();
+		auto scene = SceneManager::GetActiveScene();
+		auto mfs = scene->FindComponents<MeshFilter>();
+
+//		auto& mrs = Object::FindObjectsOfType<MeshRenderer>();
+		std::vector<GameObject*> intersection;
+		for (auto mf : mfs)
+		{
+			auto go = ((MeshFilter*)mf)->GetGameObject();
+			if (!go->IsActiveInHierarchy())
+				continue;
+//			auto mr = GetComponent<MeshRenderer>(go);
+			auto mr = go->GetComponent<MeshRenderer>();
+			if (mr != nullptr)
+			{
+				intersection.push_back(go);
+			}
+		}
+
+		for (auto go : intersection)
+		{
+			auto mesh = go->GetComponent<MeshFilter>()->GetMesh();
+			if (mesh != nullptr)
+			{
+				auto renderer = go->GetComponent<MeshRenderer>();
+				auto material = renderer->GetMaterial();
+				if (material == nullptr)
+					material = Material::GetErrorMaterial();
+
+				m_RenderObjects.emplace_back(go, renderer, mesh, material);
+			}
+		}
+		glCheckError();
+
+		auto skinnedMRs = scene->FindComponents<SkinnedMeshRenderer>();
+		for (auto r : skinnedMRs)
+		{
+			auto mesh = r->GetSharedMesh();
+			if (mesh == nullptr)
+				continue;
+			auto material = r->GetMaterial();
+			if (material == nullptr)
+				material = Material::GetErrorMaterial();
+
+			auto go = r->GetGameObject();
 			if (!go->IsActiveInHierarchy())
 				continue;
 
-			auto mesh = mf->GetMesh();
-			if (mesh == nullptr)
-				continue;
-
-			auto renderer = go->GetComponent<Renderer>();
-			if (renderer == nullptr || !renderer->GetEnabled())
-				continue;
-
-			auto modelMat = go->GetTransform()->GetLocalToWorldMatrix();
-			Pipeline::UpdatePerDrawUniforms(modelMat);
-//			Graphics::DrawMesh(mesh, Material::GetDefaultMaterial());
-			shader->Use();
-			mesh->Render(-1);
+			m_RenderObjects.emplace_back(go, r, mesh, material);
 		}
 	}
 
@@ -403,7 +432,8 @@ namespace FishEngine
 		Pipeline::BindLight(light);
 		Pipeline::BindCamera(camera);
 
-		auto mfs = scene->FindComponents<MeshFilter>();
+
+		this->GetRenderObjects();
 
 		GLint old_framebuffer = 0;
 		glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &old_framebuffer);
@@ -416,12 +446,12 @@ namespace FishEngine
 		m_SceneDepth->Resize(w, h);
 		Pipeline::PushRenderTarget(m_DepthPassRT);
 		glViewport(0, 0, w, h);
-		RenderDepthPass(m_RenderDepthShader, mfs);
+		RenderDepthPass(m_RenderDepthShader, m_RenderObjects);
 		Pipeline::PopRenderTarget();
 
 
 		// ShadowMap - CSM
-		RenderShadowMap(m_CSMShader, camera, light, mfs);
+		RenderShadowMap(m_CSMShader, camera, light, m_RenderObjects);
 
 //		glFlush();
 
@@ -460,37 +490,12 @@ namespace FishEngine
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-//		auto& mrs = Object::FindObjectsOfType<MeshRenderer>();
-		std::vector<GameObject*> intersection;
-		for (auto mf : mfs)
+		for (auto&& ro : m_RenderObjects)
 		{
-			auto go = ((MeshRenderer*)mf)->GetGameObject();
-			if (!go->IsActiveInHierarchy())
-				continue;
-//			auto mr = GetComponent<MeshRenderer>(go);
-			auto mr = go->GetComponent<MeshRenderer>();
-			if (mr != nullptr)
-			{
-				intersection.push_back(go);
-			}
+			auto& model = ro.gameObject->GetTransform()->GetLocalToWorldMatrix();
+			Pipeline::UpdatePerDrawUniforms(model);
+			Graphics::DrawMesh(ro.mesh, ro.material, -1);
 		}
-
-		for (auto go : intersection)
-		{
-			auto mesh = go->GetComponent<MeshFilter>()->GetMesh();
-			if (mesh != nullptr)
-			{
-				auto material = go->GetComponent<MeshRenderer>()->GetMaterial();
-				if (material == nullptr)
-					material = Material::GetErrorMaterial();
-
-				auto& model = go->GetTransform()->GetLocalToWorldMatrix();
-				Pipeline::UpdatePerDrawUniforms(model);
-//				Graphics::DrawMesh(mesh, material, -1, camera, model, light);
-				Graphics::DrawMesh(mesh, material, -1);
-			}
-		}
-		glCheckError();
 
 		Pipeline::PopRenderTarget();
 
@@ -520,6 +525,7 @@ namespace FishEngine
 				glDepthMask(GL_FALSE);
 //				Matrix4x4 objectToWorld = Matrix4x4::TRS(camera->GetTransform()->GetPosition(), Quaternion(), Vector3(20, 20, 20));
 				Matrix4x4 objectToWorld = Matrix4x4::Scale(camera->GetFarClipPlane());
+				Graphics::DrawMesh(Mesh::m_SkyboxSphere, mat, -1, camera, objectToWorld, light);
 				Graphics::DrawMesh(Mesh::m_SkyboxSphere, mat, -1, camera, objectToWorld, light);
 				glDepthMask(GL_TRUE);
 //				glCullFace(GL_BACK);

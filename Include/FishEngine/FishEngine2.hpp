@@ -7,6 +7,7 @@
 #include <FishEngine/RectTransform.hpp>
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
+#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 #include <FishEngine/Component/Collider.hpp>
 #include <FishEngine/Component/BoxCollider.hpp>
 #include <FishEngine/Component/SphereCollider.hpp>
@@ -18,5 +19,8 @@
 #include <FishEngine/Render/Shader.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Render/Mesh.hpp>
+
+#include <FishEngine/Animation/Avatar.hpp>
+#include <FishEngine/Animation/AnimationClip.hpp>
 
 #include <FishEngine/Render/RenderSettings.hpp>

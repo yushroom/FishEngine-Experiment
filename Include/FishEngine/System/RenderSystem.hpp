@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace FishEngine
 {
 	class RenderTarget;
@@ -8,6 +10,27 @@ namespace FishEngine
 	class DepthBuffer;
 	class LayeredDepthBuffer;
 	class Shader;
+
+	class GameObject;
+	class Mesh;
+	class Material;
+	class Renderer;
+
+	struct RenderObject
+	{
+		GameObject* gameObject;
+		Renderer*	renderer;
+		Mesh*		mesh;
+		Material*	material;
+
+		RenderObject(GameObject* gameObject,
+				Renderer*	renderer,
+				Mesh*		mesh,
+				Material*	material) : gameObject(gameObject), renderer(renderer), mesh(mesh), material(material)
+		{
+
+		}
+	};
 
 	class RenderSystem
 	{
@@ -25,6 +48,10 @@ namespace FishEngine
 		
 	private:
 		RenderSystem();
+
+		void GetRenderObjects();
+
+		std::vector<RenderObject> m_RenderObjects;
 
 		RenderTarget* m_MainRenderTarget;
 		ColorBuffer*  m_MainColorBuffer;

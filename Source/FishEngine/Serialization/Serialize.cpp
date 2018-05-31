@@ -1,12 +1,10 @@
 #include <FishEngine/Serialization/Serialize.hpp>
-
-#include <FishEngine/FishEngine2.hpp>
 #include <FishEngine/Serialization/Archive.hpp>
+#include <FishEngine/FishEngine2.hpp>
 
 namespace FishEngine
 {
-
-
+	// Object
 	void Object::Deserialize(InputArchive& archive)
 	{
 		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
@@ -18,6 +16,7 @@ namespace FishEngine
 	}
 
 
+	// GameObject
 	void GameObject::Deserialize(InputArchive& archive)
 	{
 		Object::Deserialize(archive);
@@ -44,6 +43,7 @@ namespace FishEngine
 	}
 
 
+	// Prefab
 	void Prefab::Deserialize(InputArchive& archive)
 	{
 		Object::Deserialize(archive);
@@ -67,6 +67,7 @@ namespace FishEngine
 	}
 
 
+	// Component
 	void Component::Deserialize(InputArchive& archive)
 	{
 		Object::Deserialize(archive);
@@ -85,6 +86,7 @@ namespace FishEngine
 	}
 
 
+	// Transform
 	void Transform::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -108,6 +110,7 @@ namespace FishEngine
 	}
 
 
+	// Camera
 	void Camera::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -129,6 +132,7 @@ namespace FishEngine
 	}
 
 
+	// Behaviour
 	void Behaviour::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -142,6 +146,7 @@ namespace FishEngine
 	}
 
 
+	// Light
 	void Light::Deserialize(InputArchive& archive)
 	{
 		Behaviour::Deserialize(archive);
@@ -153,6 +158,7 @@ namespace FishEngine
 	}
 
 
+	// RectTransform
 	void RectTransform::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -174,6 +180,7 @@ namespace FishEngine
 	}
 
 
+	// MeshFilter
 	void MeshFilter::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -219,6 +226,25 @@ namespace FishEngine
 	}
 
 
+	// SkinnedMeshRenderer
+	void SkinnedMeshRenderer::Deserialize(InputArchive& archive)
+	{
+		Renderer::Deserialize(archive);
+		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
+		archive.AddNVP("m_Avatar", this->m_Avatar);
+		archive.AddNVP("m_RootBone", this->m_RootBone);
+	}
+
+	void SkinnedMeshRenderer::Serialize(OutputArchive& archive) const
+	{
+		Renderer::Serialize(archive);
+		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
+		archive.AddNVP("m_Avatar", this->m_Avatar);
+		archive.AddNVP("m_RootBone", this->m_RootBone);
+	}
+
+
+	// Collider
 	void Collider::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -234,6 +260,7 @@ namespace FishEngine
 	}
 
 
+	// BoxCollider
 	void BoxCollider::Deserialize(InputArchive& archive)
 	{
 		Collider::Deserialize(archive);
@@ -249,6 +276,7 @@ namespace FishEngine
 	}
 
 
+	// SphereCollider
 	void SphereCollider::Deserialize(InputArchive& archive)
 	{
 		Collider::Deserialize(archive);
@@ -264,6 +292,7 @@ namespace FishEngine
 	}
 
 
+	// Rigidbody
 	void Rigidbody::Deserialize(InputArchive& archive)
 	{
 		Component::Deserialize(archive);
@@ -282,6 +311,44 @@ namespace FishEngine
 		archive.AddNVP("m_AngularDrag", this->m_AngularDrag);
 		archive.AddNVP("m_UseGravity", this->m_UseGravity);
 		archive.AddNVP("m_IsKinematic", this->m_IsKinematic);
+	}
+
+
+	// Avatar
+	void Avatar::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+	}
+
+	void Avatar::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+	}
+
+
+	// Motion
+	void Motion::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+	}
+
+	void Motion::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+	}
+
+
+	// AnimationClip
+	void AnimationClip::Deserialize(InputArchive& archive)
+	{
+		Motion::Deserialize(archive);
+		archive.AddNVP("m_avatar", this->m_avatar);
+	}
+
+	void AnimationClip::Serialize(OutputArchive& archive) const
+	{
+		Motion::Serialize(archive);
+		archive.AddNVP("m_avatar", this->m_avatar);
 	}
 
 
@@ -333,4 +400,6 @@ namespace FishEngine
 		archive.AddNVP("m_Sun", this->m_Sun);
 		archive.AddNVP("m_IndirectSpecularColor", this->m_IndirectSpecularColor);
 	}
+
+
 }

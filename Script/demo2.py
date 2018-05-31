@@ -28,7 +28,8 @@ def Start():
         scene_path = 'Assets/TestPhysics.unity'
     else:
         project_path = r'/Users/yushroom/program/Unity/FishEngine'
-        scene_path = 'Assets/TestPhysics.unity'
+        # scene_path = 'Assets/TestPhysics.unity'
+        scene_path = 'Assets/TestAnimation.unity'
     EditorApplication.OpenProject(project_path)
     scene = FishEditorInternal.EditorSceneManager.OpenScene(scene_path, FishEditorInternal.OpenSceneMode.Single)
     FishEngineInternal.SceneManager.SetActiveScene(scene)

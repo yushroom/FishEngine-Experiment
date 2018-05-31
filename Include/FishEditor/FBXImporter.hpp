@@ -14,11 +14,13 @@
 
 namespace FishEngine
 {
+	class GameObject;
+	class Transform;
 	class Mesh;
 	class Prefab;
-	class GameObject;
 	class Avatar;
-	class Transform;
+	class AnimationClip;
+	class SkinnedMeshRenderer;
 }
 
 namespace fbxsdk
@@ -46,31 +48,47 @@ namespace FishEditor
 	/** Animation clip containing a set of bone or blend shape animations. */
 	struct FBXAnimationClip
 	{
-		std::string name;
-		float start;
-		float end;
-		uint32_t sampleRate;
-
+		std::string 	name;
+		float 			start;
+		float 			end;
+		uint32_t 		sampleRate;
 		std::vector<FBXBoneAnimation> boneAnimations;
 		//std::vector<FBXBlendShapeAnimation> blendShapeAnimations;
 	};
 
 	struct ModelCollection
 	{
-		std::string name;
-		FishEngine::Prefab* m_prefab = nullptr;
+		std::string 					name;
+		FishEngine::Prefab* 			m_prefab = nullptr;
 //		float globalScale;
 //		bool useFileScale;
-		FishEngine::GameObject* m_rootGameObject = nullptr;
+		FishEngine::GameObject* 		m_rootGameObject = nullptr;
 //		FishEngine::Avatar*	m_avatar;
-		std::unordered_map<fbxsdk::FbxNode*, FishEngine::Transform*> m_fbxNodeLookup;
-		std::vector<FishEngine::Mesh*> m_meshes;
-		std::unordered_map<fbxsdk::FbxMesh*, size_t> m_fbxMeshLookup; // fbxmesh -> index in m_meshes
+		std::unordered_map<fbxsdk::FbxNode*, FishEngine::Transform*>
+										m_fbxNodeLookup;
+		std::vector<FishEngine::Mesh*> 	m_meshes;
+		std::unordered_map<fbxsdk::FbxMesh*, size_t>
+										m_fbxMeshLookup; // fbxmesh -> index in m_meshes
+
+		std::map<FishEngine::Mesh*, std::vector<uint32_t>>
+										m_boneIndicesForEachMesh;
+		std::vector<FishEngine::Transform*>
+										m_bones;
+		std::vector<FishEngine::Matrix4x4>
+										m_bindposes;
+		std::vector<FishEngine::SkinnedMeshRenderer*>
+										m_skinnedMeshRenderers;
+
 //		std::map<int, std::map<std::string, FishEngine::Object*>> m_objects;	// {classID: {name: Object}}
-		std::map<std::string, FishEngine::GameObject*> m_gameObjects;
-		std::vector<FBXAnimationClip> m_clips;
+		std::map<std::string, FishEngine::GameObject*>
+										m_gameObjects;
+		std::vector<FBXAnimationClip> 	m_clips;
+		std::vector<FishEngine::AnimationClip*>
+										m_animationClips;
+		FishEngine::Avatar*				m_avatar = nullptr;
 	};
-	
+
+
 	class FBXImporter final : public ModelImporter
 	{
 	public:
@@ -121,18 +139,30 @@ namespace FishEditor
 
 		
 	protected:
-		FishEngine::Mesh* ParseMesh(fbxsdk::FbxMesh* fbxMesh);
-		FishEngine::GameObject* ParseNode(fbxsdk::FbxNode* pNode);
+
 		void BakeTransforms(fbxsdk::FbxScene* scene);
+
+		FishEngine::Mesh* ParseMesh(fbxsdk::FbxMesh* fbxMesh);
+
+		FishEngine::GameObject* ParseNode(fbxsdk::FbxNode* pNode);
+
+		void GetLinkData(fbxsdk::FbxMesh* pGeometry, FishEngine::Mesh* mesh, std::map<uint32_t, uint32_t> const & vertexIndexRemapping);
+
+		void ImportSkeleton(fbxsdk::FbxScene* scene);
+
+		void UpdateBones(FishEngine::Transform* node);
+
 		void ImportAnimations(fbxsdk::FbxScene* scene);
+		void ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, fbxsdk::FbxNode* node, FBXAnimationClip& clip);
+		FishEngine::AnimationClip* ConvertAnimationClip(const FBXAnimationClip& fbxClip);
 		//void ImportAnimations(fbxsdk::FbxAnimLayer* layer, fbxsdk::FbxNode* node);
 
 //		std::vector<std::pair<int, FishEngine::Object*>> m_fileIDToRecycleName;
 
-
-
 		// {ClassID: {name: assetObject}}
 		std::map<int, std::map<std::string, FishEngine::Object*>> m_Assets;
+
+		int m_boneCount = 0;
 		ModelCollection m_model;
 //		std::map<std::string, FishEngine::Mesh*> m_meshes;
 	};

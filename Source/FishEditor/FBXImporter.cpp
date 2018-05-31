@@ -8,6 +8,11 @@
 
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
+#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
+
+#include <FishEngine/Animation/Avatar.hpp>
+#include <FishEngine/Animation/AnimationClip.hpp>
+#include <FishEngine/Animation/AnimationCurveUtility.hpp>
 
 #include <fbxsdk.h>
 #include <fbxsdk/utils/fbxgeometryconverter.h>
@@ -130,6 +135,99 @@ inline Vector3 FbxVector4ToVector3WithXFlipped(FbxVector4 const & v)
 				   static_cast<float>(v[1]),
 				   static_cast<float>(v[2]) );
 }
+
+// skinned data
+void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<uint32_t, uint32_t> const & vertexIndexRemapping)
+{
+	int lSkinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
+	if (lSkinCount <= 0)
+	{
+		mesh->m_skinned = false;
+		return;
+	}
+	if (lSkinCount != 1)
+	{
+		// TODO: multiple skin
+		abort();
+	}
+	mesh->m_skinned = true;
+	
+	int n_vertices = mesh->GetVertexCount();
+	mesh->m_boneWeights.resize(n_vertices);
+	
+	//FbxCluster::ELinkMode lClusterMode = ((FbxSkin*)pMesh->GetDeformer(0, FbxDeformer::eSkin))->GetCluster(0)->GetLinkMode();
+	
+	FbxSkin * lSkinDeformer = (FbxSkin *)pMesh->GetDeformer(0, FbxDeformer::eSkin);
+	//FbxSkin::EType lSkinningType = lSkinDeformer->GetSkinningType();
+	
+	// cluser == bone
+	int lClusterCount = lSkinDeformer->GetClusterCount();
+	std::vector<uint32_t> boneIndices(lClusterCount);
+	
+	mesh->m_boneNames.resize(lClusterCount);
+	
+	float scale = m_FileScale * m_GlobalScale;
+	
+	for (int lClusterIndex = 0; lClusterIndex != lClusterCount; ++lClusterIndex)
+	{
+		FbxCluster* lCluster= lSkinDeformer->GetCluster(lClusterIndex);
+		int lIndexCount = lCluster->GetControlPointIndicesCount();
+		int* lIndices = lCluster->GetControlPointIndices();
+		double* lWeights = lCluster->GetControlPointWeights();
+		
+		auto & boneToIndex = m_model.m_avatar->m_boneToIndex;
+		std::string boneName = (char *) lCluster->GetLink()->GetName();
+		mesh->m_boneNames[lClusterIndex] = boneName;
+		
+		//fbxsdk::FbxAMatrix bindPoseMatrix;
+		//lCluster->GetTransformLinkMatrix(bindPoseMatrix);	// this bind pose is in world(global) space
+		////m_model.m_bindposes.push_back(FbxAMatrixToMatrix4x4(bindPoseMatrix));
+		
+		int boneId;
+		auto it = boneToIndex.find(boneName);
+		if ( it != boneToIndex.end() )
+		{
+			boneId = it->second;
+		}
+		else
+		{
+			// bone not in skeletion;
+			abort();
+			//boneId = m_boneCount;
+			//m_model.m_avatar->m_boneToIndex[boneName] = boneId;
+			//m_model.m_avatar->m_indexToBone[boneId] = boneName;
+			////fbxsdk::FbxAMatrix transformMatrix;
+			////lCluster->GetTransformMatrix(transformMatrix);
+			//m_boneCount++;
+		}
+		
+		fbxsdk::FbxAMatrix bindPoseMatrix;
+		lCluster->GetTransformLinkMatrix(bindPoseMatrix);	// this bind pose is in world(global) space
+		auto mat = FBXToNativeType(bindPoseMatrix);
+		mat.m[0][3] *= scale;
+		mat.m[1][3] *= scale;
+		mat.m[2][3] *= scale;
+		m_model.m_bindposes[boneId] = mat;
+		
+		boneIndices[lClusterIndex] = boneId;
+		
+		for ( int k = 0; k < lIndexCount; k++ )
+		{
+			int vertexId = lIndices[k];
+			float weight = static_cast<float>(lWeights[k]);
+			mesh->m_boneWeights[vertexId].AddBoneData(lClusterIndex, weight);
+			auto it = vertexIndexRemapping.find(vertexId);
+			while (it != vertexIndexRemapping.end())
+			{
+				vertexId = it->second;
+				mesh->m_boneWeights[vertexId].AddBoneData(lClusterIndex, weight);
+				it = vertexIndexRemapping.find(vertexId);
+			}
+		}
+	}
+	m_model.m_boneIndicesForEachMesh.emplace(mesh, std::move(boneIndices));
+}
+
 
 
 Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
@@ -355,10 +453,10 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 	
 	auto mesh = rawMesh.ToMesh();
 	mesh->SetName(fbxMesh->GetName());
-//	GetLinkData(fbxMesh, mesh, rawMesh.m_vertexIndexRemapping);
+	GetLinkData(fbxMesh, mesh, rawMesh.m_vertexIndexRemapping);
 	
-//	m_model.m_fbxMeshLookup[fbxMesh] = m_model.m_meshes.size();
-//	m_model.m_meshes.push_back(mesh);
+	m_model.m_fbxMeshLookup[fbxMesh] = m_model.m_meshes.size();
+	m_model.m_meshes.push_back(mesh);
 	
 	return mesh;
 }
@@ -422,6 +520,444 @@ void FishEditor::FBXImporter::BakeTransforms(FbxScene * scene)
 	//scene->GetRootNode()->ResetPivotSetAndConvertAnimation();
 }
 
+
+void FishEditor::FBXImporter::ImportSkeleton(fbxsdk::FbxScene* scene)
+{
+	std::deque<FbxNode*> todo;
+	todo.push_back(scene->GetRootNode());
+	while (!todo.empty())
+	{
+		FbxNode* node = todo.front();
+		todo.pop_front();
+		for (int i = 0; i < node->GetChildCount(); ++i)
+		{
+			auto child = node->GetChild(i);
+			todo.push_back(child);
+		}
+
+		m_boneCount = 0;
+
+		const char* nodeName = node->GetName();
+		auto nodeAttributeCount = node->GetNodeAttributeCount();
+		for (int i = 0; i < nodeAttributeCount; ++i)
+		{
+			auto nodeAttribute = node->GetNodeAttributeByIndex(i);
+			auto type = nodeAttribute->GetAttributeType();
+			if (type == FbxNodeAttribute::eSkeleton)
+			{
+				//FbxSkeleton* lSkeleton = (FbxSkeleton*)nodeAttribute;
+				std::string boneName = nodeName;
+				auto it = m_model.m_avatar->m_boneToIndex.find(boneName);
+				if (it != m_model.m_avatar->m_boneToIndex.end())
+				{
+					// handle same name
+					abort();
+				}
+				m_model.m_avatar->m_boneToIndex[boneName] = m_boneCount;
+				m_model.m_avatar->m_indexToBone[m_boneCount] = boneName;
+				m_boneCount++;
+			}
+		}
+	}
+
+	m_model.m_bindposes.resize(m_boneCount);
+}
+
+
+void FishEditor::FBXImporter::UpdateBones(FishEngine::Transform* node)
+{
+	auto boneName = node->GetGameObject()->GetName();
+	auto & boneToIndex = m_model.m_avatar->m_boneToIndex;
+	auto it = boneToIndex.find(boneName);
+	if (it != boneToIndex.end())
+	{
+		int id = it->second;
+		m_model.m_bones[id] = node;
+
+		// world(global) space -> parent's local space
+		if (node->GetParent() == nullptr)
+		{
+			node->SetLocalToWorldMatrix(m_model.m_bindposes[id]);
+		}
+		else
+		{
+			auto l2w = node->GetParent()->GetWorldToLocalMatrix() * m_model.m_bindposes[id];
+			//bindPoses[id] = l2w.inverse();
+			node->SetLocalToWorldMatrix(l2w);
+			m_model.m_bindposes[id] = node->GetWorldToLocalMatrix();
+		}
+	}
+
+	for (auto & child : node->GetChildren())
+	{
+		UpdateBones(child);
+	}
+}
+
+
+TAnimationCurve<Vector3> reduceKeyframes(TAnimationCurve<Vector3>& curve)
+{
+	uint32_t keyCount = (uint32_t)curve.keyframeCount();
+	
+	std::vector<TKeyframe<Vector3>> newKeyframes;
+	
+	bool lastWasEqual = false;
+	for (uint32_t i = 0; i < keyCount; i++)
+	{
+		bool isEqual = true;
+		
+		const TKeyframe<Vector3>& curKey = curve.keyframeAt(i);
+		if (i > 0)
+		{
+			TKeyframe<Vector3>& prevKey = newKeyframes.back();
+			
+			isEqual = isEqual && (prevKey.value == curKey.value) && (prevKey.outTangent == curKey.inTangent);
+		}
+		else
+			isEqual = false;
+		
+		// More than two keys in a row are equal, remove previous key by replacing it with this one
+		if (lastWasEqual && isEqual)
+		{
+			TKeyframe<Vector3>& prevKey = newKeyframes.back();
+			
+			// Other properties are guaranteed unchanged
+			prevKey.time = curKey.time;
+			prevKey.outTangent = curKey.outTangent;
+			
+			continue;
+		}
+		
+		newKeyframes.push_back(curKey);
+		lastWasEqual = isEqual;
+	}
+	
+	return TAnimationCurve<Vector3>(newKeyframes);
+}
+
+
+void SetKeyframeValues(TKeyframe<Vector3>& keyFrame, int idx, float value, float inTangent, float outTangent)
+{
+	keyFrame.value[idx] = value;
+	keyFrame.inTangent[idx] = inTangent;
+	keyFrame.outTangent[idx] = outTangent;
+}
+
+
+template<class T, int C>
+TAnimationCurve<T> ImportCurve(FbxAnimCurve*(&fbxCurve)[C], float(&defaultValues)[C], float start, float end)
+{
+	int keyCounts[C];
+	for (int i = 0; i < C; i++)
+	{
+		if (fbxCurve[i] != nullptr)
+			keyCounts[i] = fbxCurve[i]->KeyGetCount();
+		else
+			keyCounts[i] = 0;
+	}
+	
+	// If curve key-counts don't match, we need to force resampling
+	bool forceResample = false;
+	if (!forceResample)
+	{
+		for (int i = 1; i < C; i++)
+		{
+			forceResample |= keyCounts[i - 1] != keyCounts[i];
+			if (forceResample)
+				break;
+		}
+	}
+	
+	// Read keys directly
+	if (!forceResample)
+	{
+		bool foundMismatch = false;
+		int keyCount = keyCounts[0];
+		std::vector<TKeyframe<T>> keyframes;
+		for (int i = 0; i < keyCount; i++)
+		{
+			FbxTime fbxTime = fbxCurve[0]->KeyGetTime(i);
+			float time = (float)fbxTime.GetSecondDouble();
+			
+			// Ensure times from other curves match
+			for (int j = 1; j < C; j++)
+			{
+				fbxTime = fbxCurve[j]->KeyGetTime(i);
+				float otherTime = (float)fbxTime.GetSecondDouble();
+				
+				if (!Mathf::CompareApproximately(time, otherTime))
+				{
+					foundMismatch = true;
+					break;
+				}
+			}
+			
+			if (foundMismatch)
+				break;
+			
+			if (time < start || time > end)
+				continue;
+			
+			keyframes.push_back(TKeyframe<T>());
+			TKeyframe<T>& keyFrame = keyframes.back();
+			
+			keyFrame.time = time;
+			
+			for (int j = 0; j < C; j++)
+			{
+				SetKeyframeValues(keyFrame, j,
+								  fbxCurve[j]->KeyGetValue(i),
+								  fbxCurve[j]->KeyGetLeftDerivative(i),
+								  fbxCurve[j]->KeyGetRightDerivative(i));
+			}
+		}
+		
+		if (!foundMismatch)
+			return TAnimationCurve<T>(keyframes);
+		else
+			forceResample = true;
+	}
+	
+	//if (!importOptions.animResample && forceResample)
+	//	LOGWRN("Animation has different keyframes for different curve components, forcing resampling.");
+	
+	
+	// Resample keys
+	float curveStart = std::numeric_limits<float>::infinity();
+	float curveEnd = -std::numeric_limits<float>::infinity();
+	
+	for (uint32_t i = 0; i < C; i++)
+	{
+		if (fbxCurve[i] == nullptr)
+		{
+			curveStart = std::min(0.0f, curveStart);
+			curveEnd = std::max(0.0f, curveEnd);
+			
+			continue;
+		}
+		
+		int keyCount = keyCounts[i];
+		for (int j = 0; j < keyCount; j++)
+		{
+			FbxTime fbxTime = fbxCurve[i]->KeyGetTime(j);
+			float time = (float)fbxTime.GetSecondDouble();
+			
+			curveStart = std::min(time, curveStart);
+			curveEnd = std::max(time, curveEnd);
+		}
+	}
+	
+	curveStart = Mathf::Clamp(curveStart, start, end);
+	curveEnd = Mathf::Clamp(curveEnd, start, end);
+	
+	float curveLength = curveEnd - curveStart;
+	constexpr float animSampleRate = 1.0f / 30.0f;
+	int numSamples = Mathf::CeilToInt(curveLength / animSampleRate);
+	
+	// We don't use the exact provided sample rate but instead modify it slightly so it
+	// completely covers the curve range including start/end points while maintaining
+	// constant time step between keyframes.
+	float dt = curveLength / (float)numSamples;
+	
+	int lastKeyframe[] = { 0, 0, 0 };
+	int lastLeftTangent[] = { 0, 0, 0 };
+	int lastRightTangent[] = { 0, 0, 0 };
+	
+	std::vector<TKeyframe<T>> keyframes(numSamples);
+	for (int i = 0; i < numSamples; i++)
+	{
+		float sampleTime = std::min(curveStart + i * dt, curveEnd);
+		FbxTime fbxSampleTime;
+		fbxSampleTime.SetSecondDouble(sampleTime);
+		
+		TKeyframe<T>& keyFrame = keyframes[i];
+		keyFrame.time = sampleTime;
+		
+		for (int j = 0; j < C; j++)
+		{
+			if (fbxCurve[j] != nullptr)
+			{
+				SetKeyframeValues(keyFrame, j,
+								  fbxCurve[j]->Evaluate(fbxSampleTime, &lastKeyframe[j]),
+								  fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime, &lastLeftTangent[j]),
+								  fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime, &lastRightTangent[j]));
+			}
+			else
+			{
+				SetKeyframeValues(keyFrame, j, defaultValues[C], 0.0f, 0.0f);
+			}
+		}
+	}
+	
+	return TAnimationCurve<T>(keyframes);
+}
+
+
+
+void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, fbxsdk::FbxNode* node, FBXAnimationClip& clip)
+{
+	FbxAnimCurve* translation[3];
+	translation[0] = node->LclTranslation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_X);
+	translation[1] = node->LclTranslation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Y);
+	translation[2] = node->LclTranslation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Z);
+	
+	FbxAnimCurve* rotation[3];
+	rotation[0] = node->LclRotation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_X);
+	rotation[1] = node->LclRotation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Y);
+	rotation[2] = node->LclRotation.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Z);
+	
+	FbxAnimCurve* scale[3];
+	scale[0] = node->LclScaling.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_X);
+	scale[1] = node->LclScaling.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Y);
+	scale[2] = node->LclScaling.GetCurve(layer, FBXSDK_CURVENODE_COMPONENT_Z);
+	
+	Vector3 defaultTranslation = FBXToNativeType(node->LclTranslation.Get());
+	Vector3 defaultRotation = FBXToNativeType(node->LclRotation.Get());
+	Vector3 defaultScale = FBXToNativeType(node->LclScaling.Get());
+	
+	auto hasCurveValues = [](FbxAnimCurve* curves[3])
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (curves[i] != nullptr && curves[i]->KeyGetCount() > 0)
+				return true;
+		}
+		
+		return false;
+	};
+	
+	EFbxRotationOrder order;
+	node->GetRotationOrder(FbxNode::eDestinationPivot, order);
+	RotationOrder rotationOrder = FBXToNativeType(order);
+	
+	bool hasBoneAnimation = hasCurveValues(translation) || hasCurveValues(rotation) || hasCurveValues(scale);
+	
+	if (order != eEulerXYZ && hasBoneAnimation)
+	{
+		LogWarning("here");
+	}
+	
+	if (hasBoneAnimation)
+	{
+		clip.boneAnimations.push_back(FBXBoneAnimation());
+		FBXBoneAnimation& boneAnim = clip.boneAnimations.back();
+		boneAnim.node = m_model.m_fbxNodeLookup[node];
+		
+		if (hasCurveValues(translation))
+		{
+			float defaultValues[3];
+			memcpy(defaultValues, &defaultTranslation, sizeof(defaultValues));
+			
+			boneAnim.translation = ImportCurve<Vector3, 3>(translation, defaultValues,
+														   clip.start, clip.end);
+		}
+		//else
+		//{
+		//	std::vector<TKeyframe<Vector3>> keyframes(1);
+		//	keyframes[0].value = defaultTranslation;
+		//	keyframes[0].inTangent = Vector3::zero;
+		//	keyframes[0].outTangent = Vector3::zero;
+		//	boneAnim.translation = TAnimationCurve<Vector3>(keyframes);
+		//}
+		
+		if (hasCurveValues(scale))
+		{
+			float defaultValues[3];
+			memcpy(defaultValues, &defaultScale, sizeof(defaultValues));
+			
+			boneAnim.scale = ImportCurve<Vector3, 3>(scale, defaultValues, clip.start, clip.end);
+		}
+		//else
+		//{
+		//	std::vector<TKeyframe<Vector3>> keyframes(1);
+		//	keyframes[0].value = defaultScale;
+		//	keyframes[0].inTangent = Vector3::zero;
+		//	keyframes[0].outTangent = Vector3::zero;
+		//	boneAnim.scale = TAnimationCurve<Vector3>(keyframes);
+		//}
+		
+		TAnimationCurve<Vector3> eulerAnimation;
+		if (hasCurveValues(rotation))
+		{
+			float defaultValues[3];
+			memcpy(defaultValues, &defaultRotation, sizeof(defaultValues));
+			
+			eulerAnimation = ImportCurve<Vector3, 3>(rotation, defaultValues, clip.start, clip.end);
+		}
+		//else
+		//{
+		//	std::vector<TKeyframe<Vector3>> keyframes(1);
+		//	keyframes[0].value = defaultRotation;
+		//	keyframes[0].inTangent = Vector3::zero;
+		//	keyframes[0].outTangent = Vector3::zero;
+		//	eulerAnimation = TAnimationCurve<Vector3>(keyframes);
+		//}
+		
+		//if(importOptions.reduceKeyframes)
+		//{
+		//	boneAnim.translation = reduceKeyframes(boneAnim.translation);
+		//	boneAnim.scale = reduceKeyframes(boneAnim.scale);
+		//	eulerAnimation = reduceKeyframes(eulerAnimation);
+		//}
+		
+		boneAnim.translation = AnimationCurveUtility::ScaleCurve(boneAnim.translation, m_FileScale * m_GlobalScale);
+		//boneAnim.eulers = eulerAnimation;
+		boneAnim.rotation = AnimationCurveUtility::EulerToQuaternionCurve(eulerAnimation, rotationOrder);
+		
+	}
+	
+	int childCount = node->GetChildCount();
+	for (int i = 0; i < childCount; i++)
+	{
+		FbxNode* child = node->GetChild(i);
+		ImportAnimationLayer(layer, child, clip);
+	}
+
+}
+
+AnimationClip* FishEditor::FBXImporter::ConvertAnimationClip(const FBXAnimationClip& fbxClip)
+{
+	if (fbxClip.boneAnimations.empty())
+		return nullptr;
+
+	auto result = new AnimationClip;
+	result->SetName(fbxClip.name);
+	result->frameRate = fbxClip.sampleRate;
+	result->length = fbxClip.end - fbxClip.start;
+
+	auto IsBone = [this](std::string const& name) {
+		auto it = m_model.m_avatar->m_boneToIndex.find(name);
+		return it != m_model.m_avatar->m_boneToIndex.end();
+	};
+
+	for (auto & animation : fbxClip.boneAnimations)
+	{
+		// TODO: move
+		//std::string path = "";
+		auto node = animation.node;
+		std::string path = node->GetName();
+		node = node->GetParent();
+		while (node != nullptr)
+		{
+			const auto name = node->GetName();
+			if (!IsBone(name))
+				break;
+			path = name + "/" + path;
+			node = node->GetParent();
+		}
+		if (animation.translation.keyframeCount() > 0)
+			result->m_positionCurve.emplace_back(Vector3Curve{ path, animation.translation });
+		if (animation.rotation.keyframeCount() > 0)
+			result->m_rotationCurves.emplace_back(QuaternionCurve{ path, animation.rotation });
+//		if (animation.eulers.keyframeCount() > 0)
+//			result->m_eulersCurves.emplace_back(Vector3Curve{ path, animation.eulers});
+		if (animation.scale.keyframeCount() > 0)
+			result->m_scaleCurves.emplace_back(Vector3Curve{ path, animation.scale });
+	}
+	return result;
+}
+
+
 void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
 {
 	FbxNode * root = scene->GetRootNode();
@@ -442,19 +978,22 @@ void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
 		if (layerCount == 1)
 		{
 			FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(0);
-			ImportAnimations(animLayer, root, clip);
+			ImportAnimationLayer(animLayer, root, clip);
 		}
 		else
 		{
-			//abort();
-			LogError(Format("multiple animation clip in model: %1%", this->m_assetPath.string()));
+			abort();
+//			LogError(Format("multiple animation clip in model: %1%", this->m_assetPath.string()));
 		}
 
 		for (auto clip : m_model.m_clips)
 		{
 			auto animationClip = ConvertAnimationClip(clip);
-			m_model.m_animationClips.push_back(animationClip);
-			animationClip->m_avatar = m_model.m_avatar;
+			if (animationClip != nullptr)
+			{
+				m_model.m_animationClips.push_back(animationClip);
+				animationClip->m_avatar = m_model.m_avatar;
+			}
 		}
 	}
 }
@@ -529,13 +1068,14 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 		{
 			FbxMesh* lMesh = (FbxMesh*)nodeAttribute;
 			auto mesh = ParseMesh(lMesh);
-			m_model.m_meshes.push_back(mesh);
+//			m_model.m_meshes.push_back(mesh);
 //			if (mesh->name().empty())
 //			{
 //				mesh->setName(nodeName);
 //			}
 			mesh->SetName(nodeName);
 
+#if 0
 			auto mf = new MeshFilter();
 			go->AddComponent(mf);
 			mf->SetMesh(mesh);
@@ -543,7 +1083,7 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 			auto mr = new MeshRenderer();
 			go->AddComponent(mr);
 			mr->SetMaterial(Material::GetDefaultMaterial());
-
+#else
 //			m_meshes[nodeName] = mesh;
 //
 //			if (IsNewlyCreated())
@@ -564,25 +1104,28 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 //				auto lMaterial = pNode->GetMaterial(0);
 //				material = ParseMaterial(lMaterial);
 //			}
-//
-//			RendererPtr renderer;
-//			if (mesh->m_skinned)
-//			{
-//				auto srenderer = go->AddComponent<SkinnedMeshRenderer>();
-//				m_model.m_skinnedMeshRenderers.push_back(srenderer);
-//				srenderer->SetMaterial(material);
-//				srenderer->setSharedMesh(mesh);
-//				srenderer->setAvatar(m_model.m_avatar);
-//				srenderer->setRootBone(m_model.m_rootNode->transform());
-//				renderer = srenderer;
-//			}
-//			else
-//			{
-//				go->AddComponent<MeshFilter>()->SetMesh(mesh);
-//				renderer = go->AddComponent<MeshRenderer>();
-//				renderer->SetMaterial(material);
-//			}
-//
+
+			auto material = Material::GetDefaultMaterial();
+			if (mesh->m_skinned)
+			{
+				auto srenderer = new SkinnedMeshRenderer;
+				go->AddComponent(srenderer);
+				m_model.m_skinnedMeshRenderers.push_back(srenderer);
+				srenderer->SetMaterial(material);
+				srenderer->SetSharedMesh(mesh);
+//				srenderer->SetAvatar(m_model.m_avatar);
+//				srenderer->SetRootBone(m_model.m_rootGameObject->GetTransform());
+			}
+			else
+			{
+				auto mf = new MeshFilter();
+				go->AddComponent(mf);
+				mf->SetMesh(mesh);
+				auto mr = new MeshRenderer;
+				go->AddComponent(mr);
+				mr->SetMaterial(material);
+			}
+#endif
 //			for (int i = 1; i < lMaterialCount; ++i)
 //			{
 //				auto lMaterial = pNode->GetMaterial(i);
@@ -670,10 +1213,14 @@ void FishEditor::FBXImporter::Import()
 	{
 		abort();
 	}
+
+	m_model.m_avatar = new Avatar;
 	
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
 	BakeTransforms(lScene);
+
+	ImportSkeleton(lScene);
 
 //	int geometryCount = lScene->GetGeometryCount();
 //	for (int i = 0; i < geometryCount; ++i) {
@@ -700,12 +1247,25 @@ void FishEditor::FBXImporter::Import()
 		lRootNode = lRootNode->GetChild(0);
 	}
 	m_model.m_rootGameObject = ParseNode(lRootNode);
+	
+	for (auto r : m_model.m_skinnedMeshRenderers)
+	{
+		r->SetAvatar(m_model.m_avatar);
+		r->SetRootBone(m_model.m_rootGameObject->GetTransform());
+	}
+	
 	m_model.name = fileName;
 	m_model.m_rootGameObject->SetName(fileName);
 	m_model.m_prefab->SetRootGameObject(m_model.m_rootGameObject);
+
+	ImportAnimations(lScene);
 	
 	// Destroy the SDK manager and all the other objects it was handling.
 	lSdkManager->Destroy();
+
+	auto root = m_model.m_rootGameObject;
+	m_model.m_bones.resize(m_boneCount);
+	UpdateBones(root->GetTransform());
 
 	int count = 0;
 	for (auto&& p : m_model.m_gameObjects)
@@ -722,9 +1282,11 @@ void FishEditor::FBXImporter::Import()
 		for (auto comp : go->GetAllComponents())
 		{
 			classID = comp->GetClassID();
-			fileID = classID * 100000 + count;
+			fileID = classID * 100000 + m_Assets[classID].size()*2;
 			m_FileIDToObject[fileID] = comp;
 			m_Assets[classID][name] = go;
+			if (classID == 137)
+				printf("%d: %s\n", fileID, name.c_str());
 		}
 		count += 2;
 	}
@@ -742,6 +1304,11 @@ void FishEditor::FBXImporter::Import()
 	m_model.m_prefab->m_FileIDToObject = m_FileIDToObject;
 
 	m_FileIDToObject[Prefab::ClassID * 100000] = m_model.m_prefab;
+	
+//	for (auto && p : m_FileIDToObject)
+//	{
+//		printf("%d: %s\n", p.first, p.second->GetName().c_str());
+//	}
 
 	this->m_MainAsset = m_model.m_prefab;
 	m_Imported = true;

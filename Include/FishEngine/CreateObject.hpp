@@ -31,6 +31,8 @@ namespace FishEngine
 			return CreateEmptyObject<MeshFilter>();
 		else if (classID == MeshRenderer::ClassID)
 			return CreateEmptyObject<MeshRenderer>();
+		else if (classID == SkinnedMeshRenderer::ClassID)
+			return CreateEmptyObject<SkinnedMeshRenderer>();
 		else if (classID == BoxCollider::ClassID)
 			return CreateEmptyObject<BoxCollider>();
 		else if (classID == SphereCollider::ClassID)
