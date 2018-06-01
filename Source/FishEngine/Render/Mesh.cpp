@@ -429,4 +429,20 @@ namespace FishEngine
 		std::vector<uint32_t> index = { 2,1,0,  3,1,2 };
 		m_ScreenAlignedQuad = new Mesh(std::move(p), std::move(n), std::move(uv), std::move(t), std::move(index));
 	}
+
+	void Mesh::UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertices)
+	{
+		if (!m_uploaded)
+		{
+			UploadMeshData();
+		}
+		
+		assert(skinnedVertices.size() == m_vertices.size());
+		assert(m_skinned);
+		glCheckError();
+		glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
+		glCheckError();
+		glBufferData(GL_ARRAY_BUFFER, skinnedVertices.size() * 3 * 4, skinnedVertices.data(), GL_DYNAMIC_DRAW);
+		glCheckError();
+	}
 }

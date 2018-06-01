@@ -2,6 +2,7 @@
 
 #include <FishEngine/FishEngine.hpp>
 #include "../Object.hpp"
+#include "../Asset.hpp"
 #include "WrapMode.hpp"
 #include "AnimationBlendMode.hpp"
 #include "AnimationEvent.hpp"
@@ -46,6 +47,7 @@ namespace FishEngine
 		AnimationClip() : Motion(AnimationClip::ClassID, ClassName)
 		{
 			LOGF;
+			AssetManager::GetInstance().AddAsset(this);
 		}
 		
 		// Animation Events for this animation clip.

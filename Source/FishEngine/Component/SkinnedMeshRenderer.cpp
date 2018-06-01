@@ -28,9 +28,9 @@ void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 	auto mesh = m_SharedMesh;
 	if (mesh->m_skinned)
 	{
-		if (mesh->m_skinnedVertices.size() != mesh->m_vertexCount)
+		if (m_SkinnedVertices.size() != mesh->m_vertexCount)
 		{
-			mesh->m_skinnedVertices.resize(mesh->m_vertexCount);
+			m_SkinnedVertices.resize(mesh->m_vertexCount);
 		}
 
 		for (int i = 0; i < mesh->m_vertexCount; i++)
@@ -41,9 +41,11 @@ void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 			boneTransformation += m_MatrixPalette[boneIndex[1]] * boneWeight[1];
 			boneTransformation += m_MatrixPalette[boneIndex[2]] * boneWeight[2];
 			boneTransformation += m_MatrixPalette[boneIndex[3]] * boneWeight[3];
-			mesh->m_skinnedVertices[i] = boneTransformation.MultiplyPoint(mesh->m_vertices[i]);
+			m_SkinnedVertices[i] = boneTransformation.MultiplyPoint(mesh->m_vertices[i]);
 		}
 	}
+	
+	mesh->UpdateCPUSkinneing(m_SkinnedVertices);
 
 #endif
 }

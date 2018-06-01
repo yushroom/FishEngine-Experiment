@@ -101,7 +101,7 @@ object_schema = '''
 	m_SharedMesh
 	m_Avatar
 	m_RootBone
-	
+	m_Bones
 
 @Collider: Component
 	# m_Material: {fileID: 0}

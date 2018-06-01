@@ -401,7 +401,8 @@ namespace FishEngine
 			auto go = r->GetGameObject();
 			if (!go->IsActiveInHierarchy())
 				continue;
-
+			
+			r->UpdateMatrixPalette();
 			m_RenderObjects.emplace_back(go, r, mesh, material);
 		}
 	}

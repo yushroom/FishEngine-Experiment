@@ -233,14 +233,16 @@ namespace FishEngine
 		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
 		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
+		archive.AddNVP("m_Bones", this->m_Bones);
 	}
-
+	
 	void SkinnedMeshRenderer::Serialize(OutputArchive& archive) const
 	{
 		Renderer::Serialize(archive);
 		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
 		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
+		archive.AddNVP("m_Bones", this->m_Bones);
 	}
 
 

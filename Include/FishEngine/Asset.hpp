@@ -17,7 +17,9 @@ namespace FishEngine
 //				classID == Material::ClassID ||
 //				classID == Shader::ClassID;
 //				classID == Texture2D::ClassID;
-		return classID == 43 || classID == 21 || classID == 48 || classID == 28;
+		// 90: Avatar
+		// 74: AnimationClip
+		return classID == 43 || classID == 21 || classID == 48 || classID == 28 || classID == 90 || classID == 74;
 	}
 
 	class AssetManager

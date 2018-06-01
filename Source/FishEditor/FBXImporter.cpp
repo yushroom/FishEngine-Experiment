@@ -1266,6 +1266,51 @@ void FishEditor::FBXImporter::Import()
 	auto root = m_model.m_rootGameObject;
 	m_model.m_bones.resize(m_boneCount);
 	UpdateBones(root->GetTransform());
+	
+	for (auto & r : m_model.m_skinnedMeshRenderers)
+	{
+		auto mesh = r->GetSharedMesh();
+		r->m_Bones.reserve(mesh->m_boneNames.size());
+		for (const auto & boneName : mesh->m_boneNames)
+		{
+			int boneId = m_model.m_avatar->m_boneToIndex[boneName];
+			r->m_Bones.push_back(m_model.m_bones[boneId]);
+		}
+	}
+	
+	for (auto & mesh : m_model.m_meshes)
+	{
+		if (mesh->m_skinned)
+		{
+			mesh->m_bindposes.reserve(mesh->m_boneNames.size());
+			for (auto & boneName : mesh->m_boneNames)
+			{
+				int boneId = m_model.m_avatar->m_boneToIndex[boneName];
+				mesh->m_bindposes.push_back(m_model.m_bindposes[boneId]);
+			}
+			
+			// make sure all the weights sum to 1.
+			for (auto & bw : mesh->m_boneWeights)
+			{
+				if (bw.weight[0] > 0)
+				{
+					float boneWeightScale = 0.0f;
+					for (float w : bw.weight)
+					{
+						boneWeightScale += w;
+					}
+					if ( Mathf::Abs(boneWeightScale - 1.0f) > 1E-5f)
+					{
+						boneWeightScale = 1.0f / boneWeightScale;
+						for (float & w : bw.weight)
+						{
+							w *= boneWeightScale;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	int count = 0;
 	for (auto&& p : m_model.m_gameObjects)

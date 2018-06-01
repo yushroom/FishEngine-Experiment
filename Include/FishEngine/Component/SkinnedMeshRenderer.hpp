@@ -4,10 +4,16 @@
 #include "Renderer.hpp"
 #include "../Math/Matrix4x4.hpp"
 
+namespace FishEditor
+{
+	class FBXImporter;
+}
+
 namespace FishEngine
 {
 	class Mesh;
 	class Avatar;
+	class RenderSystem;
 
 	class SkinnedMeshRenderer : public Renderer
 	{
@@ -31,6 +37,8 @@ namespace FishEngine
 
 	private:
 
+		friend class RenderSystem;
+		friend class FishEditor::FBXImporter;
 		void UpdateMatrixPalette() const;
 
 		// The mesh used for skinning.
@@ -43,5 +51,6 @@ namespace FishEngine
 		std::vector<Transform*> m_Bones;
 
 		mutable std::vector<Matrix4x4> m_MatrixPalette;
+		mutable std::vector<Vector3> m_SkinnedVertices;
 	};
 }

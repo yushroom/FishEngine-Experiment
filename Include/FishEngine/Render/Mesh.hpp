@@ -114,7 +114,7 @@ namespace FishEngine
 		unsigned int m_animationOutputNormalVBO = 0;
 		unsigned int m_animationOutputTangentVBO = 0;
 #else
-		std::vector<Vector3> m_skinnedVertices;
+//		std::vector<Vector3> m_skinnedVertices;
 #endif
 
 
@@ -131,5 +131,7 @@ namespace FishEngine
 	private:
 		void GenerateBuffer();
 		void BindBuffer();
+
+		void UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertices);
 	};
 }
