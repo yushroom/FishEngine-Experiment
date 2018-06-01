@@ -235,7 +235,7 @@ namespace FishEngine
 		archive.AddNVP("m_RootBone", this->m_RootBone);
 		archive.AddNVP("m_Bones", this->m_Bones);
 	}
-	
+
 	void SkinnedMeshRenderer::Serialize(OutputArchive& archive) const
 	{
 		Renderer::Serialize(archive);
@@ -351,6 +351,22 @@ namespace FishEngine
 	{
 		Motion::Serialize(archive);
 		archive.AddNVP("m_avatar", this->m_avatar);
+	}
+
+
+	// Animation
+	void Animation::Deserialize(InputArchive& archive)
+	{
+		Behaviour::Deserialize(archive);
+		archive.AddNVP("m_clip", this->m_clip);
+		archive.AddNVP("m_wrapMode", this->m_wrapMode);
+	}
+
+	void Animation::Serialize(OutputArchive& archive) const
+	{
+		Behaviour::Serialize(archive);
+		archive.AddNVP("m_clip", this->m_clip);
+		archive.AddNVP("m_wrapMode", this->m_wrapMode);
 	}
 
 

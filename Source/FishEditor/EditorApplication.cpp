@@ -7,6 +7,7 @@
 #include <FishEngine/System/RenderSystem.hpp>
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
+#include <FishEngine/System/AnimationSystem.hpp>
 #include <FishEngine/Scene.hpp>
 #include <FishEngine/Transform.hpp>
 #include <FishEditor/Selection.hpp>
@@ -149,6 +150,8 @@ namespace FishEditor
 
 		FishEngine::PhysicsSystem::GetInstance().Init();
 		FishEngine::PhysicsSystem::GetInstance().Start();
+
+		FishEngine::AnimationSystem::GetInstance().Start();
 	}
 
 

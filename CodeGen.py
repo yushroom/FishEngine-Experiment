@@ -129,7 +129,9 @@ object_schema = '''
 @Motion: Object
 @AnimationClip: Motion
 	m_avatar: Avatar*
-
+@Animation: Behaviour
+	m_clip
+	m_wrapMode
 
 @RenderSettings: Object
   m_ObjectHideFlags: 0

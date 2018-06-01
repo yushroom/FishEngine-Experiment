@@ -4,6 +4,8 @@
 #include "AnimationBlendMode.hpp"
 #include "WrapMode.hpp"
 
+#include <string>
+
 namespace FishEngine
 {
 	class AnimationClip;
@@ -16,7 +18,7 @@ namespace FishEngine
 		AnimationBlendMode blendMode;
 
 		// The clip that is being played by this animation state.
-		std::shared_ptr<AnimationClip> clip;
+		AnimationClip* clip;
 
 		// Enables / disables the animation.
 		bool enabled;

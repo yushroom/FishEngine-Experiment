@@ -19,6 +19,7 @@ using namespace FishEditor;
 #include <FishEngine/Component/BoxCollider.hpp>
 #include <FishEngine/Component/SphereCollider.hpp>
 #include <FishEngine/Component/Rigidbody.hpp>
+#include <FishEngine/Animation/Animation.hpp>
 
 #include <FishEditor/AssetImporter.hpp>
 #include <FishEditor/FBXImporter.hpp>
@@ -211,6 +212,11 @@ void DrawRigidbody(Rigidbody* r)
 	Bool("Is Kinematic", r, &Rigidbody::GetIsKinematic);
 }
 
+void DrawAnimation(Animation* v)
+{
+	DrawComponent(v);
+}
+
 
 /// @brief callable() support for Boost.Python objects.
 bool IsCallable(pybind11::handle object)
@@ -341,6 +347,12 @@ void Dispatch(Component* c)
 	{
 		FishGUI::Group("Rigidbody");
 		DrawRigidbody((Rigidbody*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == Animation::ClassID)
+	{
+		FishGUI::Group("Animation");
+		DrawAnimation((Animation*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == Script::ClassID)

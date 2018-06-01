@@ -21,6 +21,7 @@
 #include <FishEngine/Render/Mesh.hpp>
 
 #include <FishEngine/Animation/Avatar.hpp>
+#include <FishEngine/Animation/Animation.hpp>
 #include <FishEngine/Animation/AnimationClip.hpp>
 
 #include <FishEngine/Render/RenderSettings.hpp>

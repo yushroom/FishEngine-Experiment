@@ -41,7 +41,7 @@ void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 			boneTransformation += m_MatrixPalette[boneIndex[1]] * boneWeight[1];
 			boneTransformation += m_MatrixPalette[boneIndex[2]] * boneWeight[2];
 			boneTransformation += m_MatrixPalette[boneIndex[3]] * boneWeight[3];
-			m_SkinnedVertices[i] = boneTransformation.MultiplyPoint(mesh->m_vertices[i]);
+			m_SkinnedVertices[i] = boneTransformation.MultiplyPoint3x4(mesh->m_vertices[i]);
 		}
 	}
 	

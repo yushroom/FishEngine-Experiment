@@ -39,6 +39,8 @@ namespace FishEngine
 			return CreateEmptyObject<SphereCollider>();
 		else if (classID == Rigidbody::ClassID)
 			return CreateEmptyObject<Rigidbody>();
+		else if (classID == Animation::ClassID)
+			return CreateEmptyObject<Animation>();
 		else if (classID == RenderSettings::ClassID)
 			return CreateEmptyObject<RenderSettings>();
 		return nullptr;

@@ -5,6 +5,7 @@
 #include <FishEngine/System/ScriptSystem.hpp>
 #include <FishEngine/System/InputSystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
+#include <FishEngine/System/AnimationSystem.hpp>
 #include <FishEngine/Render/Material.hpp>
 #include <FishEngine/Scene.hpp>
 
@@ -39,8 +40,11 @@ namespace FishEngine
 
 	void Start()
 	{
-		ScriptSystem::GetInstance().Start();
 		puts("======== Start ========");
+		ScriptSystem::GetInstance().Start();
+
+		//AnimationSystem::GetInstance().Start();
+
 		for (auto o : Object::FindObjectsOfType<GameObject>())
 		{
 			auto go = (GameObject*)o;
@@ -75,6 +79,8 @@ namespace FishEngine
 	{
 //		puts("======== Update ========");
 		ScriptSystem::GetInstance().Update();
+
+		AnimationSystem::GetInstance().Update();
 		
 		auto scene = SceneManager::GetActiveScene();
 		for (auto t : scene->GetRootTransforms())

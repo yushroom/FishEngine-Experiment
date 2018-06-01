@@ -17,6 +17,8 @@
 
 #include <FishEditor/Path.hpp>
 
+#include <FishEngine/Gizmos.hpp>
+
 #include <algorithm>
 
 #ifdef _WIN32
@@ -24,6 +26,9 @@
 #undef far
 #endif
 
+
+#include <FishEngine/Animation/Animation.hpp>
+#include <FishEngine/Gizmos.hpp>
 
 namespace FishEngine
 {
@@ -331,6 +336,8 @@ namespace FishEngine
 		m_AddShadowRT = new RenderTarget();
 		m_AddShadowColorBuffer = ColorBuffer::Create(w, h);
 		m_AddShadowRT->SetColorBufferOnly(m_AddShadowColorBuffer);
+
+		Gizmos::Init();
 	}
 
 
@@ -407,6 +414,25 @@ namespace FishEngine
 		}
 	}
 
+
+	void DrawSkeleton(const std::map<std::string, Transform*> const & skeleton)
+	{
+		glDisable(GL_DEPTH_TEST);
+		for (auto&& p : skeleton)
+		{
+			auto t = p.second;
+			auto parent = t->GetParent();
+			if (parent != nullptr)
+			{
+				Gizmos::SetColor(Color::green);
+				Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
+
+				Gizmos::SetColor(Color::red);
+				Gizmos::DrawWireSphere(t->GetPosition(), 0.02f);
+			}
+		}
+		glEnable(GL_DEPTH_TEST);
+	}
 
 	void RenderSystem::Update()
 	{
@@ -491,12 +517,14 @@ namespace FishEngine
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+		glCullFace(GL_FRONT);
 		for (auto&& ro : m_RenderObjects)
 		{
 			auto& model = ro.gameObject->GetTransform()->GetLocalToWorldMatrix();
 			Pipeline::UpdatePerDrawUniforms(model);
 			Graphics::DrawMesh(ro.mesh, ro.material, -1);
 		}
+		glCullFace(GL_BACK);
 
 		Pipeline::PopRenderTarget();
 
@@ -516,6 +544,7 @@ namespace FishEngine
 		glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		// Skybox
+		//if (false)
 		{
 			Scene* scene = SceneManager::GetActiveScene();
 			Material* mat = scene->GetRenderSettings()->GetSkyboxMaterial();
@@ -532,6 +561,14 @@ namespace FishEngine
 //				glCullFace(GL_BACK);
 			}
 		}
+
+		auto animations = scene->FindComponents<Animation>();
+		for (auto animation : animations)
+		{
+			DrawSkeleton(animation->m_skeleton);
+		}
+
+
 #endif
 
 //		glDisable(GL_CULL_FACE);

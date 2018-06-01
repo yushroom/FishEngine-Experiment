@@ -20,6 +20,8 @@ namespace FishEngine
 		virtual ~Component()
 		{
 		}
+
+		std::string GetName();
 		
 		Transform* GetTransform() const;
 		GameObject* GetGameObject() const { return m_GameObject; }

@@ -5,6 +5,14 @@
 
 namespace FishEngine
 {
+
+	std::string Component::GetName()
+	{
+		if (m_GameObject != nullptr)
+			return m_GameObject->GetName();
+		return "";
+	}
+
 	Transform* Component::GetTransform() const
 	{
 		return m_GameObject->GetTransform();

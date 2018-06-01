@@ -68,8 +68,7 @@ namespace FishEngine
 		//TAnimationCurve<Vector3> m_scaleCurve;
 		std::vector<Vector3Curve> m_positionCurve;
 		std::vector<QuaternionCurve> m_rotationCurves;
-		//Meta(NonSerializable)
-		//std::vector<Vector3Curve> m_eulersCurves;
+		std::vector<Vector3Curve> m_eulersCurves;
 		std::vector<Vector3Curve> m_scaleCurves;
 		Avatar* m_avatar = nullptr;
 	};

@@ -11,6 +11,7 @@
 #include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 
 #include <FishEngine/Animation/Avatar.hpp>
+#include <FishEngine/Animation/Animation.hpp>
 #include <FishEngine/Animation/AnimationClip.hpp>
 #include <FishEngine/Animation/AnimationCurveUtility.hpp>
 
@@ -131,7 +132,7 @@ int FBXToNativeType(const int & value)
 
 inline Vector3 FbxVector4ToVector3WithXFlipped(FbxVector4 const & v)
 {
-	return Vector3(static_cast<float>(-v[0]),
+	return Vector3(static_cast<float>(v[0]),
 				   static_cast<float>(v[1]),
 				   static_cast<float>(v[2]) );
 }
@@ -166,7 +167,7 @@ void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<u
 	
 	mesh->m_boneNames.resize(lClusterCount);
 	
-	float scale = m_FileScale * m_GlobalScale;
+	float scale = this->GetScale();
 	
 	for (int lClusterIndex = 0; lClusterIndex != lClusterCount; ++lClusterIndex)
 	{
@@ -535,8 +536,6 @@ void FishEditor::FBXImporter::ImportSkeleton(fbxsdk::FbxScene* scene)
 			todo.push_back(child);
 		}
 
-		m_boneCount = 0;
-
 		const char* nodeName = node->GetName();
 		auto nodeAttributeCount = node->GetNodeAttributeCount();
 		for (int i = 0; i < nodeAttributeCount; ++i)
@@ -839,17 +838,22 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 	
 	if (hasBoneAnimation)
 	{
-		clip.boneAnimations.push_back(FBXBoneAnimation());
+		clip.boneAnimations.emplace_back();
 		FBXBoneAnimation& boneAnim = clip.boneAnimations.back();
 		boneAnim.node = m_model.m_fbxNodeLookup[node];
 		
 		if (hasCurveValues(translation))
 		{
-			float defaultValues[3];
-			memcpy(defaultValues, &defaultTranslation, sizeof(defaultValues));
-			
-			boneAnim.translation = ImportCurve<Vector3, 3>(translation, defaultValues,
+			boneAnim.translation = ImportCurve<Vector3, 3>(translation, defaultTranslation.m,
 														   clip.start, clip.end);
+
+			// flip
+			//for (auto&& v : boneAnim.translation.m_keyframes)
+			//{
+			//	v.value.x = -v.value.x;
+			//	v.inTangent.x = -v.inTangent.x;
+			//	v.outTangent.x = -v.outTangent.x;
+			//}
 		}
 		//else
 		//{
@@ -862,10 +866,7 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 		
 		if (hasCurveValues(scale))
 		{
-			float defaultValues[3];
-			memcpy(defaultValues, &defaultScale, sizeof(defaultValues));
-			
-			boneAnim.scale = ImportCurve<Vector3, 3>(scale, defaultValues, clip.start, clip.end);
+			boneAnim.scale = ImportCurve<Vector3, 3>(scale, defaultScale.m, clip.start, clip.end);
 		}
 		//else
 		//{
@@ -879,10 +880,19 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 		TAnimationCurve<Vector3> eulerAnimation;
 		if (hasCurveValues(rotation))
 		{
-			float defaultValues[3];
-			memcpy(defaultValues, &defaultRotation, sizeof(defaultValues));
-			
-			eulerAnimation = ImportCurve<Vector3, 3>(rotation, defaultValues, clip.start, clip.end);
+			eulerAnimation = ImportCurve<Vector3, 3>(rotation, defaultRotation.m, clip.start, clip.end);
+
+			// flip
+			//for (auto&& v : eulerAnimation.m_keyframes)
+			//{
+			//	v.value = -v.value;
+			//	v.inTangent = -v.inTangent;
+			//	v.outTangent = -v.outTangent;
+
+			//	v.value.x = -v.value.x;
+			//	v.inTangent.x = -v.inTangent.x;
+			//	v.outTangent.x = -v.outTangent.x;
+			//}
 		}
 		//else
 		//{
@@ -892,6 +902,7 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 		//	keyframes[0].outTangent = Vector3::zero;
 		//	eulerAnimation = TAnimationCurve<Vector3>(keyframes);
 		//}
+		boneAnim.eulers = eulerAnimation;
 		
 		//if(importOptions.reduceKeyframes)
 		//{
@@ -900,10 +911,9 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 		//	eulerAnimation = reduceKeyframes(eulerAnimation);
 		//}
 		
-		boneAnim.translation = AnimationCurveUtility::ScaleCurve(boneAnim.translation, m_FileScale * m_GlobalScale);
+		boneAnim.translation = AnimationCurveUtility::ScaleCurve(boneAnim.translation, this->GetScale());
 		//boneAnim.eulers = eulerAnimation;
 		boneAnim.rotation = AnimationCurveUtility::EulerToQuaternionCurve(eulerAnimation, rotationOrder);
-		
 	}
 	
 	int childCount = node->GetChildCount();
@@ -949,8 +959,8 @@ AnimationClip* FishEditor::FBXImporter::ConvertAnimationClip(const FBXAnimationC
 			result->m_positionCurve.emplace_back(Vector3Curve{ path, animation.translation });
 		if (animation.rotation.keyframeCount() > 0)
 			result->m_rotationCurves.emplace_back(QuaternionCurve{ path, animation.rotation });
-//		if (animation.eulers.keyframeCount() > 0)
-//			result->m_eulersCurves.emplace_back(Vector3Curve{ path, animation.eulers});
+		if (animation.eulers.keyframeCount() > 0)
+			result->m_eulersCurves.emplace_back(Vector3Curve{ path, animation.eulers});
 		if (animation.scale.keyframeCount() > 0)
 			result->m_scaleCurves.emplace_back(Vector3Curve{ path, animation.scale });
 	}
@@ -982,8 +992,8 @@ void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
 		}
 		else
 		{
+			LogError(Format("multiple animation clip in model: {}", this->GetFullPath()));
 			abort();
-//			LogError(Format("multiple animation clip in model: %1%", this->m_assetPath.string()));
 		}
 
 		for (auto clip : m_model.m_clips)
@@ -1049,13 +1059,13 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 	float scale = GetScale();
 
 	// note: x is flipped
-	go->GetTransform()->SetLocalPosition(-t[0] * scale, t[1] * scale, t[2] * scale);
+	go->GetTransform()->SetLocalPosition(t[0] * scale, t[1] * scale, t[2] * scale);
 	go->GetTransform()->SetLocalScale(s[0], s[1], s[2]);
 
 	EFbxRotationOrder rotationOrder;
 	pNode->GetRotationOrder(FbxNode::eSourcePivot, rotationOrder);
 	RotationOrder order = FBXToNativeType(rotationOrder);
-	Quaternion rot = Quaternion::Euler(order, r[0], -r[1], -r[2]);
+	Quaternion rot = Quaternion::Euler(order, r[0], r[1], r[2]);
 	go->GetTransform()->SetLocalRotation(rot);
 	m_model.m_fbxNodeLookup[pNode] = go->GetTransform();
 
@@ -1218,6 +1228,7 @@ void FishEditor::FBXImporter::Import()
 	
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
+
 	BakeTransforms(lScene);
 
 	ImportSkeleton(lScene);
@@ -1278,6 +1289,8 @@ void FishEditor::FBXImporter::Import()
 		}
 	}
 	
+	assert(MaxBoneForEachVertex == 4);
+
 	for (auto & mesh : m_model.m_meshes)
 	{
 		if (mesh->m_skinned)
@@ -1294,22 +1307,33 @@ void FishEditor::FBXImporter::Import()
 			{
 				if (bw.weight[0] > 0)
 				{
-					float boneWeightScale = 0.0f;
-					for (float w : bw.weight)
-					{
-						boneWeightScale += w;
-					}
-					if ( Mathf::Abs(boneWeightScale - 1.0f) > 1E-5f)
+					float boneWeightScale = bw.weight[0] + bw.weight[1] + bw.weight[2] + bw.weight[3];
+					//for (float w : bw.weight)
+					//{
+					//	boneWeightScale += w;
+					//}
+					if (Mathf::Abs(boneWeightScale - 1.0f) > 1E-5f)
 					{
 						boneWeightScale = 1.0f / boneWeightScale;
-						for (float & w : bw.weight)
-						{
-							w *= boneWeightScale;
-						}
+						//for (float & w : bw.weight)
+						//{
+						//	w *= boneWeightScale;
+						//}
+						bw.weight[0] *= boneWeightScale;
+						bw.weight[1] *= boneWeightScale;
+						bw.weight[2] *= boneWeightScale;
+						bw.weight[3] *= boneWeightScale;
 					}
 				}
 			}
 		}
+	}
+
+	if (m_model.m_animationClips.size() > 0)
+	{
+		auto animation = new Animation;
+		root->AddComponent(animation);
+		animation->m_clip = m_model.m_animationClips.front();
 	}
 
 	int count = 0;

@@ -13,7 +13,10 @@ namespace FishEngine
 	public:
 		DeclareObject(Animation, 111);
 
-		Animation() = default;
+		Animation() : Behaviour(Animation::ClassID, Animation::ClassName)
+		{
+
+		}
 
 		void Start();
 		void Update(float deltaTime);
