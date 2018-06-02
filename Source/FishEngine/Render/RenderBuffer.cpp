@@ -37,7 +37,7 @@ void ColorBuffer::Resize(const int newWidth, const int newHeight)
 {
 	if (newWidth == m_width && newHeight == m_height)
 		return;
-	LogInfo("ColorBuffer::Resize");
+//	LogInfo("ColorBuffer::Resize");
 	m_width = newWidth;
 	m_height = newHeight;
 	GLenum internal_format, external_format, pixel_type;
@@ -74,7 +74,7 @@ void DepthBuffer::Resize(const int newWidth, const int newHeight)
 {
 	if (newWidth == m_width && newHeight == m_height)
 		return;
-	LogInfo("DepthBuffer::Resize");
+//	LogInfo("DepthBuffer::Resize");
 	m_width = newWidth;
 	m_height = newHeight;
 	glBindTexture(GL_TEXTURE_2D, m_GLNativeTexture);
@@ -157,7 +157,7 @@ LayeredDepthBuffer* LayeredDepthBuffer::Create(const int width, const int height
 
 void FishEngine::LayeredDepthBuffer::Resize(const int newWidth, const int newHeight)
 {
-	LogInfo("LayeredDepthBuffer::Resize");
+//	LogInfo("LayeredDepthBuffer::Resize");
 	if (newWidth == m_width && newHeight == m_height)
 		return;
 	m_width = newWidth;

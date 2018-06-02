@@ -79,7 +79,7 @@ namespace FishEngine
 		std::vector<uint32_t>	m_subMeshIndexOffset;	// index start
 		
 		// The bind poses. The bind pose at each index refers to the bone with the same index.
-		// The bind pose is the inverse of the transformation matrix of the bone, when the bone is in the bind pose.
+		// The bind pose is the inverse of the transformation matrix(worldToLocalMatrix) of the bone, when the bone is in the bind pose.
 		std::vector<Matrix4x4>  m_bindposes;
 		
 		std::vector<std::string> m_boneNames;	// same size with m_binposes;

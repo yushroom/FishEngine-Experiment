@@ -5,8 +5,9 @@
 
 void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 {
-	m_MatrixPalette.resize(m_SharedMesh->GetBoneCount());
-	//RecursivelyGetTransformation(m_rootBone.lock(), m_avatar->m_boneToIndex, m_matrixPalette);
+	if (m_MatrixPalette.size() != m_SharedMesh->GetBoneCount())
+		m_MatrixPalette.resize(m_SharedMesh->GetBoneCount());
+	
 	const auto& worldToLocal = GetGameObject()->GetTransform()->GetWorldToLocalMatrix();
 	const auto& bindposes = m_SharedMesh->m_bindposes;
 	for (uint32_t i = 0; i < m_MatrixPalette.size(); ++i)

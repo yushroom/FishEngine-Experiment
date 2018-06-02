@@ -119,6 +119,9 @@ namespace FishEditor
 
 	protected:
 		friend class AssetDatabase;
+		friend class AssetImporter;
+		
+		std::map<uint32_t, std::string> m_FileIDToRecycleName;
 
 //		std::map<int64_t, FishEngine::Object*> m_FileIDToObject;
 

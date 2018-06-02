@@ -218,8 +218,10 @@ namespace FishEngine
 
 		void SetLocalToWorldMatrix(const Matrix4x4& localToWorld)
 		{
-			m_LocalToWorldMatrix = localToWorld;
-			Matrix4x4::Decompose(localToWorld, &m_LocalPosition, &m_LocalRotation, &m_LocalScale);
+			auto mat = localToWorld;
+			if (m_Father != nullptr)
+				mat = m_Father->GetWorldToLocalMatrix() * mat;	// local to parent
+			Matrix4x4::Decompose(mat, &m_LocalPosition, &m_LocalRotation, &m_LocalScale);
 			MakeDirty();
 		}
 

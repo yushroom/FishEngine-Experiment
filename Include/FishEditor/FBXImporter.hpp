@@ -9,6 +9,7 @@
 #include <FishEngine/Animation/AnimationCurve.hpp>
 #include <string>
 #include <map>
+#include <vector>
 #include <FishEngine/Debug.hpp>
 #include <FishEngine/Prefab.hpp>
 
@@ -35,6 +36,12 @@ namespace fbxsdk
 
 namespace FishEditor
 {
+	struct FE_FBXMesh
+	{
+		std::string name;
+		std::vector<fbxsdk::FbxNode*> bones;
+	};
+	
 	struct FBXBoneAnimation
 	{
 		//FBXImportNode * node;
@@ -60,6 +67,8 @@ namespace FishEditor
 	{
 		std::string 					name;
 		FishEngine::Prefab* 			m_prefab = nullptr;
+
+		std::vector<fbxsdk::FbxNode*>	m_fbxBones;
 //		float globalScale;
 //		bool useFileScale;
 		FishEngine::GameObject* 		m_rootGameObject = nullptr;
@@ -70,12 +79,13 @@ namespace FishEditor
 		std::unordered_map<fbxsdk::FbxMesh*, size_t>
 										m_fbxMeshLookup; // fbxmesh -> index in m_meshes
 
-		std::map<FishEngine::Mesh*, std::vector<uint32_t>>
-										m_boneIndicesForEachMesh;
+//		std::map<FishEngine::Mesh*, std::vector<uint32_t>>
+//										m_boneIndicesForEachMesh;
 		std::vector<FishEngine::Transform*>
 										m_bones;
-		std::vector<FishEngine::Matrix4x4>
-										m_bindposes;
+		
+		// bindpose matrix is w2l matrix of a bone in T pose
+		std::map<FishEngine::Transform*, FishEngine::Matrix4x4> m_InvBindPoses;	// l2w matrix for each bone in T pose;
 		std::vector<FishEngine::SkinnedMeshRenderer*>
 										m_skinnedMeshRenderers;
 
@@ -150,7 +160,7 @@ namespace FishEditor
 
 		void ImportSkeleton(fbxsdk::FbxScene* scene);
 
-		void UpdateBones(FishEngine::Transform* node);
+		void ApplyBindPose(FishEngine::Transform* node);
 
 		void ImportAnimations(fbxsdk::FbxScene* scene);
 		void ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, fbxsdk::FbxNode* node, FBXAnimationClip& clip);

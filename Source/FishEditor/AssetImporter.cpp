@@ -90,6 +90,16 @@ namespace FishEditor
 				bool useFileScale = meshes["useFileScale"].as<int>() == 1;
 				fbximporter->SetGlobalScale(globalScale);
 				fbximporter->SetUseFileScale(useFileScale);
+				
+				auto& m = fbximporter->m_FileIDToRecycleName;
+				auto fileIDToRecycleName = node["fileIDToRecycleName"];
+				for (auto&& p : fileIDToRecycleName)
+				{
+					uint32_t fileID = p.first.as<uint32_t>();
+					std::string name = p.second.as<std::string>();
+					m[fileID] = name;
+				}
+				
 				importer = fbximporter;
 			}
 			else if (ext == ".prefab")
