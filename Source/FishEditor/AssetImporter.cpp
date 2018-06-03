@@ -102,7 +102,7 @@ namespace FishEditor
 				
 				importer = fbximporter;
 			}
-			else if (ext == ".prefab")
+			else if (ext == ".prefab" || ext == ".mat")
 			{
 //				importer = new AssetImporter();
 				auto nativeImporter = new NativeFormatImporter();

@@ -28,7 +28,14 @@ namespace FishEditor
 
 		Object* GetObjectByFileID(int64_t fileID)
 		{
-			return m_FileIDToObject[fileID];
+			auto it = m_FileIDToObject.find(fileID);
+			if (it == m_FileIDToObject.end())
+			{
+				// fileID not found
+				abort();
+			}
+			return it->second;
+//			return m_FileIDToObject[fileID];
 		}
 
 		const std::map<int64_t, Object*>& GetFileIDToObject() const

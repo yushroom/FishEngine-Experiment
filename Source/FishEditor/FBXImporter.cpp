@@ -1282,6 +1282,7 @@ void FishEditor::FBXImporter::Import()
 	converter.Triangulate(lScene, true);
 	
 	FbxAxisSystem fileAxisSystem = lScene->GetGlobalSettings().GetAxisSystem();
+	assert(fileAxisSystem == FbxAxisSystem::OpenGL);
 //	FbxAxisSystem coordSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eLeftHanded);
 //	if (fileCoordSystem != coordSystem)
 //		coordSystem.ConvertScene(lScene);

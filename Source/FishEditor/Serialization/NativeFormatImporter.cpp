@@ -1,6 +1,9 @@
 #include <FishEditor/Serialization/NativeFormatImporter.hpp>
 #include <FishEditor/Serialization/YAMLArchive.hpp>
 #include <FishEditor/Path.hpp>
+#include <FishEngine/Render/Material.hpp>
+
+#include <boost/algorithm/string.hpp>
 
 using namespace FishEngine;
 
@@ -31,13 +34,32 @@ namespace FishEditor
 	{
 		auto path = GetFullPath();
 		auto meta = ImportMeta(path + ".meta");
+		
+		{
+			auto p = fs::path(path);
+			auto ext = boost::to_lower_copy(p.extension().string());
+			if (ext == ".mat")
+			{
+				m_MainAsset = Material::GetDefaultMaterial();
+				m_FileIDToObject[2100000] = m_MainAsset;
+				return;
+			}
+			else if (ext != ".prefab")
+			{
+				abort();
+			}
+		}
 
 		YAMLInputArchive archive;
 
 		auto fullpath = this->GetFullPath();
 		auto str = ReadFileAsString(fullpath);
 		auto objects = archive.LoadAllFromString(str);
-		auto mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
+		int64_t mainObjectFileID = Prefab::ClassID * 100000;
+		try {
+			mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
+		} catch(const std::exception& e) {
+		}
 		Object* mainObject = nullptr;
 		if (mainObjectFileID == 0)		// fileFormatVersion == 2
 			mainObject = objects[0];
