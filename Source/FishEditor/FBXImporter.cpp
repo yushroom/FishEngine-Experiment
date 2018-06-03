@@ -339,6 +339,7 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 		auto & p = controlPoints[controlPointIndex];
 		float scale = GetScale();
 		auto pp = FbxVector4ToVector3WithXFlipped(p);
+		pp.x = -pp.x;
 		rawMesh.m_vertexPositions.emplace_back(pp * scale);
 	}
 	
@@ -1093,14 +1094,14 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 
 	float scale = GetScale();
 	
-	go->GetTransform()->SetLocalPosition(t[0] * scale, t[1] * scale, t[2] * scale);	// note: x is flipped
+	go->GetTransform()->SetLocalPosition(-t[0] * scale, t[1] * scale, t[2] * scale);	// note: x is flipped
 	go->GetTransform()->SetLocalScale(s[0], s[1], s[2]);
 
 	// set rotation
 	EFbxRotationOrder rotationOrder;
 	pNode->GetRotationOrder(FbxNode::eSourcePivot, rotationOrder);
 	RotationOrder order = FBXToNativeType(rotationOrder);
-	Quaternion rot = Quaternion::Euler(order, r[0], r[1], r[2]);
+	Quaternion rot = Quaternion::Euler(order, r[0], -r[1], -r[2]);
 	go->GetTransform()->SetLocalRotation(rot);
 	
 	m_model.m_fbxNodeLookup[pNode] = go->GetTransform();
@@ -1318,7 +1319,7 @@ void FishEditor::FBXImporter::Import()
 		lRootNode = lRootNode->GetChild(0);
 	}
 	
-	FbxAxisSystem::DirectX.ConvertChildren(lRootNode, fileAxisSystem);
+	//FbxAxisSystem::DirectX.ConvertChildren(lRootNode, fileAxisSystem);
 	
 	m_model.m_rootGameObject = ParseNode(lRootNode);
 	

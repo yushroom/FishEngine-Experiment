@@ -63,7 +63,14 @@ namespace FishEditor
 		virtual void Deserialize(float & t) override			{ t = CurrentNode().as<float>();}
 		virtual void Deserialize(double & t) override			{ t = CurrentNode().as<double>();}
 		virtual void Deserialize(bool & t) override				{ t = (CurrentNode().as<int>() == 1);}
-		virtual void Deserialize(std::string & t) override	{t = CurrentNode().as<std::string>();}
+		virtual void Deserialize(std::string & t) override	{
+			try {
+				t = CurrentNode().as<std::string>();
+			}
+			catch (const std::exception& e) {
+				t = "";
+			}
+		}
 
 //		virtual void Get(std::string& t) override
 //		{

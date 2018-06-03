@@ -448,7 +448,20 @@ namespace FishEngine
 
 		auto scene = SceneManager::GetActiveScene();
 		auto camera = scene->FindComponent<Camera>();
-		auto light = scene->FindComponent<Light>();
+		//auto light = scene->FindComponent<Light>();
+
+		auto lights = scene->FindComponents<Light>();
+		Light* light = nullptr;
+		if (!lights.empty())
+		{
+			light = lights.front();
+			for (auto l : lights) {
+				if (l->GetName() == "Directional Light") {
+					light = l;
+					break;
+				}
+			}
+		}
 
 
 		if (camera == nullptr || light == nullptr)

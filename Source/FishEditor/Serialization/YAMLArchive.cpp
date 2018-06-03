@@ -107,6 +107,51 @@ namespace FishEditor
 
 		std::vector<Object*> objects(m_nodes.size());
 
+		// TODO: 
+		// prefab->InstantiateWithModification(modification) may ref objects in this file, which have not been created
+
+
+		// step 0: create all objects (except prefabs and ref to prefab)
+		for (int i = 0; i < m_nodes.size(); ++i)
+		{
+			auto&& node = m_nodes[i].begin()->second;
+			int classID = classID_fileID[i].first;
+			int64_t fileID = classID_fileID[i].second;
+
+			Object* obj = nullptr;
+
+			if (classID != Prefab::ClassID)
+			{
+				bool done = false;
+				if (YAMLNodeHasKey(node, "m_PrefabParentObject"))
+				{
+					auto id1 = node["m_PrefabParentObject"]["fileID"].as<int64_t>();
+					auto id2 = node["m_PrefabInternal"]["fileID"].as<int64_t>();
+					if (id1 != 0 && id2 != 0)
+					{
+						//auto prefab = fileIDToPrefab[id2];
+						//assert(prefab != nullptr);
+						//obj = prefab->GetObjectByFileID(id1);
+						done = true;
+					}
+				}
+				if (!done)
+					obj = CreateEmptyObjectByClassID(classID);
+			}
+			else
+			{
+				obj = objects[i];
+			}
+
+			if (obj != nullptr)
+			{
+				objects[i] = obj;
+				m_FileIDToObject[fileID] = obj;
+				obj->SetLocalIdentifierInFile(fileID);
+			}
+		}
+
+
 		// step 1: instantiate prefabs
 		std::map<int64_t, Prefab*> fileIDToPrefab;
 		for (int i = 0; i < m_nodes.size(); ++i)
@@ -150,7 +195,7 @@ namespace FishEditor
 			}
 		}
 
-		// step 2: clone all objects (except ref to prefab)
+		// step 2: ref to prefab
 		for (int i = 0; i < m_nodes.size(); ++i)
 		{
 			auto&& node = m_nodes[i].begin()->second;
@@ -161,7 +206,7 @@ namespace FishEditor
 			
 			if (classID != Prefab::ClassID)
 			{
-				bool done = false;
+				//bool done = false;
 				if (YAMLNodeHasKey(node, "m_PrefabParentObject"))
 				{
 					auto id1 = node["m_PrefabParentObject"]["fileID"].as<int64_t>();
@@ -171,21 +216,23 @@ namespace FishEditor
 						auto prefab = fileIDToPrefab[id2];
 						assert(prefab != nullptr);
 						obj = prefab->GetObjectByFileID(id1);
-						done = true;
+						//done = true;
 					}
 				}
-				if (!done)
-					obj = CreateEmptyObjectByClassID(classID);
+				//if (!done)
+				//	obj = CreateEmptyObjectByClassID(classID);
 			}
 			else
 			{
 				obj = objects[i];
 			}
 
-			objects[i] = obj;
-			m_FileIDToObject[fileID] = obj;
 			if (obj != nullptr)
+			{
+				objects[i] = obj;
+				m_FileIDToObject[fileID] = obj;
 				obj->SetLocalIdentifierInFile(fileID);
+			}
 		}
 
 		// add component to gameObject
@@ -287,8 +334,10 @@ namespace FishEditor
 				auto it = this->m_FileIDToObject.find(fileID);
 				if (it != this->m_FileIDToObject.end())
 					return it->second;
-				else
-					abort();
+				else {
+					//abort();
+					return nullptr;
+				}
 			}
 		}
 

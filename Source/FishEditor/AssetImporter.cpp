@@ -55,6 +55,8 @@ namespace FishEditor
 
 	AssetImporter* AssetImporter::GetAtPath(std::string path)
 	{
+		if (path == "")
+			return nullptr;
 		path = AssetImporter::CorrectAssetPath(path);
 		auto guid = AssetDatabase::AssetPathToGUID(path);
 		auto it = s_GUIDToImporter.find(guid);
@@ -139,6 +141,8 @@ namespace FishEditor
 		if (it == s_GUIDToImporter.end())
 		{
 			auto path = AssetDatabase::GUIDToAssetPath(guid);
+			if (path == "")
+				return nullptr;
 			auto importer = AssetImporter::GetAtPath(path);
 			s_GUIDToImporter[guid] = importer;
 			return importer;

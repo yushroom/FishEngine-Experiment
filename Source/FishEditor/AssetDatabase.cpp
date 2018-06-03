@@ -35,7 +35,7 @@ namespace FishEditor
 		auto it = s_PathToGUID.find(path);
 		if (it == s_PathToGUID.end())
 		{
-			abort();
+			//abort();
 			return "";
 		}
 		return it->second;
@@ -46,7 +46,7 @@ namespace FishEditor
 		auto it = s_GUIDToPath.find(guid);
 		if (it == s_GUIDToPath.end())
 		{
-			abort();
+			//abort();
 			return "";
 		}
 		return it->second;
@@ -191,7 +191,12 @@ namespace FishEditor
 //			auto obj = LoadMainAssetAtPath(path);
 			importer = AssetImporter::GetAtPath(path);
 		}
-		assert(importer != nullptr);
+		//assert(importer != nullptr);
+		if (importer == nullptr)
+		{
+			LogWarning(Format("Asset[guid: {}] not found.\n", guid));
+			return nullptr;
+		}
 		auto obj = importer->GetObjectByFileID(fileID);
 		return obj;
 //		auto prefab = importer->GetMainAsset()->As<Prefab>();

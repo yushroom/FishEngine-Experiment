@@ -50,7 +50,11 @@ namespace FishEngine
 	void Scene::RemoveRootTransform(Transform* t)
 	{
 		auto pos = std::find(m_RootTransforms.begin(), m_RootTransforms.end(), t);
-		assert(pos != m_RootTransforms.end());
+		//assert(pos != m_RootTransforms.end());
+		if (pos == m_RootTransforms.end()) {
+			LogWarning("transform not found");
+			return;
+		}
 		m_RootTransforms.erase(pos);
 	}
 	
