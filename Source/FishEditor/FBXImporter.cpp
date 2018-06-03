@@ -185,6 +185,9 @@ void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<u
 	
 	float scale = this->GetScale();
 	
+	auto T = Matrix4x4::Scale(-1, 1, 1);
+	auto T_inv = T.inverse();
+	
 	for (int lClusterIndex = 0; lClusterIndex != lClusterCount; ++lClusterIndex)
 	{
 		FbxCluster* lCluster= lSkinDeformer->GetCluster(lClusterIndex);
@@ -220,6 +223,7 @@ void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<u
 		mat.m[0][3] *= scale;
 		mat.m[1][3] *= scale;
 		mat.m[2][3] *= scale;
+		mat = T * mat * T_inv;
 		mesh->m_bindposes[lClusterIndex] = mat.inverse();	// w2l
 		
 		
@@ -602,6 +606,7 @@ void FishEditor::FBXImporter::ApplyBindPose(FishEngine::Transform* node)
 		node->SetLocalToWorldMatrix(l2w);
 		
 //		auto parent = node->GetParent();
+//		auto& mat = l2w;
 //		if (parent != nullptr)
 //		{
 //			mat = parent->GetWorldToLocalMatrix() * mat;
@@ -876,12 +881,12 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 														   clip.start, clip.end);
 
 			// flip
-			//for (auto&& v : boneAnim.translation.m_keyframes)
-			//{
-			//	v.value.x = -v.value.x;
-			//	v.inTangent.x = -v.inTangent.x;
-			//	v.outTangent.x = -v.outTangent.x;
-			//}
+			for (auto&& v : boneAnim.translation.m_keyframes)
+			{
+				v.value.x = -v.value.x;
+				v.inTangent.x = -v.inTangent.x;
+				v.outTangent.x = -v.outTangent.x;
+			}
 		}
 		//else
 		//{
@@ -911,16 +916,16 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 			eulerAnimation = ImportCurve<Vector3, 3>(rotation, defaultRotation.m, clip.start, clip.end);
 
 			// flip
-			//for (auto&& v : eulerAnimation.m_keyframes)
-			//{
-			//	v.value = -v.value;
-			//	v.inTangent = -v.inTangent;
-			//	v.outTangent = -v.outTangent;
+			for (auto&& v : eulerAnimation.m_keyframes)
+			{
+				v.value = -v.value;
+				v.inTangent = -v.inTangent;
+				v.outTangent = -v.outTangent;
 
-			//	v.value.x = -v.value.x;
-			//	v.inTangent.x = -v.inTangent.x;
-			//	v.outTangent.x = -v.outTangent.x;
-			//}
+				v.value.x = -v.value.x;
+				v.inTangent.x = -v.inTangent.x;
+				v.outTangent.x = -v.outTangent.x;
+			}
 		}
 		//else
 		//{
@@ -1181,11 +1186,27 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 		comp->SetPrefabInternal(m_model.m_prefab);
 	}
 	
+	
+	// sort by name
+	std::vector<fbxsdk::FbxNode*> children;
+	children.reserve(pNode->GetChildCount());
 	for (int j = 0; j < pNode->GetChildCount(); j++)
 	{
-		auto child = ParseNode(pNode->GetChild(j));
-		child->GetTransform()->SetParent(go->GetTransform(), false);
+		auto child = pNode->GetChild(j);
+		children.push_back(child);
 	}
+	std::sort(children.begin(), children.end(), [](fbxsdk::FbxNode* a, fbxsdk::FbxNode* b){
+		std::string name1 = a->GetName();
+		std::string name2 = b->GetName();
+		return name1 < name2;
+	});
+	
+	for (auto child : children)
+	{
+		auto c = ParseNode(child);
+		c->GetTransform()->SetParent(go->GetTransform(), false);
+	}
+	
 	return go;
 }
 
@@ -1228,7 +1249,7 @@ void FishEditor::FBXImporter::Import()
 	lImporter->Destroy();
 	
 //	//FbxAxisSystem::MayaYUp.ConvertScene(lScene);
-	//FbxAxisSystem::DirectX.ConvertScene(lScene); // wrong!
+//	FbxAxisSystem::DirectX.ConvertScene(lScene); // wrong!
 //	// FbxSystemUnit::m.ConvertScene(lScene);
 //	// http://help.autodesk.com/view/FBX/2017/ENU/?guid=__files_GUID_CC93340E_C4A1_49EE_B048_E898F856CFBF_htm
 //	// do NOT use FbxSystemUnit::ConvertScene(lScene), which just simply set transform.scale of root nodes.
@@ -1259,11 +1280,17 @@ void FishEditor::FBXImporter::Import()
 	
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
+	
+	FbxAxisSystem fileAxisSystem = lScene->GetGlobalSettings().GetAxisSystem();
+//	FbxAxisSystem coordSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eLeftHanded);
+//	if (fileCoordSystem != coordSystem)
+//		coordSystem.ConvertScene(lScene);
 
 	BakeTransforms(lScene);
 
 	m_boneCount = 0;
 	ImportSkeleton(lScene);
+
 
 //	int geometryCount = lScene->GetGeometryCount();
 //	for (int i = 0; i < geometryCount; ++i) {
@@ -1289,6 +1316,9 @@ void FishEditor::FBXImporter::Import()
 	{
 		lRootNode = lRootNode->GetChild(0);
 	}
+	
+	FbxAxisSystem::DirectX.ConvertChildren(lRootNode, fileAxisSystem);
+	
 	m_model.m_rootGameObject = ParseNode(lRootNode);
 	
 	for (auto r : m_model.m_skinnedMeshRenderers)
@@ -1323,6 +1353,8 @@ void FishEditor::FBXImporter::Import()
 		assert(pose->IsBindPose());
 		int count = pose->GetCount();
 		float scale = this->GetScale();
+		auto T = Matrix4x4::Scale(-1, 1, 1);
+		auto T_inv = T.inverse();
 		for (int i = 0; i < count; ++i)
 		{
 			auto node = pose->GetNode(i);
@@ -1331,6 +1363,7 @@ void FishEditor::FBXImporter::Import()
 			mat[0][3] *= scale;
 			mat[1][3] *= scale;
 			mat[2][3] *= scale;
+			mat = T * mat * T_inv;
 			m_model.m_InvBindPoses[m_model.m_fbxNodeLookup[node]] = mat;
 		}
 		ApplyBindPose(m_model.m_rootGameObject->GetTransform());
@@ -1417,6 +1450,8 @@ void FishEditor::FBXImporter::Import()
 			m_Assets[classID][name] = go;
 		}
 	}
+	
+	root->SetName(fileName);
 
 	for (auto mesh : m_model.m_meshes)
 	{

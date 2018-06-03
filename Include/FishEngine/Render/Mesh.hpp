@@ -132,6 +132,6 @@ namespace FishEngine
 		void GenerateBuffer();
 		void BindBuffer();
 
-		void UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertices);
+		void UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertexPosition, const std::vector<Vector3>& skinnedVertexNormal);
 	};
 }

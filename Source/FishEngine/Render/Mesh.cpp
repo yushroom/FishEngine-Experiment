@@ -331,7 +331,7 @@ namespace FishEngine
 
 		glGenBuffers(1, &m_normalVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
-		glBufferData(GL_ARRAY_BUFFER, m_normals.size() * 3 * 4, m_normals.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, m_normals.size() * 3 * 4, m_normals.data(), drawType);
 
 		glGenBuffers(1, &m_uvVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, m_uvVBO);
@@ -430,19 +430,23 @@ namespace FishEngine
 		m_ScreenAlignedQuad = new Mesh(std::move(p), std::move(n), std::move(uv), std::move(t), std::move(index));
 	}
 
-	void Mesh::UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertices)
+
+	void Mesh::UpdateCPUSkinneing(const std::vector<Vector3>& skinnedVertexPosition, const std::vector<Vector3>& skinnedVertexNormal)
 	{
 		if (!m_uploaded)
 		{
 			UploadMeshData();
 		}
 		
-		assert(skinnedVertices.size() == m_vertices.size());
+		assert(skinnedVertexPosition.size() == m_vertexCount);
+		assert(skinnedVertexNormal.size() == m_vertexCount);
 		assert(m_skinned);
 		glCheckError();
 		glBindBuffer(GL_ARRAY_BUFFER, m_positionVBO);
+		glBufferData(GL_ARRAY_BUFFER, skinnedVertexPosition.size() * 3 * 4, skinnedVertexPosition.data(), GL_DYNAMIC_DRAW);
 		glCheckError();
-		glBufferData(GL_ARRAY_BUFFER, skinnedVertices.size() * 3 * 4, skinnedVertices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, m_normalVBO);
+		glBufferData(GL_ARRAY_BUFFER, skinnedVertexNormal.size() * 3 * 4, skinnedVertexNormal.data(), GL_DYNAMIC_DRAW);
 		glCheckError();
 	}
 }

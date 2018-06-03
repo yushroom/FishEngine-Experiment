@@ -51,6 +51,7 @@ namespace FishEngine
 		std::vector<Transform*> m_Bones;
 
 		mutable std::vector<Matrix4x4> m_MatrixPalette;
-		mutable std::vector<Vector3> m_SkinnedVertices;
+		mutable std::vector<Vector3> m_SkinnedVertexPosition;
+		mutable std::vector<Vector3> m_SkinnedVertexNormal;
 	};
 }

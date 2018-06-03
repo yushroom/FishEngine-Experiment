@@ -99,7 +99,7 @@ void Int(const char* label, T* o, Getter getter)
 
 void DrawObject(Object* o)
 {
-//	Int("Instance ID", o, &Object::GetInstanceID);
+	Int("Instance ID", o, &Object::GetInstanceID);
 //	Int("Local Identifier In File", o, &Object::GetLocalIdentifierInFile);
 }
 
@@ -119,6 +119,11 @@ void DrawTransform(Transform* value)
 	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
 	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
 	Float3("Scale", value, &Transform::GetLocalScale, &Transform::SetLocalScale);
+	
+	auto lea = value->GetLocalRotation();
+	FishGUI::Float4("LocalRotation", lea.x, lea.y, lea.z, lea.w);
+	
+	Float3("WorldPosition", value, &Transform::GetPosition);
 	//auto m = value->GetLocalToWorldMatrix();
 	//for (int row = 0; row < 4; ++ row)
 	//{

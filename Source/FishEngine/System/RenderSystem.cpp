@@ -517,14 +517,13 @@ namespace FishEngine
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		glCullFace(GL_FRONT);
 		for (auto&& ro : m_RenderObjects)
 		{
 			auto& model = ro.gameObject->GetTransform()->GetLocalToWorldMatrix();
 			Pipeline::UpdatePerDrawUniforms(model);
 			Graphics::DrawMesh(ro.mesh, ro.material, -1);
 		}
-		glCullFace(GL_BACK);
+
 
 		Pipeline::PopRenderTarget();
 
