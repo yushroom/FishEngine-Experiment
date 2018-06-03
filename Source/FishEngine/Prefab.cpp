@@ -70,8 +70,14 @@ namespace FishEngine
 		{
 			auto fileID = p.first;
 			auto origin = p.second;
+			if (origin == nullptr)
+				continue;
 			auto cloned_ = memo[origin];
-			if (cloned_->Is<GameObject>())
+			if (cloned_ == nullptr)
+			{
+				abort();
+			}
+			else if (cloned_->Is<GameObject>())
 			{
 				cloned_->As<GameObject>()->SetPrefabParentObject(origin->As<GameObject>());
 			}
@@ -96,6 +102,9 @@ namespace FishEngine
 			cloned->m_Modification.m_Modifications[i].target = target;
 		}
 		assert(modification.m_RemovedComponents.empty());
+
+		cloned->m_ParentPrefab = this;
+		cloned->m_IsPrefabParent = false;
 		return cloned;
 	}
 }

@@ -8,6 +8,7 @@
 namespace FishEditor
 {
 	class FBXImporter;
+	class YAMLInputArchive;
 	class NativeFormatImporter;
 }
 
@@ -75,6 +76,7 @@ namespace FishEngine
 	protected:
 		friend class FishEditor::FBXImporter;
 		friend class FishEditor::NativeFormatImporter;
+		friend class FishEditor::YAMLInputArchive;
 		PrefabModification 			m_Modification;
 		Prefab *					m_ParentPrefab = nullptr;
 		GameObject *				m_RootGameObject = nullptr;

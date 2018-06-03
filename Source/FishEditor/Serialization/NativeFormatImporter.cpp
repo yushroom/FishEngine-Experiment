@@ -55,5 +55,6 @@ namespace FishEditor
 			//}
 			prefab->m_FileIDToObject = archive.GetFileIDToObject();
 		}
+		this->m_FileIDToObject = archive.GetFileIDToObject();
 	}
 }

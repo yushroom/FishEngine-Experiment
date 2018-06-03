@@ -122,8 +122,10 @@ namespace FishEditor
 
 				if (parentFileID == 0)	// this prefab is a definition
 				{
-//					obj = CreateEmptyObject<Prefab>();
-					obj = nullptr;
+					auto prefab = CreateEmptyObject<Prefab>();
+					obj = prefab;
+					fileIDToPrefab[fileID] = prefab;
+					//obj = nullptr;
 				}
 				else	// this prefab is a ref/instance
 				{
@@ -241,6 +243,28 @@ namespace FishEditor
 				PopNode();
 			}
 		}
+
+		for (int i = 0; i < m_nodes.size(); ++i)
+		{
+			int classID = classID_fileID[i].first;
+			int64_t fileID = classID_fileID[i].second;
+			if (classID == Prefab::ClassID)
+			{
+				Object* obj = nullptr;
+				auto&& node = m_nodes[i];
+				auto&& parentPrefab = node.begin()->second["m_ParentPrefab"];
+				auto parentFileID = parentPrefab["fileID"].as<int64_t>();
+
+				if (parentFileID == 0)	// this prefab is a definition
+				{
+					auto prefab = fileIDToPrefab[fileID];
+					auto&& rootGameObject = node.begin()->second["m_RootGameObject"];
+					auto rootGameObjectFileID = rootGameObject["fileID"].as<int64_t>();
+					prefab->m_RootGameObject = m_FileIDToObject[rootGameObjectFileID]->As<GameObject>();
+				}
+			}
+		}
+
 		return objects;
 	}
 
