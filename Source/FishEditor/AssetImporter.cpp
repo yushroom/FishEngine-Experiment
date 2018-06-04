@@ -14,8 +14,75 @@
 #include <FishEngine/Application.hpp>
 #include <FishEngine/Prefab.hpp>
 
+#include <FishEditor/Serialization/YAMLArchive.hpp>
+
 namespace FishEditor
 {
+	class MetaInputArchive : public YAMLInputArchive
+	{
+	public:
+		MetaInputArchive() = default;
+		
+		AssetImporter* LoadFromFile(const std::string path)
+		{
+			AssetImporter* importer = nullptr;
+			std::fstream fin(path);
+			auto nodes = YAML::LoadAll(fin);
+			auto&& meta = nodes.front();
+			
+//			this->m_nodes.resize(1);
+			
+//			std::string guid;
+//			uint32_t timeCreated = 0;
+			for (auto&& p : meta)
+			{
+				auto label = p.first.as<std::string>();
+				if (label == "ModelImporter")
+				{
+					assert(boost::ends_with(path, ".fbx.meta"));
+					auto imp = new FBXImporter;
+					importer = imp;
+				}
+				else if (label == "NativeFormatImporter")
+				{
+					auto imp = new NativeFormatImporter;
+					importer = imp;
+				}
+				else if (label == "DefaultImporter")
+				{
+					auto imp = new DefaultImporter;
+					importer = imp;
+				}
+				
+				if (importer != nullptr)
+				{
+					PushNode(p.second);
+					importer->Deserialize(*this);
+					break;
+				}
+			}
+			
+			if (importer == nullptr)
+				return nullptr;
+			
+
+			
+			auto guid = meta["guid"].as<std::string>();
+			uint32_t timeCreated = 0;
+			try {
+				timeCreated = meta["timeCreated"].as<uint32_t>();	// 18446744011573954816 in unitychan.prefab.meta, bug?
+			} catch(std::exception const & e) {
+				LogError("error in timeCreated:");
+			}
+			
+			importer->m_GUID = guid;
+			importer->m_AssetTimeStamp = timeCreated;
+//			importer->m_AssetPath = path.substr(0, path.size()-5);	// remove ".meta"
+			return importer;
+		}
+	};
+	
+	
 	std::unordered_map<std::string, AssetImporter*> AssetImporter::s_GUIDToImporter;
 
 
@@ -61,6 +128,7 @@ namespace FishEditor
 		return p.string();
 	}
 
+	
 	AssetImporter* AssetImporter::GetAtPath(std::string path)
 	{
 		if (path == "")
@@ -75,11 +143,11 @@ namespace FishEditor
 		auto p = fs::path(root);
 		p.append(path);
 		auto ext = boost::to_lower_copy(p.extension().string());
-		auto meta_file = fs::path(p.string() + ".meta");
-		if (fs::exists(meta_file))
+		auto meta_file_path = fs::path(p.string() + ".meta");
+		if (fs::exists(meta_file_path))
 		{
 			//auto modified_time = fs::last_write_time(meta_file);
-			std::fstream fin(meta_file.string());
+			std::fstream fin(meta_file_path.string());
 			auto nodes = YAML::LoadAll(fin);
 			auto&& meta = nodes.front();
 			uint32_t timeCreated = 0;
@@ -90,47 +158,19 @@ namespace FishEditor
 			}
 			
 			auto guid = meta["guid"].as<std::string>();
+			
+//			MetaInputArchive archive;
+//			AssetImporter* importer = archive.LoadFromFile(meta_file_path.c_str());
 
 			AssetImporter* importer = nullptr;
-			if (ext == ".fbx")
+			if (ext == ".fbx" || ext == ".prefab" || ext == ".mat" || ext == ".controller" || ext == ".unity")
 			{
-				auto fbximporter = new FBXImporter();
-				auto node = meta["ModelImporter"];
-				auto meshes = node["meshes"];
-				float globalScale = meshes["globalScale"].as<float>();
-				bool useFileScale = meshes["useFileScale"].as<int>() == 1;
-				fbximporter->SetGlobalScale(globalScale);
-				fbximporter->SetUseFileScale(useFileScale);
-				
-				auto& m = fbximporter->m_FileIDToRecycleName;
-				auto fileIDToRecycleName = node["fileIDToRecycleName"];
-				for (auto&& p : fileIDToRecycleName)
-				{
-					uint32_t fileID = p.first.as<uint32_t>();
-					std::string name = p.second.as<std::string>();
-					m[fileID] = name;
-				}
-				
-				importer = fbximporter;
-			}
-			else if (ext == ".prefab" || ext == ".mat" || ext == ".controller")
-			{
-//				importer = new AssetImporter();
-				auto nativeImporter = new NativeFormatImporter();
-				importer = nativeImporter;
-//				auto mainObjectFileID = meta["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
-//				nativeImporter->m_MainObjectFileID = mainObjectFileID;
-			}
-			else if (ext == ".unity")
-			{
-				auto defaultImporter = new DefaultImporter();
-				importer = defaultImporter;
+				MetaInputArchive archive;
+				importer = archive.LoadFromFile(meta_file_path.c_str());
 			}
 //			if (importer == nullptr)
 //				return nullptr;
 			assert(importer != nullptr);
-			importer->m_GUID = guid;
-			importer->m_AssetTimeStamp = timeCreated;
 			importer->m_AssetPath = path;
 			importer->Import();
 

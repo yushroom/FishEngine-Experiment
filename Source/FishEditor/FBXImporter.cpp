@@ -1257,19 +1257,19 @@ void FishEditor::FBXImporter::Import()
 	auto unit = lScene->GetGlobalSettings().GetSystemUnit();
 	if ( unit == FbxSystemUnit::mm )
 	{
-		m_FileScale = 0.001f;
+		this->meshes.fileScale = 0.001f;
 	}
 	else if ( unit == FbxSystemUnit::dm)
 	{
-		m_FileScale = 0.1f;
+		this->meshes.fileScale = 0.1f;
 	}
 	else if (unit == FbxSystemUnit::cm)
 	{
-		m_FileScale = 0.01f;
+		this->meshes.fileScale = 0.01f;
 	}
 	else if (unit == FbxSystemUnit::m)
 	{
-		m_FileScale = 1.0f;
+		this->meshes.fileScale = 1.0f;
 	}
 	else
 	{
@@ -1332,9 +1332,8 @@ void FishEditor::FBXImporter::Import()
 	m_model.m_rootGameObject->SetName(fileName);
 	m_model.m_prefab->SetRootGameObject(m_model.m_rootGameObject);
 
-	ImportAnimations(lScene);
-	
-
+	if (this->importAnimation)
+		ImportAnimations(lScene);
 
 	auto root = m_model.m_rootGameObject;
 	m_model.m_bones.resize(m_boneCount);
@@ -1468,7 +1467,17 @@ void FishEditor::FBXImporter::Import()
 	for (auto clip : m_model.m_animationClips)
 	{
 		int classID = AnimationClip::ClassID;
-		auto name = clip->GetName();
+		auto takename = clip->GetName();
+		std::string name = takename;
+		for (auto& ca : this->animations.clipAnimations)
+		{
+			if (ca.takeName == takename)
+			{
+				name = ca.name;
+				break;
+			}
+		}
+		clip->SetName(name);
 		auto fileID = recycleNameToFileID[classID][name];
 		m_FileIDToObject[fileID] = clip;
 		m_Assets[classID][name] = clip;

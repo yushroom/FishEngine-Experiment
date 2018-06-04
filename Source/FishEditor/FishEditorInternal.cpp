@@ -67,7 +67,6 @@ PYBIND11_EMBEDDED_MODULE(FishEditorInternal, m)
 		.def("GetUseFileScale", &ModelImporter::GetUseFileScale)
 		.def("SetUseFileScale", &ModelImporter::SetUseFileScale)
 		.def("GetFileScale", &ModelImporter::GetFileScale)
-		.def("SetFileScale", &ModelImporter::SetFileScale)
 	;
 	
 

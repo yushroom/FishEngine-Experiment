@@ -78,6 +78,7 @@ namespace FishEditor
 
 	protected:
 		friend class AssetDatabase;
+		friend class MetaInputArchive;
 
 		static std::unordered_map<std::string, AssetImporter*> s_GUIDToImporter;
 

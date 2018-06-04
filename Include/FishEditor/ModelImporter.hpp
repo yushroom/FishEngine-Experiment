@@ -96,12 +96,13 @@ namespace FishEditor
 
 	struct ModelImporterMesh
 	{
-		float globalScale = 1;
+		float globalScale = 1.0f;
 		bool addColliders = false;
 		bool importBlendShapes = true;
 		bool swapUVChannels = false;
 		bool useFileUnits = true;
 		bool useFileScale = true;
+		float fileScale = 1.0f;
 	};
 	
 	class ModelImporter : public AssetImporter
@@ -114,16 +115,16 @@ namespace FishEditor
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		
-		float GetGlobalScale() const { return m_GlobalScale; }
-		void SetGlobalScale(float value) { m_GlobalScale = value; }
+		// Global scale factor for importing.
+		float GetGlobalScale() const { return meshes.globalScale; }
+		void SetGlobalScale(float value) { meshes.globalScale = value; }
 
-		bool GetUseFileScale() const { return m_UseFileScale; }
-		void SetUseFileScale(bool value) { m_UseFileScale = value; }
+		bool GetUseFileScale() const { return meshes.useFileScale; }
+		void SetUseFileScale(bool value) { meshes.useFileScale = value; }
 
-		float GetFileScale() const { return m_FileScale; }
-		void SetFileScale(float value) { m_FileScale = value; }
-		
-		//ModelPtr LoadFromFile( const FishEngine::Path& path );
+		// File scale factor (if available) or default one. (Read-only).
+		// fileSscale is determined by model file and can not be modified by user.
+		float GetFileScale() const { return meshes.fileScale; }
 
 		void setImportNormals( ModelImporterNormals importNormals )
 		{
@@ -150,11 +151,11 @@ namespace FishEditor
 
 //		std::map<int64_t, FishEngine::Object*> m_FileIDToObject;
 
-		float GetScale()
+		float GetScale() const
 		{
-			if (m_UseFileScale)
-				return m_GlobalScale * m_FileScale;
-			return m_GlobalScale;
+			if (GetUseFileScale())
+				return GetGlobalScale() * GetFileScale();
+			return GetFileScale();
 		}
 
 		
@@ -163,17 +164,6 @@ namespace FishEditor
 //		friend class ::ModelImporterInspector;
 
 //		static void Init();
-
-		// Global scale factor for importing.
-		float m_GlobalScale = 1.0f;
-		
-
-		bool m_UseFileScale = true;
-
-		// File scale factor (if available) or default one. (Read-only).
-		// fileSscale is determined by model file and can not be modified by user.
-//		Meta(NonSerializable)
-		float m_FileScale = 1.0f;
 
 		// Vertex normal import options.
 		ModelImporterNormals m_importNormals    = ModelImporterNormals::Import;
@@ -190,7 +180,7 @@ namespace FishEditor
 
 		//ModelImporterMesh m_Meshes;
 		
-		std::map<int64_t, std::string> fileIDToRecycleName;
+//		std::map<int64_t, std::string> fileIDToRecycleName;
 		ModelImporterAnimation animations;
 		ModelImporterMesh meshes;
 		bool importAnimation = true;

@@ -81,7 +81,7 @@ void AssetImporter::Serialize(OutputArchive& archive) const
 void ModelImporter::Deserialize(InputArchive& archive)
 {
 	AssetImporter::Deserialize(archive);
-	archive.AddNVP("fileIDToRecycleName", this->fileIDToRecycleName);
+	archive.AddNVP("fileIDToRecycleName", this->m_FileIDToRecycleName);
 	archive.AddNVP("animations", this->animations);
 	archive.AddNVP("meshes", this->meshes);
 	archive.AddNVP("importAnimation", this->importAnimation);
@@ -91,7 +91,7 @@ void ModelImporter::Deserialize(InputArchive& archive)
 void ModelImporter::Serialize(OutputArchive& archive) const
 {
 	AssetImporter::Serialize(archive);
-	archive.AddNVP("fileIDToRecycleName", this->fileIDToRecycleName);
+	archive.AddNVP("fileIDToRecycleName", this->m_FileIDToRecycleName);
 	archive.AddNVP("animations", this->animations);
 	archive.AddNVP("meshes", this->meshes);
 	archive.AddNVP("importAnimation", this->importAnimation);

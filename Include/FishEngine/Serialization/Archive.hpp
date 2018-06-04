@@ -113,6 +113,7 @@ namespace FishEngine
 				AfterMapKey();
 				(*this) >> value;
 				AfterMapValue();
+				t[key] = value;
 			}
 			EndMap();
 			return *this;

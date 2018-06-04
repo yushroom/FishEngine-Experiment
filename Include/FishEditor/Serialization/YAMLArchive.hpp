@@ -23,6 +23,7 @@ namespace FishEditor
 	public:
 		YAMLInputArchive() = default;
 
+		
 		std::vector<Object*> LoadAllFromString(const std::string& str);
 
 
@@ -64,12 +65,8 @@ namespace FishEditor
 		virtual void Deserialize(double & t) override			{ t = CurrentNode().as<double>();}
 		virtual void Deserialize(bool & t) override				{ t = (CurrentNode().as<int>() == 1);}
 		virtual void Deserialize(std::string & t) override	{
-			try {
-				t = CurrentNode().as<std::string>();
-			}
-			catch (const std::exception& e) {
-				t = "";
-			}
+			const auto& n = CurrentNode();
+			t = n.IsNull() ? "" : n.as<std::string>();
 		}
 
 //		virtual void Get(std::string& t) override
@@ -120,6 +117,28 @@ namespace FishEditor
 		}
 		
 		
+		virtual void BeginMapKey() override
+		{
+			PushNode(m_mapIterator->first);
+		}
+
+		virtual void AfterMapKey() override
+		{
+			PopNode();
+			PushNode(m_mapIterator->second);
+		}
+
+		virtual void AfterMapValue() override
+		{
+			PopNode();
+			m_mapIterator++;
+		}
+
+		virtual void EndMap() override
+		{
+
+		}
+
 
 		// Sequence
 		virtual int BeginSequence() override
