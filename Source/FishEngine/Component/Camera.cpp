@@ -108,22 +108,23 @@ namespace FishEngine
 	Camera* Camera::GetMainCamera()
 	{
 		Scene* scene = SceneManager::GetActiveScene();
-		auto camera = scene->FindComponent<Camera>();
-		assert(camera != nullptr);
+		auto cameras = scene->FindComponents<Camera>();
+		Camera* camera = nullptr;
+		if (!cameras.empty())
+		{
+			for (auto c : cameras)
+			{
+				if (!c->GetEnabled() || !c->GetGameObject()->IsActiveInHierarchy())
+					continue;
+				camera = c;
+				if (c->GetGameObject()->GetTag() == "MainCamera")
+				{
+//					camera = c;
+					break;
+				}
+			}
+		}
+//		assert(camera != nullptr);
 		return camera;
 	}
-//
-//
-//	CameraPtr Camera::
-//	mainGameCamera()
-//	{
-//		for (auto& c : m_allCameras)
-//		{
-//			if (c->tag() == "MainCamera" && c->m_cameraType == CameraType::Game)
-//			{
-//				return c;
-//			}
-//		}
-//		return nullptr;
-//	}
 }

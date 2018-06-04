@@ -113,6 +113,8 @@ namespace FishEngine
 			return m_Scene;
 		}
 		
+		const std::string& GetTag() const { return m_TagString; }
+		
 		// The local active state of this GameObject.
 		bool IsActive() const { return m_IsActive; }
 		void SetActive(bool active) { m_IsActive = active; }
@@ -127,11 +129,13 @@ namespace FishEngine
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
 	protected:
-		GameObject * m_PrefabParentObject = nullptr;
-		Prefab * m_PrefabInternal = nullptr;
+		GameObject * 			m_PrefabParentObject = nullptr;
+		Prefab * 				m_PrefabInternal = nullptr;
 		Scene*					m_Scene = nullptr;
 		Transform*				m_Transform = nullptr;
-		std::list<Component*>		m_Component;
-		bool						m_IsActive = true;	// activeSelf
+		std::list<Component*>	m_Component;
+		int 					m_Layer;
+		std::string 			m_TagString;
+		bool					m_IsActive = true;	// activeSelf
 	};
 }

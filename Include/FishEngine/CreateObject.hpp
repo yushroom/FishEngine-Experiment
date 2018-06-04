@@ -41,6 +41,14 @@ namespace FishEngine
 			return CreateEmptyObject<Rigidbody>();
 		else if (classID == Animation::ClassID)
 			return CreateEmptyObject<Animation>();
+		else if (classID == Animator::ClassID)
+			return CreateEmptyObject<Animator>();
+		else if (classID == FishEditor::Animations::AnimatorState::ClassID)
+			return CreateEmptyObject<FishEditor::Animations::AnimatorState>();
+		else if (classID == FishEditor::Animations::AnimatorController::ClassID)
+			return CreateEmptyObject<FishEditor::Animations::AnimatorController>();
+		else if (classID == FishEditor::Animations::AnimatorStateMachine::ClassID)
+			return CreateEmptyObject<FishEditor::Animations::AnimatorStateMachine>();
 		else if (classID == RenderSettings::ClassID)
 			return CreateEmptyObject<RenderSettings>();
 		return nullptr;

@@ -17,8 +17,7 @@ namespace FishEditor
 	class AssetImporter : public FishEngine::Object
 	{
 	public:
-		constexpr static int ClassID = 1003;
-		constexpr static const char* ClassName = "AssetImporter";
+		DeclareObject(AssetImporter, 1003);
 		
 		AssetImporter(int classID, const char* className) : Object(classID, className) { }
 		virtual ~AssetImporter();
@@ -72,9 +71,9 @@ namespace FishEditor
 		Object* GetObjectByFileID(int64_t fileID)
 		{
 			auto it = m_FileIDToObject.find(fileID);
-			assert(it != m_FileIDToObject.end());
-//			return this->m_FileIDToObject[fileID];
-			return it->second;
+			if (it != m_FileIDToObject.end())
+				return it->second;
+			return nullptr;
 		}
 
 	protected:
@@ -93,5 +92,7 @@ namespace FishEditor
 		// and child game objects in expanded state. The root game object is the main asset
 		// in this case.
 		FishEngine::Object* m_MainAsset = nullptr;
+		
+		int64_t m_MainObjectFileID = 0;
 	};
 }

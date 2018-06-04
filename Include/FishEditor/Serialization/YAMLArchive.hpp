@@ -98,7 +98,6 @@ namespace FishEditor
 			if (!node)
 			{
 				LogWarning(Format("Key [{}] not found!", name));
-//				abort();
 			}
 			PushNode(node);
 
@@ -109,6 +108,18 @@ namespace FishEditor
 		{
 			PopNode();
 		}
+		
+		// Map
+		virtual int BeginMap() override
+		{
+			auto current = CurrentNode();
+			assert(current.IsMap());
+			int size = std::distance(current.begin(), current.end());
+			m_mapIterator = current.begin();
+			return size;
+		}
+		
+		
 
 		// Sequence
 		virtual int BeginSequence() override
@@ -116,18 +127,18 @@ namespace FishEditor
 			auto current = CurrentNode();
 			assert(current.IsSequence());
 			int size = std::distance(current.begin(), current.end());
-			m_sequenceiterator = current.begin();
+			m_sequenceIterator = current.begin();
 			return size;
 		}
 		virtual void BeginSequenceItem() override
 		{
-			PushNode(*m_sequenceiterator);
+			PushNode(*m_sequenceIterator);
 		}
 
 		virtual void AfterSequenceItem() override
 		{
 			PopNode();
-			m_sequenceiterator++;
+			m_sequenceIterator++;
 		}
 		virtual void EndSequence() override
 		{
@@ -156,15 +167,15 @@ namespace FishEditor
 
 	protected:
 		std::vector<YAML::Node>		m_nodes;
-//		std::vector<std::pair<int, int64_t>> m_ClassIDAndFileID:
 		YAML::Node					m_currentNode;
 		std::stack<YAML::Node>		m_workingNodes;
-		YAML::const_iterator		m_sequenceiterator;
+		
+		// todo: sequence inside sequence, or, map inside map
+		YAML::const_iterator		m_sequenceIterator;
+		YAML::const_iterator		m_mapIterator;
 
 		// local
 		std::map<int64_t, Object*>	m_FileIDToObject;
-
-//		std::map<std::string, >
 	};
 
 
@@ -231,6 +242,7 @@ namespace FishEditor
 			beginOfLine = false;
 		}
 		
+		
 		void BeginSequence(int size) override
 		{
 			if (size == 0)
@@ -240,7 +252,6 @@ namespace FishEditor
 				NewLine();
 			}
 			//state = State::Sequence;
-
 		}
 
 		void BeforeSequenceItem() override

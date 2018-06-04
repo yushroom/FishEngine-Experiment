@@ -2,20 +2,20 @@
 #include <FishEngine/Scene.hpp>
 #include <FishEngine/Animation/Animation.hpp>
 
-#include <FishEngine/Gizmos.hpp>
-using namespace FishEngine;
-void DrawSkeleton(const std::map<std::string, Transform*> const & skeleton)
-{
-	for (auto&& p : skeleton)
-	{
-		auto t = p.second;
-		auto parent = t->GetParent();
-		if (parent != nullptr)
-		{
-			Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
-		}
-	}
-}
+//#include <FishEngine/Gizmos.hpp>
+//using namespace FishEngine;
+//void DrawSkeleton(const std::map<std::string, Transform*> & skeleton)
+//{
+//	for (auto&& p : skeleton)
+//	{
+//		auto t = p.second;
+//		auto parent = t->GetParent();
+//		if (parent != nullptr)
+//		{
+//			Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
+//		}
+//	}
+//}
 
 void FishEngine::AnimationSystem::Start()
 {

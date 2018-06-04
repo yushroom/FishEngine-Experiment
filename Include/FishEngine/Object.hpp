@@ -18,9 +18,9 @@ namespace FishEngine
 	enum {ClassID = classID}; 								\
 	static constexpr const char* ClassName = #className;
 	
-#define OverrideSerializeFunc 											\
-	virtual void Deserialize(InputArchive& archive) override; \
-	virtual void Serialize(OutputArchive& archive) const override;
+#define OverrideSerializeFunc 												\
+	virtual void Deserialize(FishEngine::InputArchive& archive) override; 	\
+	virtual void Serialize(FishEngine::OutputArchive& archive) const override;
 	
 #define DeclareObject(className, classID)	\
 	InjectClassName(className, classID) 	\

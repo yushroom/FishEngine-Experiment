@@ -415,7 +415,7 @@ namespace FishEngine
 	}
 
 
-	void DrawSkeleton(const std::map<std::string, Transform*> const & skeleton)
+	void DrawSkeleton(const std::map<std::string, Transform*> & skeleton)
 	{
 		glDisable(GL_DEPTH_TEST);
 		for (auto&& p : skeleton)
@@ -436,20 +436,10 @@ namespace FishEngine
 
 	void RenderSystem::Update()
 	{
-//		glCheckError();
-//		glViewport(0, 0, Screen::GetWidth(), Screen::GetHeight());
-//		glClearColor(0.2f, 0.3f, 0.3f, 1);
-//		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//
-//		glFrontFace(GL_CW);
-//		glEnable(GL_DEPTH_TEST);
-//		glEnable(GL_CULL_FACE);
-//		glCullFace(GL_BACK);
-
 		auto scene = SceneManager::GetActiveScene();
-		auto camera = scene->FindComponent<Camera>();
-		//auto light = scene->FindComponent<Light>();
+		Camera* camera = Camera::GetMainCamera();
 
+//		auto light = scene->FindComponent<Light>();
 		auto lights = scene->FindComponents<Light>();
 		Light* light = nullptr;
 		if (!lights.empty())

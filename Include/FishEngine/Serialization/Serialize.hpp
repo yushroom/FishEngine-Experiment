@@ -9,6 +9,12 @@
 
 #include <FishEngine/Serialization/Archive.hpp>
 
+namespace FishEditor::Animations
+{
+	class AnimatorControllerLayer;
+	class ChildAnimatorStateMachine;
+}
+
 namespace FishEngine
 {
 	// Vector2
@@ -24,7 +30,7 @@ namespace FishEngine
 		archive.AddNVP("y", t.y);
 		return archive;
 	}
-
+	
 	// Vector3
 	inline InputArchive& operator>>(InputArchive& archive, Vector3& t)
 	{
@@ -40,7 +46,7 @@ namespace FishEngine
 		archive.AddNVP("z", t.z);
 		return archive;
 	}
-
+	
 	// Vector4
 	inline InputArchive& operator>>(InputArchive& archive, Vector4& t)
 	{
@@ -58,7 +64,7 @@ namespace FishEngine
 		archive.AddNVP("w", t.w);
 		return archive;
 	}
-
+	
 	// Quaternion
 	inline InputArchive& operator>>(InputArchive& archive, Quaternion& t)
 	{
@@ -76,7 +82,7 @@ namespace FishEngine
 		archive.AddNVP("w", t.w);
 		return archive;
 	}
-
+	
 	// Color
 	inline InputArchive& operator>>(InputArchive& archive, Color& t)
 	{
@@ -94,7 +100,7 @@ namespace FishEngine
 		archive.AddNVP("a", t.a);
 		return archive;
 	}
-
+	
 	// Modification
 	inline InputArchive& operator>>(InputArchive& archive, Modification& t)
 	{
@@ -112,7 +118,7 @@ namespace FishEngine
 		archive.AddNVP("objectReference", t.objectReference);
 		return archive;
 	}
-
+	
 	// PrefabModification
 	inline InputArchive& operator>>(InputArchive& archive, PrefabModification& t)
 	{
@@ -128,7 +134,13 @@ namespace FishEngine
 		archive.AddNVP("m_RemovedComponents", t.m_RemovedComponents);
 		return archive;
 	}
-
+	
+	// AnimatorControllerLayer
+	InputArchive& operator>>(InputArchive& archive, FishEditor::Animations::AnimatorControllerLayer& t);
+	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::AnimatorControllerLayer& t);
+	
+	// ChildAnimatorStateMachine
+	InputArchive& operator>>(InputArchive& archive, FishEditor::Animations::ChildAnimatorStateMachine& t);
+	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::ChildAnimatorStateMachine& t);
+	
 }
-
-

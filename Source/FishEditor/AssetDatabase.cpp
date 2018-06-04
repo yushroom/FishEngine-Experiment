@@ -194,10 +194,15 @@ namespace FishEditor
 		//assert(importer != nullptr);
 		if (importer == nullptr)
 		{
-			LogWarning(Format("Asset[guid: {}] not found.\n", guid));
+			LogWarning(Format("Importer[guid: {}] not found.\n", guid));
 			return nullptr;
 		}
 		auto obj = importer->GetObjectByFileID(fileID);
+		if (obj == nullptr)
+		{
+			LogWarning(Format("Asset[file: {}] not found.\n", fileID));
+			return nullptr;
+		}
 		return obj;
 //		auto prefab = importer->GetMainAsset()->As<Prefab>();
 //		assert(prefab != nullptr);

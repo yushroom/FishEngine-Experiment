@@ -45,7 +45,7 @@ namespace FishEditor
 	enum class ModelImporterAnimationType
 	{
 		None,       // Generate no animation data.
-		//Legacy,     // Generate a legacy animation type.
+		Legacy,     // Generate a legacy animation type.
 		Generic,    // Generate a generic animator.
 		Human,      // Generate a human animator.
 	};
@@ -55,6 +55,27 @@ namespace FishEditor
 		Local,          // Search in local Materials folder.
 		RecursiveUp,    // Recursive-up search in Materials folders.
 		Everywhere,     // Search in all project.
+	};
+	
+	struct ModelImporterMaterial
+	{
+		bool importMaterials = true;
+		std::string materialName;
+		ModelImporterMaterialSearch materialSearch;
+	};
+	
+	struct ModelImporterClipAnimation
+	{
+		std::string name;
+		std::string takeName;
+		int firstFrame = 0;
+		int lastFrame = 0;
+	};
+	
+	struct ModelImporterAnimation
+	{
+		std::vector<ModelImporterClipAnimation> clipAnimations;
+		bool isReadable = true;
 	};
 	
 	enum class ModelImporterMeshCompression
@@ -76,16 +97,20 @@ namespace FishEditor
 	struct ModelImporterMesh
 	{
 		float globalScale = 1;
+		bool addColliders = false;
+		bool importBlendShapes = true;
+		bool swapUVChannels = false;
+		bool useFileUnits = true;
 		bool useFileScale = true;
 	};
 	
 	class ModelImporter : public AssetImporter
 	{
 	public:
-		constexpr static int ClassID = 1040;
-		constexpr static const char* ClassName = "ModelImporter";
-		
-		ModelImporter(int classID=ClassID, const char* className=ClassName) : AssetImporter(classID, className) { }
+		DeclareObject(ModelImporter, 1040);
+
+		ModelImporter() : AssetImporter(ClassID, ClassName) { }
+		ModelImporter(int classID, const char* className) : AssetImporter(classID, className) { }
 		
 //		ModelImporter& operator=(ModelImporter const & rhs);
 		
@@ -164,6 +189,12 @@ namespace FishEditor
 		std::map<std::string, std::map<std::string, FishEngine::Matrix4x4>> m_nodeTransformations;
 
 		//ModelImporterMesh m_Meshes;
+		
+		std::map<int64_t, std::string> fileIDToRecycleName;
+		ModelImporterAnimation animations;
+		ModelImporterMesh meshes;
+		bool importAnimation = true;
+		ModelImporterAnimationType animationType = ModelImporterAnimationType::Generic;
 
 	}; // end of class ModelImporter
 }

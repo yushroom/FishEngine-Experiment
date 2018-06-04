@@ -56,6 +56,8 @@ namespace FishEngine
 		InputArchive & operator >> (bool & t)				{ this->Deserialize(t); return *this; }
 		InputArchive & operator >> (std::string & t)		{ this->Deserialize(t); return *this; }
 
+		
+		// enum
 		template<typename T, std::enable_if_t<std::is_enum<T>::value, int> = 0>
 		InputArchive& operator>>(T& t)
 		{
@@ -65,11 +67,12 @@ namespace FishEngine
 			return *this;
 		}
 
+		// sequence, vector
 		template<typename T>
 		InputArchive& operator>>(std::vector<T>& t)
 		{
 			int size = BeginSequence();
-//			t.clear();
+			//t.clear();
 			t.resize(size);
 			for (int i = 0; i < size; ++i)
 			{
@@ -80,6 +83,7 @@ namespace FishEngine
 			return *this;
 		}
 
+		// sequence, list
 		template<typename T>
 		InputArchive& operator>>(std::list<T>& t)
 		{
@@ -87,10 +91,30 @@ namespace FishEngine
 			t.clear();
 			for (int i = 0; i < size; ++i)
 			{
-				T item = GetSequenceItem<T>();
+				T item = GetSequenceItem<T>();		// std::move
 				t.push_back(item);
 			}
 			EndSequence();
+			return *this;
+		}
+		
+		// dict, map
+		template<typename T, typename B>
+		InputArchive& operator>>(std::map<T, B>& t)
+		{
+			t.clear();
+			int size = BeginMap();
+			for (int i = 0; i < size; ++i)
+			{
+				T key;
+				B value;
+				BeginMapKey();
+				(*this) >> key;
+				AfterMapKey();
+				(*this) >> value;
+				AfterMapValue();
+			}
+			EndMap();
 			return *this;
 		}
 
@@ -126,6 +150,7 @@ namespace FishEngine
 
 		// Map
 		// if should skip next node, return false
+		// eg. return false when the 'name' is not found
 		virtual bool MapKey(const char* name) = 0;
 		virtual void AfterValue() {}
 
@@ -134,6 +159,14 @@ namespace FishEngine
 		virtual void BeginSequenceItem() {}
 		virtual void AfterSequenceItem() {}
 		virtual void EndSequence() {}
+		
+		// Map
+		virtual int BeginMap() { return 0; };			// begin a map/dict, return value is the size of the map
+		virtual void BeginMapKey() {}
+		virtual void AfterMapKey() {}
+		virtual void AfterMapValue() {}
+		virtual void EndMap() {}
+//		virutal std::vector<std::string> GetAllKeysOfMap() { abort(); return {}; }
 
 	protected:
 		template<class T>
@@ -145,6 +178,16 @@ namespace FishEngine
 			AfterSequenceItem();
 			return value;
 		}
+		
+//		template<class T>
+//		T GetMapValue()
+//		{
+//			BeginMapValue();
+//			T value;
+//			(*this) >> value;
+//			AfterMapValue();
+//			return value;
+//		}
 	};
 
 	
@@ -207,13 +250,26 @@ namespace FishEngine
 		OutputArchive & operator << (const std::list<T>& t)
 		{
 			BeginSequence(t.size());
-			for (auto&& item : t) {
+			for (auto&& item : t)
+			{
 				BeforeSequenceItem();
 				(*this) << item;
 				AfterSequenceItem();
 			}
 			EndSequence();  
 			return (*this);
+		}
+		
+		template<typename T, typename B>
+		OutputArchive & operator << (const std::map<T, B>& t)
+		{
+			BeginMap(t.size());
+			for (auto&& p : t)
+			{
+				std::string label = std::to_string(p.first);
+				this->AddNVP(label.c_str(), p.second);
+			}
+			return *this;
 		}
 
 		// Object*
@@ -258,5 +314,8 @@ namespace FishEngine
 		virtual void BeforeSequenceItem() {}
 		virtual void AfterSequenceItem() {}
 		virtual void EndSequence() {}
+		
+		// Map
+		virtual void BeginMap(int size) {}
 	};
 }

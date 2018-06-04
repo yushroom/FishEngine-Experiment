@@ -96,7 +96,9 @@ namespace FishEngine
 		for (int i = 0; i < modification.m_Modifications.size(); ++i)
 		{
 			auto& mod = modification.m_Modifications[i];
-			assert(mod.target != nullptr);
+//			assert(mod.target != nullptr);
+			if (mod.target == nullptr)
+				continue;
 			Object * target =  memo[mod.target];
 			archive.UpdateValue(target, mod.propertyPath, mod.value, mod.objectReference);
 			cloned->m_Modification.m_Modifications[i].target = target;

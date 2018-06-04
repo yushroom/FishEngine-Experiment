@@ -5,21 +5,23 @@
 using namespace FishEngine;
 using namespace FishEditor;
 
-#include <FishEngine/Render/Mesh.hpp>
-#include <FishEngine/GameObject.hpp>
-#include <FishEngine/Transform.hpp>
-#include <FishEngine/RectTransform.hpp>
-#include <FishEngine/Component/Camera.hpp>
-#include <FishEngine/Component/Light.hpp>
-#include <FishEngine/Component/MeshFilter.hpp>
-#include <FishEngine/Component/MeshRenderer.hpp>
-#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
+//#include <FishEngine/Render/Mesh.hpp>
+//#include <FishEngine/GameObject.hpp>
+//#include <FishEngine/Transform.hpp>
+//#include <FishEngine/RectTransform.hpp>
+//#include <FishEngine/Component/Camera.hpp>
+//#include <FishEngine/Component/Light.hpp>
+//#include <FishEngine/Component/MeshFilter.hpp>
+//#include <FishEngine/Component/MeshRenderer.hpp>
+//#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 #include <FishEngine/Script.hpp>
-#include <FishEngine/Render/Material.hpp>
-#include <FishEngine/Component/BoxCollider.hpp>
-#include <FishEngine/Component/SphereCollider.hpp>
-#include <FishEngine/Component/Rigidbody.hpp>
-#include <FishEngine/Animation/Animation.hpp>
+//#include <FishEngine/Render/Material.hpp>
+//#include <FishEngine/Component/BoxCollider.hpp>
+//#include <FishEngine/Component/SphereCollider.hpp>
+//#include <FishEngine/Component/Rigidbody.hpp>
+//#include <FishEngine/Animation/Animation.hpp>
+
+#include <FishEngine/FishEngine2.hpp>
 
 #include <FishEditor/AssetImporter.hpp>
 #include <FishEditor/FBXImporter.hpp>
@@ -117,11 +119,15 @@ void DrawTransform(Transform* value)
 //	Int("GO IntanceID", value->GetGameObject(), &Object::GetInstanceID);
 	DrawComponent(value);
 	Float3("Position", value, &Transform::GetLocalPosition, &Transform::SetLocalPosition);
+	auto euler = value->GetLocalEulerAngles();
 	Float3("Rotation", value, &Transform::GetLocalEulerAngles, &Transform::SetLocalEulerAngles);
 	Float3("Scale", value, &Transform::GetLocalScale, &Transform::SetLocalScale);
 	
 	auto lea = value->GetLocalRotation();
 	FishGUI::Float4("LocalRotation", lea.x, lea.y, lea.z, lea.w);
+	
+	Quaternion q = Quaternion::Euler(euler.x, euler.y, euler.z);
+	FishGUI::Float4("euler->quat", q.x, q.y, q.z, q.w);
 	
 	Float3("WorldPosition", value, &Transform::GetPosition);
 	//auto m = value->GetLocalToWorldMatrix();
@@ -218,6 +224,11 @@ void DrawRigidbody(Rigidbody* r)
 }
 
 void DrawAnimation(Animation* v)
+{
+	DrawComponent(v);
+}
+
+void DrawAnimator(Animator* v)
 {
 	DrawComponent(v);
 }
@@ -358,6 +369,12 @@ void Dispatch(Component* c)
 	{
 		FishGUI::Group("Animation");
 		DrawAnimation((Animation*)c);
+		FishGUI::EndGroup();
+	}
+	else if (c->GetClassID() == Animator::ClassID)
+	{
+		FishGUI::Group("Animator");
+		DrawAnimator((Animator*)c);
 		FishGUI::EndGroup();
 	}
 	else if (c->GetClassID() == Script::ClassID)

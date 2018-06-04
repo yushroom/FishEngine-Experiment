@@ -147,7 +147,7 @@ int FBXToNativeType(const int & value)
 
 inline Vector3 FbxVector4ToVector3WithXFlipped(FbxVector4 const & v)
 {
-	return Vector3(static_cast<float>(v[0]),
+	return Vector3(static_cast<float>(-v[0]),
 				   static_cast<float>(v[1]),
 				   static_cast<float>(v[2]) );
 }
@@ -339,7 +339,6 @@ Mesh* FishEditor::FBXImporter::ParseMesh(FbxMesh* fbxMesh)
 		auto & p = controlPoints[controlPointIndex];
 		float scale = GetScale();
 		auto pp = FbxVector4ToVector3WithXFlipped(p);
-		pp.x = -pp.x;
 		rawMesh.m_vertexPositions.emplace_back(pp * scale);
 	}
 	
@@ -1453,8 +1452,28 @@ void FishEditor::FBXImporter::Import()
 		}
 	}
 	
+	// avatar
+	{
+		auto avatar = m_model.m_avatar;
+		auto name = fileName+"Avatar";
+		avatar->SetName(name);
+		int classID = Avatar::ClassID;
+		int fileID = classID * 100000;
+		m_FileIDToObject[fileID] = avatar;
+		m_Assets[classID][name] = avatar;
+	}
+	
 	root->SetName(fileName);
 
+	for (auto clip : m_model.m_animationClips)
+	{
+		int classID = AnimationClip::ClassID;
+		auto name = clip->GetName();
+		auto fileID = recycleNameToFileID[classID][name];
+		m_FileIDToObject[fileID] = clip;
+		m_Assets[classID][name] = clip;
+	}
+	
 	for (auto mesh : m_model.m_meshes)
 	{
 		int classID = Mesh::ClassID;

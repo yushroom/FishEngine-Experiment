@@ -33,6 +33,46 @@ schema = '''
 	m_TransformParent: nullptr;
 	m_Modifications
 	m_RemovedComponents
+
+@AnimatorControllerLayer
+    m_Name: Base Layer
+    m_StateMachine: {fileID: 1107723725710441410}
+    # m_Mask: {fileID: 0}
+    # m_Motions: []
+    # m_Behaviours: []
+    # m_BlendingMode: 0
+    # m_SyncedLayerIndex: -1
+    # m_DefaultWeight: 0
+    # m_IKPass: 0
+    # m_SyncedLayerAffectsTiming: 0
+    m_Controller: {fileID: 9100000}
+@ChildAnimatorStateMachine
+    m_State
+@ModelImporterClipAnimation
+    name: PlayerIdle
+    takeName: Take 001
+    firstFrame: 1
+    lastFrame: 400
+@ModelImporterAnimation
+    clipAnimations
+    isReadable: 1
+@ModelImporterMesh
+    # lODScreenPercentages: []
+    globalScale: 1
+    # meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    # generateSecondaryUV: 0
+    useFileUnits: 1
+    # optimizeMeshForGPU: 1
+    # keepQuads: 0
+    # weldVertices: 1
+    # secondaryUVAngleDistortion: 8
+    # secondaryUVAreaDistortion: 15.000001
+    # secondaryUVHardAngle: 88
+    # secondaryUVPackMargin: 4
+    useFileScale: 1
 '''
 
 object_schema = '''
@@ -43,8 +83,9 @@ object_schema = '''
 	m_PrefabParentObject: Prefab*
 	m_PrefabInternal: Prefab*
 	m_Component : std::vector<Component*>
-	# m_Layer
+	m_Layer: int
 	m_Name : std::string
+	m_TagString: std::string
 	# m_Icon
 	# m_NavMeshLayer
 	# m_StaticEditorFlags
@@ -98,7 +139,7 @@ object_schema = '''
 
 @MeshRenderer: Renderer
 @SkinnedMeshRenderer: Renderer
-	m_SharedMesh
+	m_Mesh
 	m_Avatar
 	m_RootBone
 	m_Bones
@@ -132,7 +173,34 @@ object_schema = '''
 @Animation: Behaviour
 	m_clip
 	m_wrapMode
-
+@Animator: Behaviour
+    m_Avatar
+    m_Controller
+    m_ApplyRootMotion
+    m_LinearVelocityBlending
+    m_WarningMessage
+    m_HasTransformHierarchy
+    m_AllowConstantClipSamplingOptimization
+@RuntimeAnimatorController : Object
+@AnimatorController: RuntimeAnimatorController
+    m_AnimatorLayers
+@AnimatorState: Object
+    m_Motion
+@AnimatorStateMachine: Object
+    m_ChildStates:
+    # - serializedVersion: 1
+    # m_State: {fileID: 1102003656108312482}
+    # m_Position: {x: 360, y: 72, z: 0}
+    # m_ChildStateMachines: []
+    # m_AnyStateTransitions: []
+    # m_EntryTransitions: []
+    # m_StateMachineTransitions: {}
+    # m_StateMachineBehaviours: []
+    # m_AnyStatePosition: {x: 50, y: 20, z: 0}
+    # m_EntryPosition: {x: 50, y: 120, z: 0}
+    # m_ExitPosition: {x: 800, y: 120, z: 0}
+    # m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+    m_DefaultState: {fileID: 1102003656108312482}
 @RenderSettings: Object
   m_ObjectHideFlags: 0
   # serializedVersion: 8
@@ -161,6 +229,14 @@ object_schema = '''
   # m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+@AssetImporter: Object
+@ModelImporter: AssetImporter
+    fileIDToRecycleName
+    # materials
+    animations
+    meshes
+    importAnimation: 1
+    animationType: 3
 '''
 
 '''
@@ -207,6 +283,7 @@ template1 = '''#pragma once
 #include <FishEngine/Math/Vector3.hpp>
 #include <FishEngine/Math/Vector4.hpp>
 #include <FishEngine/Math/Quaternion.hpp>
+#include <FishEngine/Color.hpp>
 #include <FishEngine/Prefab.hpp>
 
 #include <FishEngine/Serialization/Archive.hpp>
@@ -239,8 +316,12 @@ template2 = '''#include <FishEngine/Serialization/Serialize.hpp>
 #include <FishEngine/Serialization/Archive.hpp>
 #include <FishEngine/FishEngine2.hpp>
 
-namespace FishEngine
-{
+using namespace FishEngine;
+using namespace FishEditor;
+using namespace FishEditor::Animation;
+
+//namespace FishEngine
+//{
 % for c in ClassInfo:
 	// ${c['className']}
 	void ${c['className']}::Deserialize(InputArchive& archive)
@@ -265,7 +346,7 @@ namespace FishEngine
 
 
 % endfor
-}
+//}
 '''
 
 def Func(schema, template):
@@ -299,5 +380,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-# Func(schema, template1)
-Func(object_schema, template2)
+Func(schema, template1)
+# Func(object_schema, template2)

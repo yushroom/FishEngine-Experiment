@@ -27,6 +27,7 @@ namespace FishEngine
 		m.erase(m.find(m_Handle));
 		if (SceneManager::s_ActiveScene == this)
 			SceneManager::SetActiveScene(nullptr);
+		LogInfo(m_Name.c_str());
 	}
 	
 //	std::vector<GameObject*> Scene::GetRootGameObjects()

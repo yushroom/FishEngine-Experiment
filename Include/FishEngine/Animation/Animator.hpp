@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../FishEngine.hpp"
-#include "../Component.hpp"
+#include "../Component/Behaviour.hpp"
 #include "../Math/Vector3.hpp"
 #include "../Math/Quaternion.hpp"
 #include "../Math/Matrix4x4.hpp"
@@ -95,13 +95,28 @@ namespace FishEngine
 		std::map<std::string, std::weak_ptr<GameObject>> m_nameToGameObject;
 	};
 #endif
+	
+	class Avatar;
+	class RuntimeAnimatorController;
 
-	class FE_EXPORT Animator : public Component
+	class FE_EXPORT Animator : public Behaviour
 	{
 	public:
 		DeclareObject(Animator, 95);
-
-		//std::list<std::shared_ptr<AnimationClip>> m_clips;
-		//AnimationClipPtr m_clip;
+		Animator() : Behaviour(ClassID, ClassName)
+		{
+			
+		}
+		
+	private:
+		Avatar* 					m_Avatar = nullptr;
+		RuntimeAnimatorController* 	m_Controller = nullptr;
+//		m_CullingMode;
+//		m_UpdateMode;
+		bool 						m_ApplyRootMotion = false;
+		bool 						m_LinearVelocityBlending = false;
+		std::string 				m_WarningMessage;
+		bool 						m_HasTransformHierarchy = true;
+		bool 						m_AllowConstantClipSamplingOptimization = true;
 	};
 }

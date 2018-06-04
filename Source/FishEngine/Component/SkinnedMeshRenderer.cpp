@@ -5,11 +5,11 @@
 
 void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 {
-	if (m_MatrixPalette.size() != m_SharedMesh->GetBoneCount())
-		m_MatrixPalette.resize(m_SharedMesh->GetBoneCount());
+	if (m_MatrixPalette.size() != m_Mesh->GetBoneCount())
+		m_MatrixPalette.resize(m_Mesh->GetBoneCount());
 	
 	const auto& worldToLocal = GetGameObject()->GetTransform()->GetWorldToLocalMatrix();
-	const auto& bindposes = m_SharedMesh->m_bindposes;
+	const auto& bindposes = m_Mesh->m_bindposes;
 	for (uint32_t i = 0; i < m_MatrixPalette.size(); ++i)
 	{
 		auto bone = m_Bones[i];
@@ -26,7 +26,7 @@ void FishEngine::SkinnedMeshRenderer::UpdateMatrixPalette() const
 
 #if ! Enable_GPU_Skinning
 
-	auto mesh = m_SharedMesh;
+	auto mesh = m_Mesh;
 	if (mesh->m_skinned)
 	{
 		if (m_SkinnedVertexPosition.size() != mesh->m_vertexCount)

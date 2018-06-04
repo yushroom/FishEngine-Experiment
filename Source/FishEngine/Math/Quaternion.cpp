@@ -7,6 +7,7 @@ namespace FishEngine {
 	
 	Vector3 Quaternion::eulerAngles() const
 	{
+#if 0
 		// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
 		// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
 		float heading, attitude, bank;  // y, z, x
@@ -28,13 +29,57 @@ namespace FishEngine {
 				bank = 0.f;
 			}
 			else {
-				heading = atan2(2 * (y*w - x*z), sqx - sqy - sqz + sqw);
-				attitude = asin(2 * test / unit);
-				bank = atan2(2 * (x*w - y*z), -sqx + sqy - sqz + sqw);
+				heading = atan2(2 * (y*w - x*z), sqx - sqy - sqz + sqw); 	// y
+				attitude = asin(2 * test / unit); 							// z
+				bank = atan2(2 * (x*w - y*z), -sqx + sqy - sqz + sqw); 		// x
 			}
 		}
 		return Vector3(bank, heading, attitude) * Mathf::Rad2Deg;
 		//return Vector3(pitch(), yaw(), roll());
+#elif 0
+		auto R = Matrix4x4::FromRotation(*this);
+		float x = -asin(R[1][2]);
+		float y = atan2(R[0][2], R[2][2]);
+		float z = atan2(R[1][0], R[1][1]);
+		return Vector3(x, y, z) * Mathf::Rad2Deg;
+#else
+//		float R12, R02, R22, R10, R11;
+		auto& q = *this;
+		float x = 2.0f * q.x;
+		float y = 2.0f * q.y;
+		float z = 2.0f * q.z;
+		float qxx = q.x * x;
+		float qyy = q.y * y;
+		float qzz = q.z * z;
+		float qxy = q.x * y;
+		float qxz = q.x * z;
+		float qyz = q.y * z;
+		float qwx = q.w * x;
+		float qwy = q.w * y;
+		float qwz = q.w * z;
+//
+//		result.m[0][0] = 1.f - (qyy + qzz);
+//		result.m[1][0] = qxy + qwz;
+//		result.m[2][0] = qxz - qwy;
+//
+//		result.m[0][1] = qxy - qwz;
+//		result.m[1][1] = 1.f - (qxx + qzz);
+//		result.m[2][1] = qyz + qwx;
+//
+//		result.m[0][2] = qxz + qwy;
+//		result.m[1][2] = qyz - qwx;
+//		result.m[2][2] = 1.f - (qxx + qyy);
+		float R12 = qyz - qwx;
+		float R02 = qxz + qwy;
+		float R22 = 1.f - (qxx + qyy);
+		float R10 = qxy + qwz;
+		float R11 = 1.f - (qxx + qzz);
+			
+		x = -asin(R12);
+		y = atan2(R02, R22);
+		z = atan2(R10, R11);
+		return Vector3(x, y, z) * Mathf::Rad2Deg;
+#endif
 	}
 	
 	
@@ -115,7 +160,7 @@ namespace FishEngine {
 	}
 	
 	
-	void SinCos(float degrees, float *s, float * c)
+	void SinCos(float degrees, float* s, float* c)
 	{
 		float rad = Mathf::Radians(degrees);
 		*s = std::sinf(rad);
@@ -134,12 +179,14 @@ namespace FishEngine {
 		float sz, cz;
 		SinCos(z / 2.0f, &sz, &cz);
 		
-		Quaternion qx(sx, 0.0f, 0.0f, cx);
-		Quaternion qy(0.0f, sy, 0.0f, cy);
-		Quaternion qz(0.0f, 0.0f, sz, cz);
-		
-		// TODO
-		return qy * qx * qz;
+//		Quaternion qx(sx, 0.0f, 0.0f, cx);
+//		Quaternion qy(0.0f, sy, 0.0f, cy);
+//		Quaternion qz(0.0f, 0.0f, sz, cz);
+//		return qy * qx * qz;
+		return Quaternion(cy*sx*cz + sy*cx*sz,
+						  -cy*sx*sz + sy*cx*cz,
+						  cy*cx*sz - sy*sx*cz,
+						  cy*cx*cz + sy*sx*sz);
 	}
 	
 	

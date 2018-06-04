@@ -2,8 +2,44 @@
 #include <FishEngine/Serialization/Archive.hpp>
 #include <FishEngine/FishEngine2.hpp>
 
+using namespace FishEngine;
+using namespace FishEditor;
+using namespace FishEditor::Animations;
+
 namespace FishEngine
 {
+	// AnimatorControllerLayer
+	InputArchive& operator>>(InputArchive& archive, AnimatorControllerLayer& t)
+	{
+		archive.AddNVP("m_Name", t.m_Name);
+		archive.AddNVP("m_StateMachine", t.m_StateMachine);
+		archive.AddNVP("m_Controller", t.m_Controller);
+		return archive;
+	}
+	OutputArchive& operator<<(OutputArchive& archive, const AnimatorControllerLayer& t)
+	{
+		archive.AddNVP("m_Name", t.m_Name);
+		archive.AddNVP("m_StateMachine", t.m_StateMachine);
+		archive.AddNVP("m_Controller", t.m_Controller);
+		return archive;
+	}
+	
+	
+	// ChildAnimatorStateMachine
+	InputArchive& operator>>(InputArchive& archive, ChildAnimatorStateMachine& t)
+	{
+		archive.AddNVP("m_State", t.m_State);
+		return archive;
+	}
+	OutputArchive& operator<<(OutputArchive& archive, const ChildAnimatorStateMachine& t)
+	{
+		archive.AddNVP("m_State", t.m_State);
+		return archive;
+	}
+}
+
+//namespace FishEngine
+//{
 	// Object
 	void Object::Deserialize(InputArchive& archive)
 	{
@@ -22,13 +58,15 @@ namespace FishEngine
 		Object::Deserialize(archive);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
-		auto components = this->m_Component;
+		typeof(this->m_Component) components;
 		archive.AddNVP("m_Component", components);
 		for (auto comp : components)
 		{
 			this->AddComponent(comp);
 		}
+		archive.AddNVP("m_Layer", this->m_Layer);
 		archive.AddNVP("m_Name", this->m_Name);
+		archive.AddNVP("m_TagString", this->m_TagString);
 		archive.AddNVP("m_IsActive", this->m_IsActive);
 	}
 
@@ -38,7 +76,9 @@ namespace FishEngine
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
 		archive.AddNVP("m_Component", this->m_Component);
+		archive.AddNVP("m_Layer", this->m_Layer);
 		archive.AddNVP("m_Name", this->m_Name);
+		archive.AddNVP("m_TagString", this->m_TagString);
 		archive.AddNVP("m_IsActive", this->m_IsActive);
 	}
 
@@ -230,7 +270,7 @@ namespace FishEngine
 	void SkinnedMeshRenderer::Deserialize(InputArchive& archive)
 	{
 		Renderer::Deserialize(archive);
-		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
+		archive.AddNVP("m_Mesh", this->m_Mesh);
 		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
 		archive.AddNVP("m_Bones", this->m_Bones);
@@ -239,7 +279,7 @@ namespace FishEngine
 	void SkinnedMeshRenderer::Serialize(OutputArchive& archive) const
 	{
 		Renderer::Serialize(archive);
-		archive.AddNVP("m_SharedMesh", this->m_SharedMesh);
+		archive.AddNVP("m_Mesh", this->m_Mesh);
 		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
 		archive.AddNVP("m_Bones", this->m_Bones);
@@ -369,6 +409,87 @@ namespace FishEngine
 		archive.AddNVP("m_wrapMode", this->m_wrapMode);
 	}
 
+	// Animator
+	void Animator::Deserialize(InputArchive& archive)
+	{
+		Behaviour::Deserialize(archive);
+		archive.AddNVP("m_Avatar", this->m_Avatar);
+		archive.AddNVP("m_Controller", this->m_Controller);
+		archive.AddNVP("m_ApplyRootMotion", this->m_ApplyRootMotion);
+		archive.AddNVP("m_LinearVelocityBlending", this->m_LinearVelocityBlending);
+		archive.AddNVP("m_WarningMessage", this->m_WarningMessage);
+		archive.AddNVP("m_HasTransformHierarchy", this->m_HasTransformHierarchy);
+		archive.AddNVP("m_AllowConstantClipSamplingOptimization", this->m_AllowConstantClipSamplingOptimization);
+	}
+
+	void Animator::Serialize(OutputArchive& archive) const
+	{
+		Behaviour::Serialize(archive);
+		archive.AddNVP("m_Avatar", this->m_Avatar);
+		archive.AddNVP("m_Controller", this->m_Controller);
+		archive.AddNVP("m_ApplyRootMotion", this->m_ApplyRootMotion);
+		archive.AddNVP("m_LinearVelocityBlending", this->m_LinearVelocityBlending);
+		archive.AddNVP("m_WarningMessage", this->m_WarningMessage);
+		archive.AddNVP("m_HasTransformHierarchy", this->m_HasTransformHierarchy);
+		archive.AddNVP("m_AllowConstantClipSamplingOptimization", this->m_AllowConstantClipSamplingOptimization);
+	}
+	
+	
+	// RuntimeAnimatorController
+	void RuntimeAnimatorController::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+	}
+	
+	void RuntimeAnimatorController::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+	}
+	
+	
+	// AnimatorController
+	void AnimatorController::Deserialize(FishEngine::InputArchive& archive)
+	{
+		RuntimeAnimatorController::Deserialize(archive);
+		archive.AddNVP("m_AnimatorLayers", this->m_AnimatorLayers);
+	}
+	
+	void AnimatorController::Serialize(OutputArchive& archive) const
+	{
+		RuntimeAnimatorController::Serialize(archive);
+		archive.AddNVP("m_AnimatorLayers", this->m_AnimatorLayers);
+	}
+	
+	
+	// AnimatorState
+	void AnimatorState::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+		archive.AddNVP("m_Motion", this->m_Motion);
+	}
+	
+	void AnimatorState::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+		archive.AddNVP("m_Motion", this->m_Motion);
+	}
+	
+	
+	// AnimatorStateMachine
+	void AnimatorStateMachine::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+		archive.AddNVP("m_ChildStates", this->m_ChildStates);
+		archive.AddNVP("m_DefaultState", this->m_DefaultState);
+	}
+	
+	void AnimatorStateMachine::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+		archive.AddNVP("m_ChildStates", this->m_ChildStates);
+		archive.AddNVP("m_DefaultState", this->m_DefaultState);
+	}
+
 
 	// RenderSettings
 	void RenderSettings::Deserialize(InputArchive& archive)
@@ -420,4 +541,4 @@ namespace FishEngine
 	}
 
 
-}
+//}

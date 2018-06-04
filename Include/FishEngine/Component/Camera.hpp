@@ -84,17 +84,8 @@ namespace FishEngine
 //		void virtual OnDrawGizmos() override;
 //		void virtual OnDrawGizmosSelected() override;
 
-		// TODO
 		// The first enabled camera tagged "MainCamera" (Read Only).
 		static Camera* GetMainCamera();
-
-//		static CameraPtr mainGameCamera();
-		
-//		// TODO: delete it
-//		static void setMainCamera(CameraPtr camera)
-//		{
-//			m_mainCamera = camera;
-//		}
 
 		static void OnWindowSizeChanged(const int width, const int height);
 
@@ -102,21 +93,21 @@ namespace FishEngine
 	private:
 //		friend class RenderSystem;
 
-		float m_FarClipPlane        = 1000.f;
-		float m_NearClipPlane       = 0.3f;
-		float m_FieldOfView         = 60.f;
-		bool  m_Orthographic = false;
+		float 			m_FarClipPlane        = 1000.f;
+		float 			m_NearClipPlane       = 0.3f;
+		float 			m_FieldOfView         = 60.f;
+		bool  			m_Orthographic = false;
 		// Projection's half-size(vertical) when in orthographic mode.
-		float m_OrthographicSize    = 5.f;
+		float 			m_OrthographicSize    = 5.f;
 		
 		
 		// The aspect ratio (width divided by height).
-		mutable float m_aspect              = 0;
+		mutable float 	m_aspect              = 0;
 //		bool m_isAspectSet         = false;
-		Vector4 m_viewport{ 0, 0, 1, 1 };
-		mutable bool m_isDirty = true;
+		Vector4 		m_viewport{ 0, 0, 1, 1 };
+		mutable bool 	m_isDirty = true;
 
-		CameraType  m_cameraType = CameraType::Game;
+		CameraType  	m_cameraType = CameraType::Game;
 
 //		Meta(NonSerializable)
 		mutable Matrix4x4 m_projectMatrix;

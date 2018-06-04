@@ -32,8 +32,8 @@ namespace FishEngine
 		void SetRootBone(Transform* rootBone) { m_RootBone = rootBone; }
 		Transform* GetRootBone() const { return  m_RootBone; }
 
-		void SetSharedMesh(Mesh* sharedMesh) { m_SharedMesh = sharedMesh; }
-		Mesh* GetSharedMesh() const { return m_SharedMesh; }
+		void SetSharedMesh(Mesh* sharedMesh) { m_Mesh = sharedMesh; }
+		Mesh* GetSharedMesh() const { return m_Mesh; }
 
 	private:
 
@@ -42,7 +42,7 @@ namespace FishEngine
 		void UpdateMatrixPalette() const;
 
 		// The mesh used for skinning.
-		Mesh*		m_SharedMesh = nullptr;
+		Mesh*		m_Mesh = nullptr;
 		Avatar*		m_Avatar = nullptr;
 		Transform*	m_RootBone = nullptr;
 

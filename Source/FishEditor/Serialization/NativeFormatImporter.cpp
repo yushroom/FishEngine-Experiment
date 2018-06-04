@@ -44,10 +44,10 @@ namespace FishEditor
 				m_FileIDToObject[2100000] = m_MainAsset;
 				return;
 			}
-			else if (ext != ".prefab")
-			{
-				abort();
-			}
+//			else if (ext != ".prefab")
+//			{
+//				abort();
+//			}
 		}
 
 		YAMLInputArchive archive;
@@ -59,6 +59,7 @@ namespace FishEditor
 		try {
 			mainObjectFileID = meta.importerInfo["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
 		} catch(const std::exception& e) {
+			abort();
 		}
 		Object* mainObject = nullptr;
 		if (mainObjectFileID == 0)		// fileFormatVersion == 2

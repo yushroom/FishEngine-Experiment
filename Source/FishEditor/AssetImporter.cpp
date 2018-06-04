@@ -12,6 +12,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <FishEngine/Application.hpp>
+#include <FishEngine/Prefab.hpp>
 
 namespace FishEditor
 {
@@ -37,6 +38,13 @@ namespace FishEditor
 //		for (auto&& p : m_FileIDToObject)
 //		{
 //			delete p.second;
+//		}
+//		if (m_MainAsset != nullptr)
+//		{
+//			if (m_MainAsset->GetClassID() == FishEngine::Prefab::ClassID)
+//			{
+//				delete m_MainAsset;
+//			}
 //		}
 	}
 
@@ -80,6 +88,7 @@ namespace FishEditor
 			} catch(std::exception const & e) {
 				LogError("error in timeCreated:");
 			}
+			
 			auto guid = meta["guid"].as<std::string>();
 
 			AssetImporter* importer = nullptr;
@@ -104,11 +113,13 @@ namespace FishEditor
 				
 				importer = fbximporter;
 			}
-			else if (ext == ".prefab" || ext == ".mat")
+			else if (ext == ".prefab" || ext == ".mat" || ext == ".controller")
 			{
 //				importer = new AssetImporter();
 				auto nativeImporter = new NativeFormatImporter();
 				importer = nativeImporter;
+//				auto mainObjectFileID = meta["NativeFormatImporter"]["mainObjectFileID"].as<int64_t>();
+//				nativeImporter->m_MainObjectFileID = mainObjectFileID;
 			}
 			else if (ext == ".unity")
 			{
