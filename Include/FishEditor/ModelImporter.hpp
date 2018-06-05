@@ -4,6 +4,7 @@
 #include <FishEngine/Render/Mesh.hpp>
 //#include <FishEngine/Scene.hpp>
 #include <FishEngine/Render/Material.hpp>
+#include <FishEngine/Animation/HumanDescription.hpp>
 //#include <FishEngine/Component/MeshFilter.hpp>
 //#include <FishEngine/Animator.hpp>
 //#include <FishEngine/PrimitiveType.hpp>
@@ -184,6 +185,7 @@ namespace FishEditor
 		ModelImporterAnimation animations;
 		ModelImporterMesh meshes;
 		bool importAnimation = true;
+		FishEngine::HumanDescription humanDescription;
 		ModelImporterAnimationType animationType = ModelImporterAnimationType::Generic;
 
 	}; // end of class ModelImporter

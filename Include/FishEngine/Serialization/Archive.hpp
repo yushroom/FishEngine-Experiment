@@ -1,11 +1,6 @@
 #pragma once
 
 #include "../Object.hpp"
-#include "../Math/Vector2.hpp"
-#include "../Math/Vector3.hpp"
-#include "../Math/Vector4.hpp"
-#include "../Math/Quaternion.hpp"
-//#include "Math/Matrix4x4.hpp"
 #include "../Util/StringFormat.hpp"
 #include "../Debug.hpp"
 

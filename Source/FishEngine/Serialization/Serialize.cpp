@@ -2,38 +2,224 @@
 #include <FishEngine/Serialization/Archive.hpp>
 #include <FishEngine/FishEngine2.hpp>
 
+#include <FishEngine/Animation/HumanDescription.hpp>
+#include <FishEngine/Animation/AnimatorController.hpp>
+
 using namespace FishEngine;
 using namespace FishEditor;
 using namespace FishEditor::Animations;
 
 namespace FishEngine
 {
+	// Vector2
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Vector2& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector2& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		return archive;
+	}
+
+	// Vector3
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Vector3& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector3& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		return archive;
+	}
+
+	// Vector4
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Vector4& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		archive.AddNVP("w", t.w);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector4& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		archive.AddNVP("w", t.w);
+		return archive;
+	}
+
+	// Quaternion
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Quaternion& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		archive.AddNVP("w", t.w);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Quaternion& t)
+	{
+		archive.AddNVP("x", t.x);
+		archive.AddNVP("y", t.y);
+		archive.AddNVP("z", t.z);
+		archive.AddNVP("w", t.w);
+		return archive;
+	}
+
+	// Color
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Color& t)
+	{
+		archive.AddNVP("r", t.r);
+		archive.AddNVP("g", t.g);
+		archive.AddNVP("b", t.b);
+		archive.AddNVP("a", t.a);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Color& t)
+	{
+		archive.AddNVP("r", t.r);
+		archive.AddNVP("g", t.g);
+		archive.AddNVP("b", t.b);
+		archive.AddNVP("a", t.a);
+		return archive;
+	}
+
+	// Modification
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, Modification& t)
+	{
+		archive.AddNVP("target", t.target);
+		archive.AddNVP("propertyPath", t.propertyPath);
+		archive.AddNVP("value", t.value);
+		archive.AddNVP("objectReference", t.objectReference);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Modification& t)
+	{
+		archive.AddNVP("target", t.target);
+		archive.AddNVP("propertyPath", t.propertyPath);
+		archive.AddNVP("value", t.value);
+		archive.AddNVP("objectReference", t.objectReference);
+		return archive;
+	}
+
+	// PrefabModification
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, PrefabModification& t)
+	{
+		archive.AddNVP("m_TransformParent", t.m_TransformParent);
+		archive.AddNVP("m_Modifications", t.m_Modifications);
+		archive.AddNVP("m_RemovedComponents", t.m_RemovedComponents);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const PrefabModification& t)
+	{
+		archive.AddNVP("m_TransformParent", t.m_TransformParent);
+		archive.AddNVP("m_Modifications", t.m_Modifications);
+		archive.AddNVP("m_RemovedComponents", t.m_RemovedComponents);
+		return archive;
+	}
+
 	// AnimatorControllerLayer
-	InputArchive& operator>>(InputArchive& archive, AnimatorControllerLayer& t)
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, AnimatorControllerLayer& t)
 	{
 		archive.AddNVP("m_Name", t.m_Name);
 		archive.AddNVP("m_StateMachine", t.m_StateMachine);
 		archive.AddNVP("m_Controller", t.m_Controller);
 		return archive;
 	}
-	OutputArchive& operator<<(OutputArchive& archive, const AnimatorControllerLayer& t)
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const AnimatorControllerLayer& t)
 	{
 		archive.AddNVP("m_Name", t.m_Name);
 		archive.AddNVP("m_StateMachine", t.m_StateMachine);
 		archive.AddNVP("m_Controller", t.m_Controller);
 		return archive;
 	}
-	
-	
+
 	// ChildAnimatorStateMachine
-	InputArchive& operator>>(InputArchive& archive, ChildAnimatorStateMachine& t)
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, ChildAnimatorStateMachine& t)
 	{
 		archive.AddNVP("m_State", t.m_State);
 		return archive;
 	}
-	OutputArchive& operator<<(OutputArchive& archive, const ChildAnimatorStateMachine& t)
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const ChildAnimatorStateMachine& t)
 	{
 		archive.AddNVP("m_State", t.m_State);
+		return archive;
+	}
+
+	// HumanLimit
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, HumanLimit& t)
+	{
+		archive.AddNVP("min", t.m_Min);
+		archive.AddNVP("max", t.m_Max);
+		archive.AddNVP("value", t.m_Center);
+		archive.AddNVP("length", t.m_AxisLength);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const HumanLimit& t)
+	{
+		archive.AddNVP("min", t.m_Min);
+		archive.AddNVP("max", t.m_Max);
+		archive.AddNVP("value", t.m_Center);
+		archive.AddNVP("length", t.m_AxisLength);
+		return archive;
+	}
+
+	// HumanBone
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, HumanBone& t)
+	{
+		archive.AddNVP("boneName", t.boneName);
+		archive.AddNVP("humanName", t.humanName);
+		archive.AddNVP("limit", t.limit);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const HumanBone& t)
+	{
+		archive.AddNVP("boneName", t.boneName);
+		archive.AddNVP("humanName", t.humanName);
+		archive.AddNVP("limit", t.limit);
+		return archive;
+	}
+
+	// SkeletonBone
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, SkeletonBone& t)
+	{
+		archive.AddNVP("name", t.name);
+		archive.AddNVP("position", t.position);
+		archive.AddNVP("rotation", t.rotation);
+		archive.AddNVP("scale", t.scale);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const SkeletonBone& t)
+	{
+		archive.AddNVP("name", t.name);
+		archive.AddNVP("position", t.position);
+		archive.AddNVP("rotation", t.rotation);
+		archive.AddNVP("scale", t.scale);
+		return archive;
+	}
+
+	// HumanDescription
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, HumanDescription& t)
+	{
+		archive.AddNVP("human", t.human);
+		archive.AddNVP("skeleton", t.skeleton);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const HumanDescription& t)
+	{
+		archive.AddNVP("human", t.human);
+		archive.AddNVP("skeleton", t.skeleton);
 		return archive;
 	}
 }

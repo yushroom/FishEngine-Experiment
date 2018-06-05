@@ -1,5 +1,5 @@
 from mako.template import Template
-schema = '''
+schema_struct_FishEngine = '''
 @Vector2
 	x
 	y
@@ -22,18 +22,15 @@ schema = '''
 	g
 	b
 	a
-
 @Modification
 	target: nullptr;
 	propertyPath
 	value
 	objectReference: nullptr;
-	
 @PrefabModification
 	m_TransformParent: nullptr;
 	m_Modifications
 	m_RemovedComponents
-
 @AnimatorControllerLayer
 	m_Name: Base Layer
 	m_StateMachine: {fileID: 1107723725710441410}
@@ -48,6 +45,26 @@ schema = '''
 	m_Controller: {fileID: 9100000}
 @ChildAnimatorStateMachine
 	m_State
+@HumanLimit:
+	min: {x: 0, y: 0, z: 0}
+	max: {x: 0, y: 0, z: 0}
+	value: {x: 0, y: 0, z: 0}
+	length: 0
+@HumanBone:
+	boneName: RightHandPinky3
+	humanName: Right Little Distal
+	limit:
+@SkeletonBone:
+	name: Run(Clone)
+	position: {x: 0, y: 0, z: 0}
+	rotation: {x: 0, y: 0, z: 0, w: 1}
+	scale: {x: 1, y: 1, z: 1}
+@HumanDescription:
+	human
+	skeleton
+'''
+
+schema_struct_FishEditor = '''
 @ModelImporterClipAnimation
 	name: PlayerIdle
 	takeName: Take 001
@@ -75,7 +92,7 @@ schema = '''
 	useFileScale: 1
 '''
 
-object_schema = '''
+schema_Object_FishEngine = '''
 @Object
 	m_ObjectHideFlags
 	m_PrefabParentObject
@@ -232,6 +249,9 @@ object_schema = '''
   # m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+'''
+
+schema_Object_FishEditor = '''
 @AssetImporter: Object
 @ModelImporter: AssetImporter
 	fileIDToRecycleName
@@ -239,6 +259,7 @@ object_schema = '''
 	animations
 	meshes
 	importAnimation: 1
+	humanDescription
 	animationType: 3
 @DefaultImporter: AssetImporter
   # externalObjects: {}
@@ -253,67 +274,35 @@ object_schema = '''
   # assetBundleVariant: 
 '''
 
-'''
-Camera:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 822216902}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_NormalizedViewPortRect:
-	serializedVersion: 2
-	x: 0
-	y: 0
-	width: 1
-	height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -1
-  m_CullingMask:
-	serializedVersion: 2
-	m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
-'''
 
-template1 = '''#pragma once
-
-#include <FishEngine/Math/Vector2.hpp>
-#include <FishEngine/Math/Vector3.hpp>
-#include <FishEngine/Math/Vector4.hpp>
-#include <FishEngine/Math/Quaternion.hpp>
-#include <FishEngine/Color.hpp>
-#include <FishEngine/Prefab.hpp>
-
+template_serialize_header = '''
+#pragma once
 #include <FishEngine/Serialization/Archive.hpp>
 
 namespace FishEngine
 {
 % for c in ClassInfo:
+	struct ${c['className']};
+	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, ${c['className']}& t);
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const ${c['className']}& t);
+
+% endfor
+}
+'''
+
+template_serialize_source = '''
+namespace FishEngine
+{
+% for c in ClassInfo:
 	// ${c['className']}
-	inline InputArchive& operator>>(InputArchive& archive, ${c['className']}& t)
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
 	% endfor
 		return archive;
 	}
-	inline OutputArchive& operator<<(OutputArchive& archive, const ${c['className']}& t)
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const ${c['className']}& t)
 	{
 	% for member in c['members']:
 		archive.AddNVP("${member}", t.${member});
@@ -323,7 +312,6 @@ namespace FishEngine
 
 % endfor
 }
-
 '''
 
 template2 = '''#include <FishEngine/Serialization/Serialize.hpp>
@@ -394,5 +382,6 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-# Func(schema, template1)
-Func(object_schema, template2)
+# Func(schema_struct_FishEngine, template_serialize_header)
+Func(schema_struct_FishEngine, template_serialize_source)
+# Func(object_schema, template2)

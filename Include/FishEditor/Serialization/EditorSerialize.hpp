@@ -1,7 +1,7 @@
 #pragma once
 
-//#include <FishEngine/Serialization/Serialize.hpp>
 #include <FishEngine/Serialization/Archive.hpp>
+#include <FishEngine/Serialization/Serialize.hpp>
 
 //namespace FishEngine
 //{

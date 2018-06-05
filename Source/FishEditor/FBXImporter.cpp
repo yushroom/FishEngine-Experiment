@@ -1464,6 +1464,22 @@ void FishEditor::FBXImporter::Import()
 	
 	root->SetName(fileName);
 
+#if 1
+	// TODO: this is a hack
+	//	takename may not be foud
+	if (m_model.m_animationClips.size() == 1)
+	{
+		auto clip = m_model.m_animationClips[0];
+		int classID = AnimationClip::ClassID;
+		for (auto& ca : this->animations.clipAnimations)
+		{
+			auto name = ca.name;
+			auto fileID = recycleNameToFileID[classID][name];
+			m_FileIDToObject[fileID] = clip;
+			m_Assets[classID][name] = clip;
+		}
+	}
+#else
 	for (auto clip : m_model.m_animationClips)
 	{
 		int classID = AnimationClip::ClassID;
@@ -1482,6 +1498,7 @@ void FishEditor::FBXImporter::Import()
 		m_FileIDToObject[fileID] = clip;
 		m_Assets[classID][name] = clip;
 	}
+#endif
 	
 	for (auto mesh : m_model.m_meshes)
 	{

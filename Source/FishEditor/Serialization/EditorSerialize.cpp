@@ -87,6 +87,7 @@ void ModelImporter::Deserialize(InputArchive& archive)
 	archive.AddNVP("animations", this->animations);
 	archive.AddNVP("meshes", this->meshes);
 	archive.AddNVP("importAnimation", this->importAnimation);
+	archive.AddNVP("humanDescription", this->humanDescription);
 	archive.AddNVP("animationType", this->animationType);
 }
 
@@ -97,6 +98,7 @@ void ModelImporter::Serialize(OutputArchive& archive) const
 	archive.AddNVP("animations", this->animations);
 	archive.AddNVP("meshes", this->meshes);
 	archive.AddNVP("importAnimation", this->importAnimation);
+	archive.AddNVP("humanDescription", this->humanDescription);
 	archive.AddNVP("animationType", this->animationType);
 }
 
