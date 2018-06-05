@@ -222,6 +222,38 @@ namespace FishEngine
 		archive.AddNVP("skeleton", t.skeleton);
 		return archive;
 	}
+
+	// MaterialTextureProperty
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, MaterialTextureProperty& t)
+	{
+		archive.AddNVP("m_Texture", t.m_Texture);
+		archive.AddNVP("m_Scale", t.m_Scale);
+		archive.AddNVP("m_Offset", t.m_Offset);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const MaterialTextureProperty& t)
+	{
+		archive.AddNVP("m_Texture", t.m_Texture);
+		archive.AddNVP("m_Scale", t.m_Scale);
+		archive.AddNVP("m_Offset", t.m_Offset);
+		return archive;
+	}
+
+	// MaterialProperties
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, MaterialProperties& t)
+	{
+		archive.AddNVP("m_TexEnvs", t.m_TexEnvs);
+		archive.AddNVP("m_Floats", t.m_Floats);
+		archive.AddNVP("m_Colors", t.m_Colors);
+		return archive;
+	}
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const MaterialProperties& t)
+	{
+		archive.AddNVP("m_TexEnvs", t.m_TexEnvs);
+		archive.AddNVP("m_Floats", t.m_Floats);
+		archive.AddNVP("m_Colors", t.m_Colors);
+		return archive;
+	}
 }
 
 //namespace FishEngine
@@ -365,6 +397,30 @@ namespace FishEngine
 		archive.AddNVP("m_FieldOfView", this->m_FieldOfView);
 		archive.AddNVP("m_Orthographic", this->m_Orthographic);
 		archive.AddNVP("m_OrthographicSize", this->m_OrthographicSize);
+	}
+
+
+	// Material
+	void Material::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+		archive.AddNVP("m_Shader", this->m_Shader);
+		archive.AddNVP("m_ShaderKeywords", this->m_ShaderKeywords);
+		//archive.AddNVP("m_LightmapFlags", this->m_LightmapFlags);
+		//archive.AddNVP("m_CustomRenderQueue", this->m_CustomRenderQueue);
+		//archive.AddNVP("stringTagMap", this->stringTagMap);
+		archive.AddNVP("m_SavedProperties", this->m_SavedProperties);
+	}
+
+	void Material::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+		archive.AddNVP("m_Shader", this->m_Shader);
+		archive.AddNVP("m_ShaderKeywords", this->m_ShaderKeywords);
+		//archive.AddNVP("m_LightmapFlags", this->m_LightmapFlags);
+		//archive.AddNVP("m_CustomRenderQueue", this->m_CustomRenderQueue);
+		//archive.AddNVP("stringTagMap", this->stringTagMap);
+		archive.AddNVP("m_SavedProperties", this->m_SavedProperties);
 	}
 
 

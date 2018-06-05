@@ -25,17 +25,16 @@ namespace FishEngine
 	{
 		std::vector<MaterialTextureProperty> m_TexEnvs;
 		std::vector<float> m_Floats;
-		std::vector<Color> m_COlors;
+		std::vector<Color> m_Colors;
 	};
 	
 	class Material : public Object
 	{
 	public:
-        InjectClassName(Material, 21);
+		DeclareObject(Material, 21);
 		
 		Material() : Object(Material::ClassID, ClassName)
 		{
-//			LOGF;
 			AssetManager::GetInstance().AddAsset(this);
 		}
 		Material(const Material&) = delete;
@@ -43,7 +42,6 @@ namespace FishEngine
 		
 		~Material()
 		{
-//			LOGF;
 			AssetManager::GetInstance().RemoveAsset(this);
 		}
 		

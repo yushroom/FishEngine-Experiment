@@ -63,4 +63,12 @@ namespace FishEngine
 	InputArchive& operator>>(InputArchive& archive, FishEditor::Animations::ChildAnimatorStateMachine& t);
 	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::ChildAnimatorStateMachine& t);
 	
+
+	struct MaterialTextureProperty;
+	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, MaterialTextureProperty& t);
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const MaterialTextureProperty& t);
+
+	struct MaterialProperties;
+	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, MaterialProperties& t);
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const MaterialProperties& t);
 }

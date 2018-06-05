@@ -204,8 +204,5 @@ namespace FishEditor
 			return nullptr;
 		}
 		return obj;
-//		auto prefab = importer->GetMainAsset()->As<Prefab>();
-//		assert(prefab != nullptr);
-//		return prefab->GetObjectByFileID(fileID);
 	}
 }

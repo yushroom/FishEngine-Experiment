@@ -62,6 +62,14 @@ schema_struct_FishEngine = '''
 @HumanDescription:
 	human
 	skeleton
+@MaterialTextureProperty:
+	m_Texture: {fileID: 0}
+	m_Scale: {x: 1, y: 1}
+	m_Offset: {x: 0, y: 0}
+@MaterialProperties:
+	m_TexEnvs
+	m_Floats
+	m_Colors
 '''
 
 schema_struct_FishEditor = '''
@@ -136,6 +144,13 @@ schema_Object_FishEngine = '''
 	m_Orthographic
 	m_OrthographicSize
 
+@Material: Object
+	m_Shader
+	m_ShaderKeywords: OUTLINE_FRONT _EMISSION
+	m_LightmapFlags: 1
+	m_CustomRenderQueue: 1
+	stringTagMap: {}
+	m_SavedProperties:
 @Behaviour: Component
 	m_Enabled
 
@@ -314,7 +329,7 @@ namespace FishEngine
 }
 '''
 
-template2 = '''#include <FishEngine/Serialization/Serialize.hpp>
+template_Object = '''#include <FishEngine/Serialization/Serialize.hpp>
 #include <FishEngine/Serialization/Archive.hpp>
 #include <FishEngine/FishEngine2.hpp>
 
@@ -383,5 +398,5 @@ def Func(schema, template):
 	print(template1.render(ClassInfo=classInfo))
 
 # Func(schema_struct_FishEngine, template_serialize_header)
-Func(schema_struct_FishEngine, template_serialize_source)
-# Func(object_schema, template2)
+# Func(schema_struct_FishEngine, template_serialize_source)
+Func(schema_Object_FishEngine, template_Object)
