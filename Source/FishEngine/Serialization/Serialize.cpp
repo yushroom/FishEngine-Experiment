@@ -44,18 +44,25 @@ namespace FishEngine
 	void Object::Deserialize(InputArchive& archive)
 	{
 		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
+		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
+		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
+		archive.AddNVP("m_Name", this->m_Name);
 	}
 
 	void Object::Serialize(OutputArchive& archive) const
 	{
 		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
+		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
+		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
+		archive.AddNVP("m_Name", this->m_Name);
 	}
 
 
 	// GameObject
 	void GameObject::Deserialize(InputArchive& archive)
 	{
-		Object::Deserialize(archive);
+//		Object::Deserialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
 		typeof(this->m_Component) components;
@@ -72,7 +79,8 @@ namespace FishEngine
 
 	void GameObject::Serialize(OutputArchive& archive) const
 	{
-		Object::Serialize(archive);
+//		Object::Serialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
 		archive.AddNVP("m_Component", this->m_Component);
@@ -110,7 +118,8 @@ namespace FishEngine
 	// Component
 	void Component::Deserialize(InputArchive& archive)
 	{
-		Object::Deserialize(archive);
+//		Object::Deserialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
 		archive.AddNVP("m_GameObject", this->m_GameObject);
@@ -119,7 +128,8 @@ namespace FishEngine
 
 	void Component::Serialize(OutputArchive& archive) const
 	{
-		Object::Serialize(archive);
+//		Object::Serialize(archive);
+		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
 		archive.AddNVP("m_GameObject", this->m_GameObject);

@@ -115,21 +115,24 @@ namespace FishEngine
 
 		for (auto o : archive.m_Objects)
 		{
-			if (o->Is<GameObject>())
-			{
-				auto go = o->As<GameObject>();
-				if (go->GetPrefabParentObject() != nullptr)
-					memo[go->GetPrefabParentObject()] = nullptr;
-				if (go->GetPrefabParentObject() != nullptr)
-					memo[go->GetPrefabParentObject()] = nullptr;
-			}
-			else if (o->Is<Component>())
-			{
-				auto comp = o->As<Component>();
-				if (comp->GetPrefabParentObject() != nullptr)
-					memo[comp->GetPrefabParentObject()] = nullptr;
-			}
-//			objects.push_back(o);
+			auto p = o->GetPrefabParentObject();
+			if (p != nullptr)
+				memo[p] = nullptr;
+//			if (o->Is<GameObject>())
+//			{
+//				auto go = o->As<GameObject>();
+//				if (go->GetPrefabParentObject() != nullptr)
+//					memo[go->GetPrefabParentObject()] = nullptr;
+//				if (go->GetPrefabParentObject() != nullptr)
+//					memo[go->GetPrefabParentObject()] = nullptr;
+//			}
+//			else if (o->Is<Component>())
+//			{
+//				auto comp = o->As<Component>();
+//				if (comp->GetPrefabParentObject() != nullptr)
+//					memo[comp->GetPrefabParentObject()] = nullptr;
+//			}
+////			objects.push_back(o);
 		}
 
 //		std::map<Object*, Object*> memo;

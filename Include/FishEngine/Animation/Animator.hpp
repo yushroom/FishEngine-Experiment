@@ -9,6 +9,45 @@
 
 namespace FishEngine
 {
+	class Avatar;
+	class RuntimeAnimatorController;
+
+	class FE_EXPORT Animator : public Behaviour
+	{
+	public:
+		DeclareObject(Animator, 95);
+		Animator() : Behaviour(ClassID, ClassName)
+		{
+			
+		}
+		
+		RuntimeAnimatorController*
+		GetRuntimeAnimatorController() const { return m_Controller; }
+		
+		Avatar*
+		GetAvatar() const { return m_Avatar; }
+		
+		void Start();
+		void Play();
+		void Update(float deltaTime);
+		
+	private:
+		Avatar* 					m_Avatar = nullptr;
+		RuntimeAnimatorController* 	m_Controller = nullptr;
+//		m_CullingMode;
+//		m_UpdateMode;
+		bool 						m_ApplyRootMotion = false;
+		bool 						m_LinearVelocityBlending = false;
+		std::string 				m_WarningMessage;
+		bool 						m_HasTransformHierarchy = true;
+		bool 						m_AllowConstantClipSamplingOptimization = true;
+		
+		float m_localTimer = 0.0f;
+		std::map<std::string, Transform*> m_Skeleton;
+	};
+	
+	
+	
 #if 0
 	struct FE_EXPORT Vector3Key
 	{
@@ -21,7 +60,7 @@ namespace FishEngine
 		float time;
 		Quaternion value;
 	};
-
+	
 	struct FE_EXPORT TransformationKey
 	{
 		float time;
@@ -44,11 +83,11 @@ namespace FishEngine
 		float ticksPerSecond;
 		std::map<std::string, AnimationNode> channels;
 	};
-
+	
 	typedef std::shared_ptr<AnimationChannel> AnimationChannelPtr;
 	
-
-
+	
+	
 	class FE_EXPORT Meta(DisallowMultipleComponent) Animator : public Component
 	{
 	public:
@@ -59,7 +98,7 @@ namespace FishEngine
 		bool m_playingOnce = false;
 		bool m_playOneFrame = false;
 		int m_currentFrame = 0;
-
+		
 		Meta(NonSerializable)
 		AnimationChannelPtr m_animation;
 		
@@ -68,7 +107,7 @@ namespace FishEngine
 		void Play();
 		
 		void PlayOnce();
-
+		
 		void NextFrame();
 		
 		void Stop() {
@@ -79,11 +118,11 @@ namespace FishEngine
 		}
 		
 		virtual void Update() override;
-
+		
 		AvatarPtr& avatar() {
 			return m_avatar;
 		}
-
+		
 		void setAvatar(const AvatarPtr& avatar) {
 			m_avatar = avatar;
 		}
@@ -95,28 +134,5 @@ namespace FishEngine
 		std::map<std::string, std::weak_ptr<GameObject>> m_nameToGameObject;
 	};
 #endif
-	
-	class Avatar;
-	class RuntimeAnimatorController;
 
-	class FE_EXPORT Animator : public Behaviour
-	{
-	public:
-		DeclareObject(Animator, 95);
-		Animator() : Behaviour(ClassID, ClassName)
-		{
-			
-		}
-		
-	private:
-		Avatar* 					m_Avatar = nullptr;
-		RuntimeAnimatorController* 	m_Controller = nullptr;
-//		m_CullingMode;
-//		m_UpdateMode;
-		bool 						m_ApplyRootMotion = false;
-		bool 						m_LinearVelocityBlending = false;
-		std::string 				m_WarningMessage;
-		bool 						m_HasTransformHierarchy = true;
-		bool 						m_AllowConstantClipSamplingOptimization = true;
-	};
 }

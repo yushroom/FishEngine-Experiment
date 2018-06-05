@@ -9,12 +9,15 @@ namespace FishEditor
 	class NativeFormatImporter : public AssetImporter
 	{
 	public:
-		InjectClassName(NativeFormatImporter, 1034);
+		DeclareObject(NativeFormatImporter, 1034);
 
 		NativeFormatImporter() : AssetImporter(ClassID, ClassName)
 		{
 		}
 
 		virtual void Import() override;
+		
+	protected:
+		int64_t m_MainObjectFileID = 0;
 	};
 }

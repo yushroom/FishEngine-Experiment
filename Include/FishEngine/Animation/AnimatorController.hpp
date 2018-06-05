@@ -20,8 +20,11 @@ namespace FishEngine
 		}
 
 		// Retrieves all AnimationClip used by the controller.
-		const std::vector<AnimationClip>&
+		const std::vector<AnimationClip*>&
 		GetAnimationClips() const;
+		
+		virtual AnimationClip*
+		GetCurrentAnimationClip() = 0;
 	};
 	
 
@@ -203,7 +206,7 @@ namespace FishEditor::Animations
 		}
 		
 	private:
-		
+		friend class AnimatorController;
 		std::vector<ChildAnimatorStateMachine> m_ChildStates;
 		// m_ChildStateMachines;
 		// m_AnyStateTransitions;
@@ -243,6 +246,9 @@ namespace FishEditor::Animations
 		{
 			
 		}
+		
+		virtual FishEngine::AnimationClip*
+		GetCurrentAnimationClip() override;
 
 	private:
 		std::vector<AnimatorControllerLayer>

@@ -19,7 +19,10 @@ namespace FishEngine
 //				classID == Texture2D::ClassID;
 		// 90: Avatar
 		// 74: AnimationClip
-		return classID == 43 || classID == 21 || classID == 48 || classID == 28 || classID == 90 || classID == 74;
+		// 93: RuntimeAnimatorController
+		// 91: AnimatorController
+		return classID == 43 || classID == 21 || classID == 48 || classID == 28
+			|| classID == 90 || classID == 74 || classID == 93 || classID == 91;
 	}
 
 	class AssetManager

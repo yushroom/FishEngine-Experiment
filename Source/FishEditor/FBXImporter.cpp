@@ -196,7 +196,7 @@ void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<u
 		double* lWeights = lCluster->GetControlPointWeights();
 		
 //		auto & boneToIndex = m_model.m_avatar->m_boneToIndex;
-		FbxNode* fbxBone = lCluster->GetLink();
+//		FbxNode* fbxBone = lCluster->GetLink();
 		std::string boneName = (char *) lCluster->GetLink()->GetName();
 		mesh->m_boneNames[lClusterIndex] = boneName;
 		
@@ -1020,15 +1020,15 @@ void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
 		clip.sampleRate = (uint32_t)FbxTime::GetFrameRate(scene->GetGlobalSettings().GetTimeMode());
 		
 		int layerCount = animStack->GetMemberCount<FbxAnimLayer>();
-		if (layerCount == 1)
+		if (layerCount == 0)
+			continue;
+//		else if (layerCount > 1)
+//			LogWarning(Format("multiple animation clip in model: %{}", this->GetFullPath()));
+
+		for (int i = 0; i < layerCount; ++i)
 		{
-			FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(0);
+			FbxAnimLayer* animLayer = animStack->GetMember<FbxAnimLayer>(i);
 			ImportAnimationLayer(animLayer, root, clip);
-		}
-		else
-		{
-			//abort();
-			LogError(Format("multiple animation clip in model: %{}", this->GetFullPath()));
 		}
 	}
 	

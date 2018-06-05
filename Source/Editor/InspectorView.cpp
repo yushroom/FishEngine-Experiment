@@ -5,22 +5,7 @@
 using namespace FishEngine;
 using namespace FishEditor;
 
-//#include <FishEngine/Render/Mesh.hpp>
-//#include <FishEngine/GameObject.hpp>
-//#include <FishEngine/Transform.hpp>
-//#include <FishEngine/RectTransform.hpp>
-//#include <FishEngine/Component/Camera.hpp>
-//#include <FishEngine/Component/Light.hpp>
-//#include <FishEngine/Component/MeshFilter.hpp>
-//#include <FishEngine/Component/MeshRenderer.hpp>
-//#include <FishEngine/Component/SkinnedMeshRenderer.hpp>
 #include <FishEngine/Script.hpp>
-//#include <FishEngine/Render/Material.hpp>
-//#include <FishEngine/Component/BoxCollider.hpp>
-//#include <FishEngine/Component/SphereCollider.hpp>
-//#include <FishEngine/Component/Rigidbody.hpp>
-//#include <FishEngine/Animation/Animation.hpp>
-
 #include <FishEngine/FishEngine2.hpp>
 
 #include <FishEditor/AssetImporter.hpp>
@@ -231,6 +216,10 @@ void DrawAnimation(Animation* v)
 void DrawAnimator(Animator* v)
 {
 	DrawComponent(v);
+	auto name = v->GetRuntimeAnimatorController()->GetName();
+	FishGUI::InputText("Controller", name);
+	name = v->GetAvatar()->GetName();
+	FishGUI::InputText("Avatar", name);
 }
 
 

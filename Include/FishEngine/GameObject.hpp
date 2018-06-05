@@ -122,15 +122,15 @@ namespace FishEngine
 		// Is the GameObject active in the scene?
 		bool IsActiveInHierarchy() const;
 
-		GameObject* GetPrefabParentObject() const { return m_PrefabParentObject; }
-		void SetPrefabParentObject(GameObject* value) { m_PrefabParentObject = value; }
+//		GameObject* GetPrefabParentObject() const { return m_PrefabParentObject; }
+//		void SetPrefabParentObject(GameObject* value) { m_PrefabParentObject = value; }
 
 		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
 		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
 	protected:
-		GameObject * 			m_PrefabParentObject = nullptr;
-		Prefab * 				m_PrefabInternal = nullptr;
+//		GameObject * 			m_PrefabParentObject = nullptr;
+//		Prefab * 				m_PrefabInternal = nullptr;
 		Scene*					m_Scene = nullptr;
 		Transform*				m_Transform = nullptr;
 		std::list<Component*>	m_Component;

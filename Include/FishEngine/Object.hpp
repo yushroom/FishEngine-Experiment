@@ -9,10 +9,12 @@
 //#include <pybind11/pybind11.h>
 //#include <functional>	// hash
 
+
 namespace FishEngine
 {
 	class InputArchive;
 	class OutputArchive;
+	class Prefab;
 
 #define InjectClassName(className, classID) 				\
 	enum {ClassID = classID}; 								\
@@ -25,6 +27,7 @@ namespace FishEngine
 #define DeclareObject(className, classID)	\
 	InjectClassName(className, classID) 	\
 	OverrideSerializeFunc
+	
 
 	class Object
 	{
@@ -107,14 +110,23 @@ namespace FishEngine
 		{
 			return s_Objects;
 		}
+		
+		Object* GetPrefabParentObject() const { return m_PrefabParentObject; }
+//		void SetPrefabParentObject(Object* value) { m_PrefabParentObject = value; }
+		
+		Prefab* GetPrefabInternal() const { return m_PrefabInternal; }
+//		void SetPrefabInternal(Prefab* value) { m_PrefabInternal = value; }
 
 		virtual void Deserialize(InputArchive& archive);
 		virtual void Serialize(OutputArchive& archive) const;
 		
 	protected:
+		friend class Prefab;
+		HideFlags			m_ObjectHideFlags = HideFlags::None;
+		Object* 			m_PrefabParentObject = nullptr;
+		Prefab* 			m_PrefabInternal = nullptr;
 		std::string			m_Name;
 		//pybind11::object	m_PyObject = pybind11::none();
-		HideFlags			m_ObjectHideFlags = HideFlags::None;
 
 	private:
 		const char*			m_ClassName = "Object";

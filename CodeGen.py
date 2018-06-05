@@ -35,49 +35,52 @@ schema = '''
 	m_RemovedComponents
 
 @AnimatorControllerLayer
-    m_Name: Base Layer
-    m_StateMachine: {fileID: 1107723725710441410}
-    # m_Mask: {fileID: 0}
-    # m_Motions: []
-    # m_Behaviours: []
-    # m_BlendingMode: 0
-    # m_SyncedLayerIndex: -1
-    # m_DefaultWeight: 0
-    # m_IKPass: 0
-    # m_SyncedLayerAffectsTiming: 0
-    m_Controller: {fileID: 9100000}
+	m_Name: Base Layer
+	m_StateMachine: {fileID: 1107723725710441410}
+	# m_Mask: {fileID: 0}
+	# m_Motions: []
+	# m_Behaviours: []
+	# m_BlendingMode: 0
+	# m_SyncedLayerIndex: -1
+	# m_DefaultWeight: 0
+	# m_IKPass: 0
+	# m_SyncedLayerAffectsTiming: 0
+	m_Controller: {fileID: 9100000}
 @ChildAnimatorStateMachine
-    m_State
+	m_State
 @ModelImporterClipAnimation
-    name: PlayerIdle
-    takeName: Take 001
-    firstFrame: 1
-    lastFrame: 400
+	name: PlayerIdle
+	takeName: Take 001
+	firstFrame: 1
+	lastFrame: 400
 @ModelImporterAnimation
-    clipAnimations
-    isReadable: 1
+	clipAnimations
+	isReadable: 1
 @ModelImporterMesh
-    # lODScreenPercentages: []
-    globalScale: 1
-    # meshCompression: 0
-    addColliders: 0
-    importBlendShapes: 1
-    swapUVChannels: 0
-    # generateSecondaryUV: 0
-    useFileUnits: 1
-    # optimizeMeshForGPU: 1
-    # keepQuads: 0
-    # weldVertices: 1
-    # secondaryUVAngleDistortion: 8
-    # secondaryUVAreaDistortion: 15.000001
-    # secondaryUVHardAngle: 88
-    # secondaryUVPackMargin: 4
-    useFileScale: 1
+	# lODScreenPercentages: []
+	globalScale: 1
+	# meshCompression: 0
+	addColliders: 0
+	importBlendShapes: 1
+	swapUVChannels: 0
+	# generateSecondaryUV: 0
+	useFileUnits: 1
+	# optimizeMeshForGPU: 1
+	# keepQuads: 0
+	# weldVertices: 1
+	# secondaryUVAngleDistortion: 8
+	# secondaryUVAreaDistortion: 15.000001
+	# secondaryUVHardAngle: 88
+	# secondaryUVPackMargin: 4
+	useFileScale: 1
 '''
 
 object_schema = '''
 @Object
-	m_ObjectHideFlags: ObjectHideFlags
+	m_ObjectHideFlags
+	m_PrefabParentObject
+	m_PrefabInternal
+	m_Name
 
 @GameObject: Object
 	m_PrefabParentObject: Prefab*
@@ -174,33 +177,33 @@ object_schema = '''
 	m_clip
 	m_wrapMode
 @Animator: Behaviour
-    m_Avatar
-    m_Controller
-    m_ApplyRootMotion
-    m_LinearVelocityBlending
-    m_WarningMessage
-    m_HasTransformHierarchy
-    m_AllowConstantClipSamplingOptimization
+	m_Avatar
+	m_Controller
+	m_ApplyRootMotion
+	m_LinearVelocityBlending
+	m_WarningMessage
+	m_HasTransformHierarchy
+	m_AllowConstantClipSamplingOptimization
 @RuntimeAnimatorController : Object
 @AnimatorController: RuntimeAnimatorController
-    m_AnimatorLayers
+	m_AnimatorLayers
 @AnimatorState: Object
-    m_Motion
+	m_Motion
 @AnimatorStateMachine: Object
-    m_ChildStates:
-    # - serializedVersion: 1
-    # m_State: {fileID: 1102003656108312482}
-    # m_Position: {x: 360, y: 72, z: 0}
-    # m_ChildStateMachines: []
-    # m_AnyStateTransitions: []
-    # m_EntryTransitions: []
-    # m_StateMachineTransitions: {}
-    # m_StateMachineBehaviours: []
-    # m_AnyStatePosition: {x: 50, y: 20, z: 0}
-    # m_EntryPosition: {x: 50, y: 120, z: 0}
-    # m_ExitPosition: {x: 800, y: 120, z: 0}
-    # m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-    m_DefaultState: {fileID: 1102003656108312482}
+	m_ChildStates:
+	# - serializedVersion: 1
+	# m_State: {fileID: 1102003656108312482}
+	# m_Position: {x: 360, y: 72, z: 0}
+	# m_ChildStateMachines: []
+	# m_AnyStateTransitions: []
+	# m_EntryTransitions: []
+	# m_StateMachineTransitions: {}
+	# m_StateMachineBehaviours: []
+	# m_AnyStatePosition: {x: 50, y: 20, z: 0}
+	# m_EntryPosition: {x: 50, y: 120, z: 0}
+	# m_ExitPosition: {x: 800, y: 120, z: 0}
+	# m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+	m_DefaultState: {fileID: 1102003656108312482}
 @RenderSettings: Object
   m_ObjectHideFlags: 0
   # serializedVersion: 8
@@ -231,12 +234,23 @@ object_schema = '''
   m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 @AssetImporter: Object
 @ModelImporter: AssetImporter
-    fileIDToRecycleName
-    # materials
-    animations
-    meshes
-    importAnimation: 1
-    animationType: 3
+	fileIDToRecycleName
+	# materials
+	animations
+	meshes
+	importAnimation: 1
+	animationType: 3
+@DefaultImporter: AssetImporter
+  # externalObjects: {}
+  # userData: 
+  # assetBundleName: 
+  # assetBundleVariant: 
+@NativeFormatImporter: AssetImporter
+  # externalObjects: {}
+  mainObjectFileID: 9100000
+  # userData: 
+  # assetBundleName: 
+  # assetBundleVariant: 
 '''
 
 '''
@@ -380,5 +394,5 @@ def Func(schema, template):
 	# print(classInfo)
 	print(template1.render(ClassInfo=classInfo))
 
-Func(schema, template1)
-# Func(object_schema, template2)
+# Func(schema, template1)
+Func(object_schema, template2)

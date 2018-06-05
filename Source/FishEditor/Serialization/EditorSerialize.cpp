@@ -4,6 +4,8 @@
 
 #include <FishEditor/AssetImporter.hpp>
 #include <FishEditor/ModelImporter.hpp>
+#include <FishEditor/Serialization/DefaultImporter.hpp>
+#include <FishEditor/Serialization/NativeFormatImporter.hpp>
 
 using namespace FishEngine;
 using namespace FishEditor;
@@ -96,5 +98,30 @@ void ModelImporter::Serialize(OutputArchive& archive) const
 	archive.AddNVP("meshes", this->meshes);
 	archive.AddNVP("importAnimation", this->importAnimation);
 	archive.AddNVP("animationType", this->animationType);
+}
+
+// DefaultImporter
+void DefaultImporter::Deserialize(InputArchive& archive)
+{
+	AssetImporter::Deserialize(archive);
+}
+
+void DefaultImporter::Serialize(OutputArchive& archive) const
+{
+	AssetImporter::Serialize(archive);
+}
+
+
+// NativeFormatImporter
+void NativeFormatImporter::Deserialize(InputArchive& archive)
+{
+	AssetImporter::Deserialize(archive);
+	archive.AddNVP("mainObjectFileID", this->m_MainObjectFileID);
+}
+
+void NativeFormatImporter::Serialize(OutputArchive& archive) const
+{
+	AssetImporter::Serialize(archive);
+	archive.AddNVP("mainObjectFileID", this->m_MainObjectFileID);
 }
 

@@ -249,7 +249,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	// compile error in clang
 //		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
 		.def("GetComponent", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)
-		.def("GetPrefabInternal", &GameObject::GetPrefabInternal, return_value_policy::reference)
+//		.def("GetPrefabInternal", &GameObject::GetPrefabInternal, return_value_policy::reference)
 	;
 
 	//m.def("GameObject_GetComopnent", &GameObject_GetComopnent);
@@ -258,7 +258,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	class_<Component, Object>(m, "Component")
 		.def("GetGameObject", &Component::GetGameObject, return_value_policy::reference)
-		.def("GetPrefabInternal", &Component::GetPrefabInternal, return_value_policy::reference)
+//		.def("GetPrefabInternal", &Component::GetPrefabInternal, return_value_policy::reference)
 	;
 
 

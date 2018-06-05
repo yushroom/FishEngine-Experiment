@@ -77,13 +77,9 @@ namespace FishEngine
 			{
 				abort();
 			}
-			else if (cloned_->Is<GameObject>())
+			else
 			{
-				cloned_->As<GameObject>()->SetPrefabParentObject(origin->As<GameObject>());
-			}
-			else if (cloned_->Is<Component>())
-			{
-				cloned_->As<Component>()->SetPrefabParentObject(origin->As<Component>());
+				cloned_->m_PrefabParentObject = origin;
 			}
 			cloned->m_FileIDToObject[fileID] = cloned_;
 		}

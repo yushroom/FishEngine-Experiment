@@ -17,7 +17,7 @@ namespace FishEditor
 	class DefaultImporter : public AssetImporter
 	{
 	public:
-		InjectClassName(DefaultImporter, 1030);
+		DeclareObject(DefaultImporter, 1030);
 
 		DefaultImporter() : AssetImporter(ClassID, ClassName)
 		{

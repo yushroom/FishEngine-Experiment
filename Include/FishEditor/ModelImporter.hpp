@@ -68,8 +68,8 @@ namespace FishEditor
 	{
 		std::string name;
 		std::string takeName;
-		int firstFrame = 0;
-		int lastFrame = 0;
+		float firstFrame = 0;
+		float lastFrame = 0;
 	};
 	
 	struct ModelImporterAnimation

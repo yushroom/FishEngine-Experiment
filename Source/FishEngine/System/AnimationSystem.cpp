@@ -1,21 +1,8 @@
 #include <FishEngine/System/AnimationSystem.hpp>
 #include <FishEngine/Scene.hpp>
 #include <FishEngine/Animation/Animation.hpp>
+#include <FishEngine/Animation/Animator.hpp>
 
-//#include <FishEngine/Gizmos.hpp>
-//using namespace FishEngine;
-//void DrawSkeleton(const std::map<std::string, Transform*> & skeleton)
-//{
-//	for (auto&& p : skeleton)
-//	{
-//		auto t = p.second;
-//		auto parent = t->GetParent();
-//		if (parent != nullptr)
-//		{
-//			Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
-//		}
-//	}
-//}
 
 void FishEngine::AnimationSystem::Start()
 {
@@ -25,8 +12,12 @@ void FishEngine::AnimationSystem::Start()
 	{
 		animation->Start();
 	}
+	auto animators = scene->FindComponents<Animator>();
+	for (auto animator : animators)
+	{
+		animator->Start();
+	}
 }
-
 
 
 void FishEngine::AnimationSystem::Update()
@@ -36,6 +27,10 @@ void FishEngine::AnimationSystem::Update()
 	for (auto animation : animations)
 	{
 		animation->Update(0.03333f);
-		//DrawSkeleton(animation->m_skeleton);
+	}
+	auto animators = scene->FindComponents<Animator>();
+	for (auto animator : animators)
+	{
+		animator->Update(0.03333f);
 	}
 }

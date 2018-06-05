@@ -65,18 +65,16 @@ namespace FishEditor
 			if (importer == nullptr)
 				return nullptr;
 			
-
-			
 			auto guid = meta["guid"].as<std::string>();
-			uint32_t timeCreated = 0;
-			try {
-				timeCreated = meta["timeCreated"].as<uint32_t>();	// 18446744011573954816 in unitychan.prefab.meta, bug?
-			} catch(std::exception const & e) {
-				LogError("error in timeCreated:");
-			}
+//			uint32_t timeCreated = 0;
+//			try {
+//				timeCreated = meta["timeCreated"].as<uint32_t>();	// 18446744011573954816 in unitychan.prefab.meta, bug?
+//			} catch(std::exception const & e) {
+//				LogError("error in timeCreated:");
+//			}
 			
 			importer->m_GUID = guid;
-			importer->m_AssetTimeStamp = timeCreated;
+//			importer->m_AssetTimeStamp = timeCreated;
 //			importer->m_AssetPath = path.substr(0, path.size()-5);	// remove ".meta"
 			return importer;
 		}
@@ -147,21 +145,6 @@ namespace FishEditor
 		if (fs::exists(meta_file_path))
 		{
 			//auto modified_time = fs::last_write_time(meta_file);
-			std::fstream fin(meta_file_path.string());
-			auto nodes = YAML::LoadAll(fin);
-			auto&& meta = nodes.front();
-			uint32_t timeCreated = 0;
-			try {
-				timeCreated = meta["timeCreated"].as<uint32_t>();	// 18446744011573954816 in unitychan.prefab.meta, bug?
-			} catch(std::exception const & e) {
-				LogError("error in timeCreated:");
-			}
-			
-			auto guid = meta["guid"].as<std::string>();
-			
-//			MetaInputArchive archive;
-//			AssetImporter* importer = archive.LoadFromFile(meta_file_path.c_str());
-
 			AssetImporter* importer = nullptr;
 			if (ext == ".fbx" || ext == ".prefab" || ext == ".mat" || ext == ".controller" || ext == ".unity")
 			{
