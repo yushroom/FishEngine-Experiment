@@ -216,9 +216,11 @@ void DrawAnimation(Animation* v)
 void DrawAnimator(Animator* v)
 {
 	DrawComponent(v);
-	auto name = v->GetRuntimeAnimatorController()->GetName();
+	auto controller = v->GetRuntimeAnimatorController();
+	std::string name = (controller == nullptr ? "None" : controller->GetName());
 	FishGUI::InputText("Controller", name);
-	name = v->GetAvatar()->GetName();
+	auto avatar = v->GetAvatar();
+	name = (avatar == nullptr ? "None" : avatar->GetName());
 	FishGUI::InputText("Avatar", name);
 }
 

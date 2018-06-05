@@ -65,7 +65,7 @@ namespace FishEngine
 		archive.AddNVP("m_ObjectHideFlags", this->m_ObjectHideFlags);
 		archive.AddNVP("m_PrefabParentObject", this->m_PrefabParentObject);
 		archive.AddNVP("m_PrefabInternal", this->m_PrefabInternal);
-		typeof(this->m_Component) components;
+		decltype(this->m_Component) components;
 		archive.AddNVP("m_Component", components);
 		for (auto comp : components)
 		{

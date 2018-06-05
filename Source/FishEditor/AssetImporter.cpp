@@ -149,7 +149,7 @@ namespace FishEditor
 			if (ext == ".fbx" || ext == ".prefab" || ext == ".mat" || ext == ".controller" || ext == ".unity")
 			{
 				MetaInputArchive archive;
-				importer = archive.LoadFromFile(meta_file_path.c_str());
+				importer = archive.LoadFromFile(meta_file_path.string());
 			}
 //			if (importer == nullptr)
 //				return nullptr;
