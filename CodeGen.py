@@ -43,7 +43,7 @@ schema_struct_FishEngine = '''
 	# m_IKPass: 0
 	# m_SyncedLayerAffectsTiming: 0
 	m_Controller: {fileID: 9100000}
-@ChildAnimatorStateMachine
+@ChildAnimatorState
 	m_State
 @HumanLimit:
 	min: {x: 0, y: 0, z: 0}
@@ -216,26 +216,50 @@ schema_Object_FishEngine = '''
 	m_WarningMessage
 	m_HasTransformHierarchy
 	m_AllowConstantClipSamplingOptimization
+
 @RuntimeAnimatorController : Object
 @AnimatorController: RuntimeAnimatorController
 	m_AnimatorLayers
+@AnimatorTransitionBase: Object
+	# m_Conditions: []
+	m_DstStateMachine: {fileID: 0}
+	m_DstState: {fileID: 1102003656108312482}
+	m_Solo: 0
+	m_Mute: 0
+	m_IsExit: 0
+@AnimatorStateTransition: AnimatorTransitionBase
+	m_TransitionDuration: 0.25
+	m_TransitionOffset: 0
+	m_ExitTime: 0.93697476
+	m_HasExitTime: 1
+	m_HasFixedDuration: 1
+	# m_InterruptionSource: 0
+	# m_OrderedInterruption: 1
+	# m_CanTransitionToSelf: 1
+	
 @AnimatorState: Object
+	m_Transitions
 	m_Motion
+
 @AnimatorStateMachine: Object
-	m_ChildStates:
-	# - serializedVersion: 1
-	# m_State: {fileID: 1102003656108312482}
-	# m_Position: {x: 360, y: 72, z: 0}
-	# m_ChildStateMachines: []
-	# m_AnyStateTransitions: []
-	# m_EntryTransitions: []
-	# m_StateMachineTransitions: {}
-	# m_StateMachineBehaviours: []
-	# m_AnyStatePosition: {x: 50, y: 20, z: 0}
-	# m_EntryPosition: {x: 50, y: 120, z: 0}
-	# m_ExitPosition: {x: 800, y: 120, z: 0}
-	# m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-	m_DefaultState: {fileID: 1102003656108312482}
+  m_ChildStates:
+  # - serializedVersion: 1
+  #   m_State: {fileID: 1102003656108312482}
+  #   m_Position: {x: 288, y: 336, z: 0}
+  # - serializedVersion: 1
+  #   m_State: {fileID: 1102935202331155774}
+  #   m_Position: {x: 288, y: 192, z: 0}
+  m_ChildStateMachines: []
+  m_AnyStateTransitions: []
+  m_EntryTransitions: []
+  m_StateMachineTransitions: {}
+  m_StateMachineBehaviours: []
+  m_AnyStatePosition: {x: 50, y: 20, z: 0}
+  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_ExitPosition: {x: 800, y: 120, z: 0}
+  m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+  m_DefaultState: {fileID: 1102935202331155774}
+
 @RenderSettings: Object
   m_ObjectHideFlags: 0
   # serializedVersion: 8

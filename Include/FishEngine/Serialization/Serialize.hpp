@@ -5,28 +5,28 @@
 namespace FishEditor::Animations
 {
 	class AnimatorControllerLayer;
-	class ChildAnimatorStateMachine;
+	class ChildAnimatorState;
 }
 
 namespace FishEngine
 {
-	struct Vector2;
+	class Vector2;
 	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, Vector2& t);
 	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector2& t);
 
-	struct Vector3;
+	class Vector3;
 	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, Vector3& t);
 	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector3& t);
 
-	struct Vector4;
+	class Vector4;
 	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, Vector4& t);
 	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Vector4& t);
 
-	struct Quaternion;
+	class Quaternion;
 	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, Quaternion& t);
 	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Quaternion& t);
 
-	struct Color;
+	class Color;
 	FishEngine::InputArchive&  operator>>(FishEngine::InputArchive& archive, Color& t);
 	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const Color& t);
 
@@ -60,8 +60,8 @@ namespace FishEngine
 	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::AnimatorControllerLayer& t);
 	
 	// ChildAnimatorStateMachine
-	InputArchive& operator>>(InputArchive& archive, FishEditor::Animations::ChildAnimatorStateMachine& t);
-	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::ChildAnimatorStateMachine& t);
+	InputArchive& operator>>(InputArchive& archive, FishEditor::Animations::ChildAnimatorState& t);
+	OutputArchive& operator<<(OutputArchive& archive, const FishEditor::Animations::ChildAnimatorState& t);
 	
 
 	struct MaterialTextureProperty;

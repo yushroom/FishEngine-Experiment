@@ -1131,13 +1131,6 @@ GameObject* FishEditor::FBXImporter::ParseNode(FbxNode* pNode)
 			mr->SetMaterial(Material::GetDefaultMaterial());
 #else
 //			m_meshes[nodeName] = mesh;
-//
-//			if (IsNewlyCreated())
-//			{
-//				m_recycleNameToFileID[mesh->name()] = m_nextMeshFileID;
-//				m_fileIDToRecycleName[m_nextMeshFileID] = mesh->name();
-//				m_nextMeshFileID += 2;
-//			}
 			
 //			int lMaterialCount = pNode->GetMaterialCount();
 //			MaterialPtr material;

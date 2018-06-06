@@ -2,9 +2,12 @@
 
 #include "../Object.hpp"
 #include "AnimationClip.hpp"
+#include <map>
 
 namespace FishEngine
 {
+	class Transform;
+	
 	// Runtime representation of the AnimatorController.
 	// It can be used to change the Animator's controller during runtime.
 	class RuntimeAnimatorController : public Object
@@ -23,8 +26,7 @@ namespace FishEngine
 		const std::vector<AnimationClip*>&
 		GetAnimationClips() const;
 		
-		virtual AnimationClip*
-		GetCurrentAnimationClip() = 0;
+		virtual void ApplyAnimation(float deltaTime, std::map<std::string, Transform*> const & skeleton) = 0;
 	};
 	
 
@@ -56,26 +58,38 @@ namespace FishEngine
 namespace FishEditor::Animations
 {
 	class AnimatorController;
+	class AnimatorStateMachine;
+	class AnimatorState;
 
 	enum class AnimatorLayerBlendingMode
 	{
 		Override,
 		Additive
 	};
-
-	class AnimatorStateMachine;
+	
+	enum class AnimatorConditionMode
+	{
+		If,			//The condition is true when the parameter value is true.
+		IfNot,		//The condition is true when the parameter value is false.
+		Greater,	//The condition is true when parameter value is greater than the threshold.
+		Less,		//The condition is true when the parameter value is less than the threshold.
+		Equals,		//The condition is true when parameter value is equal to the threshold.
+		NotEqual,	//The condition is true when the parameter value is not equal to the threshold.
+	};
+	
+	struct AnimatorCondition
+	{
+		AnimatorConditionMode mode;
+		std::string parameter;
+		float threshold;
+	};
 
 	class AnimatorTransitionBase : public FishEngine::Object
 	{
-
-	};
-
-	class AnimatorStateTransition : public AnimatorTransitionBase
-	{
-		// m_ObjectHideFlags: 1
-		// m_PrefabParentObject: {fileID: 0}
-		// m_PrefabInternal: {fileID: 0}
-		// m_Name: 
+	public:
+		DeclareObject(AnimatorTransitionBase, 1111);
+		AnimatorTransitionBase(int classID, const char* className) : Object(classID, className) {}
+		
 		// m_Conditions:
 		// - m_ConditionMode: 4
 		// m_ConditionEvent: Speed
@@ -85,12 +99,27 @@ namespace FishEditor::Animations
 		// m_Solo: 0
 		// m_Mute: 0
 		// m_IsExit: 0
+//		std::vector<AnimatorCondition> m_Conditions;
+		AnimatorStateMachine* m_DstStateMachine = nullptr;
+		AnimatorState* m_DstState = nullptr;
+		bool m_Solo = false;
+		bool m_Mute = false;
+		bool m_IsExit = false;
+	};
+	
+
+	class AnimatorStateTransition : public AnimatorTransitionBase
+	{
+	public:
+		DeclareObject(AnimatorStateTransition, 1101);
+		AnimatorStateTransition() : AnimatorTransitionBase(ClassID, ClassName) {}
+		
 		// serializedVersion: 3
-		// m_TransitionDuration: 0.25
-		// m_TransitionOffset: 0
-		// m_ExitTime: 0.79310346
-		// m_HasExitTime: 0
-		// m_HasFixedDuration: 1
+		float m_TransitionDuration = 0.25;
+		float m_TransitionOffset = 0;
+		float m_ExitTime = 0.79310346f;
+		bool m_HasExitTime = false;
+		bool m_HasFixedDuration = true;
 		// m_InterruptionSource: 0
 		// m_OrderedInterruption: 1
 		// m_CanTransitionToSelf: 1
@@ -151,7 +180,7 @@ namespace FishEditor::Animations
 
 		// float m_CycleOffset = 0;
 
-		// std::vector<AnimatorStateTransition*> m_Transitions:
+		std::vector<AnimatorStateTransition*> m_Transitions;
 
 		// m_StateMachineBehaviours: []
 
@@ -175,16 +204,17 @@ namespace FishEditor::Animations
 		// std::string m_SpeedParameter;
 		// bool m_SpeedParameterActive = false;
 		
-		
 		FishEngine::Motion* m_Motion = nullptr;
 		
 		// std::string m_Tag;
 
 		// std::string m_CycleOffsetParameter;
 		// bool m_CycleOffsetParameterActive = false;
+		
+		float m_LocalPlayTimer = 0;
 	};
 
-	struct ChildAnimatorStateMachine
+	struct ChildAnimatorState
 	{
 	public:
 		AnimatorStateMachine* 	m_StateMachine = nullptr;
@@ -193,7 +223,7 @@ namespace FishEditor::Animations
 
 		// in editor
 		// The position the the state machine node in the context of its parent state machine.
-		FishEngine::Vector3 				m_Position;
+//		FishEngine::Vector3 	m_Position;
 	};
 
 	class AnimatorStateMachine : public FishEngine::Object
@@ -207,7 +237,7 @@ namespace FishEditor::Animations
 		
 	private:
 		friend class AnimatorController;
-		std::vector<ChildAnimatorStateMachine> m_ChildStates;
+		std::vector<ChildAnimatorState> m_ChildStates;
 		// m_ChildStateMachines;
 		// m_AnyStateTransitions;
 		// m_EntryTransitions;
@@ -218,6 +248,10 @@ namespace FishEditor::Animations
 		// m_ExitPosition;
 		// m_ParentStateMachinePosition;
 		AnimatorState* m_DefaultState = nullptr;
+		
+	private:
+		AnimatorState* m_CurrentState = nullptr;
+		float m_CurrentStatePlayTimer = 0;
 	};
 
 	class AnimatorControllerLayer
@@ -247,8 +281,7 @@ namespace FishEditor::Animations
 			
 		}
 		
-		virtual FishEngine::AnimationClip*
-		GetCurrentAnimationClip() override;
+		virtual void ApplyAnimation(float deltaTime, std::map<std::string, FishEngine::Transform*> const & skeleton)  override;
 
 	private:
 		std::vector<AnimatorControllerLayer>

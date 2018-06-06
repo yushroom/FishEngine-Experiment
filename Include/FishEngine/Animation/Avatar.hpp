@@ -2,7 +2,7 @@
 
 #include "../Object.hpp"
 #include "../Asset.hpp"
-#include "../Math/Matrix4x4.hpp"
+//#include "../Math/Matrix4x4.hpp"
 #include <map>
 #include <vector>
 
@@ -19,13 +19,12 @@ namespace FishEngine
 
 		std::map<std::string, int> m_boneToIndex;
 		std::vector<std::string> m_indexToBoneName;
-		std::vector<Matrix4x4> m_matrixPalette;
 	};
 
-	class MatrixPalette
-	{
-	public:
-		mutable std::vector<Matrix4x4> m_matrixPalette;
-		void UpdateMatrixPalette() const;
-	};
+//	class MatrixPalette
+//	{
+//	public:
+//		mutable std::vector<Matrix4x4> m_matrixPalette;
+//		void UpdateMatrixPalette() const;
+//	};
 }

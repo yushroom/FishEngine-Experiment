@@ -19,61 +19,11 @@ void Animator::Start()
 	GetSkeleton(t, "", m_Skeleton, m_Avatar->m_boneToIndex);
 }
 
-inline Transform* GetBone(std::string const & path, std::map<std::string, Transform*> const & skeleton)
-{
-	auto it = skeleton.find(path);
-	if (it == skeleton.end())
-	{
-		//LogWarning(Format("Bone [{}] not found\n", path));
-		return nullptr;
-	}
-	return it->second;
-}
 
 void Animator::Update(float deltaTime)
 {
-	auto clip = m_Controller->GetCurrentAnimationClip();
-	if (clip == nullptr)
-		return;
-	m_localTimer += deltaTime;
-	for (auto & curve : clip->m_positionCurve)
-	{
-		auto t = GetBone(curve.path, m_Skeleton);
-		if (t != nullptr)
-		{
-			auto v = curve.curve.Evaluate(m_localTimer, true);
-			t->SetLocalPosition(v);
-		}
-	}
-	//for (auto & curve : m_clip->m_rotationCurves)
-	//{
-	//	auto t = GetBone(curve.path, m_skeleton);
-	//	if (t != nullptr)
-	//	{
-	//		auto v = curve.curve.Evaluate(m_localTimer, true);
-	//		v.NormalizeSelf();
-	//		t->SetLocalRotation(v);
-	//	}
-	//}
-	for (auto & curve : clip->m_eulersCurves)
-	{
-		auto t = GetBone(curve.path, m_Skeleton);
-		if (t != nullptr)
-		{
-			auto v = curve.curve.Evaluate(m_localTimer, true);
-			assert(!(isnan(v.x) || isnan(v.y) || isnan(v.z)));
-			t->SetLocalRotation(Quaternion::Euler(RotationOrder::XYZ, v));
-		}
-	}
-	for (auto & curve : clip->m_scaleCurves)
-	{
-		auto t = GetBone(curve.path, m_Skeleton);
-		if (t != nullptr)
-		{
-			auto v = curve.curve.Evaluate(m_localTimer, true);
-			t->SetLocalScale(v);
-		}
-	}
+//	m_localTimer += deltaTime;
+	m_Controller->ApplyAnimation(deltaTime, m_Skeleton);
 }
 
 

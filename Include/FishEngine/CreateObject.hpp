@@ -43,6 +43,8 @@ namespace FishEngine
 			return CreateEmptyObject<Animation>();
 		else if (classID == Animator::ClassID)
 			return CreateEmptyObject<Animator>();
+		else if (classID == FishEditor::Animations::AnimatorStateTransition::ClassID)
+			return CreateEmptyObject<FishEditor::Animations::AnimatorStateTransition>();
 		else if (classID == FishEditor::Animations::AnimatorState::ClassID)
 			return CreateEmptyObject<FishEditor::Animations::AnimatorState>();
 		else if (classID == FishEditor::Animations::AnimatorController::ClassID)

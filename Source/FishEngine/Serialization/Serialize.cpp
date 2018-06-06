@@ -146,12 +146,12 @@ namespace FishEngine
 	}
 
 	// ChildAnimatorStateMachine
-	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, ChildAnimatorStateMachine& t)
+	FishEngine::InputArchive& operator>>(FishEngine::InputArchive& archive, ChildAnimatorState& t)
 	{
 		archive.AddNVP("m_State", t.m_State);
 		return archive;
 	}
-	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const ChildAnimatorStateMachine& t)
+	FishEngine::OutputArchive& operator<<(FishEngine::OutputArchive& archive, const ChildAnimatorState& t)
 	{
 		archive.AddNVP("m_State", t.m_State);
 		return archive;
@@ -711,18 +711,64 @@ namespace FishEngine
 		RuntimeAnimatorController::Serialize(archive);
 		archive.AddNVP("m_AnimatorLayers", this->m_AnimatorLayers);
 	}
+
+
+	// AnimatorStateTransitionBase
+	void AnimatorTransitionBase::Deserialize(InputArchive& archive)
+	{
+		Object::Deserialize(archive);
+		archive.AddNVP("m_DstStateMachine", this->m_DstStateMachine);
+		archive.AddNVP("m_DstState", this->m_DstState);
+		archive.AddNVP("m_Solo", this->m_Solo);
+		archive.AddNVP("m_Mute", this->m_Mute);
+		archive.AddNVP("m_IsExit", this->m_IsExit);
+	}
+
+	void AnimatorTransitionBase::Serialize(OutputArchive& archive) const
+	{
+		Object::Serialize(archive);
+		archive.AddNVP("m_DstStateMachine", this->m_DstStateMachine);
+		archive.AddNVP("m_DstState", this->m_DstState);
+		archive.AddNVP("m_Solo", this->m_Solo);
+		archive.AddNVP("m_Mute", this->m_Mute);
+		archive.AddNVP("m_IsExit", this->m_IsExit);
+	}
+
+
+	// AnimatorStateTransition
+	void AnimatorStateTransition::Deserialize(InputArchive& archive)
+	{
+		AnimatorTransitionBase::Deserialize(archive);
+		archive.AddNVP("m_TransitionDuration", this->m_TransitionDuration);
+		archive.AddNVP("m_TransitionOffset", this->m_TransitionOffset);
+		archive.AddNVP("m_ExitTime", this->m_ExitTime);
+		archive.AddNVP("m_HasExitTime", this->m_HasExitTime);
+		archive.AddNVP("m_HasFixedDuration", this->m_HasFixedDuration);
+	}
+
+	void AnimatorStateTransition::Serialize(OutputArchive& archive) const
+	{
+		AnimatorTransitionBase::Serialize(archive);
+		archive.AddNVP("m_TransitionDuration", this->m_TransitionDuration);
+		archive.AddNVP("m_TransitionOffset", this->m_TransitionOffset);
+		archive.AddNVP("m_ExitTime", this->m_ExitTime);
+		archive.AddNVP("m_HasExitTime", this->m_HasExitTime);
+		archive.AddNVP("m_HasFixedDuration", this->m_HasFixedDuration);
+	}
 	
 	
 	// AnimatorState
 	void AnimatorState::Deserialize(InputArchive& archive)
 	{
 		Object::Deserialize(archive);
+		archive.AddNVP("m_Transitions", this->m_Transitions);
 		archive.AddNVP("m_Motion", this->m_Motion);
 	}
 	
 	void AnimatorState::Serialize(OutputArchive& archive) const
 	{
 		Object::Serialize(archive);
+		archive.AddNVP("m_Transitions", this->m_Transitions);
 		archive.AddNVP("m_Motion", this->m_Motion);
 	}
 	
