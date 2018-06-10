@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace FishEngine
 {
@@ -16,6 +17,8 @@ namespace FishEngine
 		void Update();
 		void Clean();
 		void Reload();
+		
+		void AddScriptDir(const std::string& path);
 		
 	protected:
 		ScriptSystem() = default;

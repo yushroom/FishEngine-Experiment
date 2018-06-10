@@ -67,15 +67,9 @@ namespace FishEngine
 			puts("Script::~Script");
 		}
 		
-		virtual void Start()
-		{
-			
-		}
-		
-		virtual void Update()
-		{
-			
-		}
+		virtual void Start() { }
+		virtual void Update() { }
+		virtual void OnDrawGizmos() { }
 		
 		void SetPyObject(const pybind11::handle& obj)
 		{
@@ -86,6 +80,11 @@ namespace FishEngine
 		{
 			return m_PyObject;
 		}
+		
+//		void CallMethod(const std::string& methodName)
+//		{
+//			m_PyObject.attr(methodName);
+//		}
 		
 	protected:
 		pybind11::handle	m_PyObject = pybind11::none();

@@ -33,7 +33,10 @@ from .MeshFilter import MeshFilter
 from .Shader import Shader
 from .Material import Material
 from .MeshRenderer import MeshRenderer
+from .SkinnedMeshRenderer import SkinnedMeshRenderer
+
 from .Graphics import Graphics
+from .Gizmos import Gizmos
 
 from .Rigidbody import Rigidbody
 from .Collider import Collider

@@ -51,21 +51,21 @@ class __Transform:
 
     @property
     def right(self)->Vector3:
-        return self.rotation * Vector3.right()
+        return self.rotation * Vector3.right
     @right.setter
     def right(self, value:Vector3):
-        self.rotation = Quaternion.FromToRotation(Vector3.right(), value)
+        self.rotation = Quaternion.FromToRotation(Vector3.right, value)
 
     @property
     def up(self)->Vector3:
-        return self.rotation * Vector3.up()
+        return self.rotation * Vector3.up
     @up.setter
     def up(self, value:Vector3):
-        self.rotation = Quaternion.FromToRotation(Vector3.up(), value)
+        self.rotation = Quaternion.FromToRotation(Vector3.up, value)
 
     @property
     def forward(self)->Vector3:
-        return self.rotation * Vector3.right()
+        return self.rotation * Vector3.right
     @forward.setter
     def forward(self, value:Vector3):
         self.rotation = Quaternion.FromToRotation(value)
@@ -119,7 +119,7 @@ class __Transform:
 
 
     # ?
-    def LookAt(self, target: Vector3, worldUp: Vector3 = Vector3.up()):
+    def LookAt(self, target: Vector3, worldUp: Vector3 = Vector3.up):
         # m = Matrix4x4.LookAt(self.position, target, worldUp)
         # self.rotation = m.inverse.rotation()
         # forward = Vector3.Normalize(target - self.position)

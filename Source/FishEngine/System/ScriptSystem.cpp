@@ -6,32 +6,25 @@
 namespace py = pybind11;
 
 
-
+#include <FishEngine/FishEngine2.hpp>
 #include <FishEngine/FishEngine.hpp>
 #include <FishEngine/Math/Vector2.hpp>
 #include <FishEngine/Math/Vector3.hpp>
 #include <FishEngine/Math/Quaternion.hpp>
 #include <FishEngine/Math/Matrix4x4.hpp>
-#include <FishEngine/Object.hpp>
-#include <FishEngine/Prefab.hpp>
-#include <FishEngine/GameObject.hpp>
-#include <FishEngine/Transform.hpp>
-#include <FishEngine/RectTransform.hpp>
+//#include <FishEngine/Object.hpp>
+//#include <FishEngine/Prefab.hpp>
+//#include <FishEngine/GameObject.hpp>
+//#include <FishEngine/Transform.hpp>
+//#include <FishEngine/RectTransform.hpp>
 #include <FishEngine/Script.hpp>
 
 #include <FishEngine/Render/Mesh.hpp>
 #include <FishEngine/Render/Shader.hpp>
 #include <FishEngine/Render/Material.hpp>
 
-#include <FishEngine/Component/MeshFilter.hpp>
-#include <FishEngine/Component/MeshRenderer.hpp>
-#include <FishEngine/Component/Camera.hpp>
-#include <FishEngine/Component/Light.hpp>
-#include <FishEngine/Component/Collider.hpp>
-#include <FishEngine/Component/BoxCollider.hpp>
-#include <FishEngine/Component/SphereCollider.hpp>
-#include <FishEngine/Component/Rigidbody.hpp>
 
+#include <FishEngine/Gizmos.hpp>
 #include <FishEngine/Render/Graphics.hpp>
 #include <FishEngine/Screen.hpp>
 #include <FishEngine/Scene.hpp>
@@ -51,6 +44,17 @@ Object* FindObjectOfType(int classID)
 	if (objs.size() == 0)
 		return nullptr;
 	return *objs.begin();
+}
+
+template<typename T>
+inline py::list StdVector2PyList(const std::vector<T>& v)
+{
+	py::list ret;
+	for (auto&& e : v)
+	{
+		ret.append(e);
+	}
+	return ret;
 }
 
 py::list FindObjectsOfType(int classID)
@@ -102,6 +106,10 @@ void Scene_GetRootGameObjects(Scene* scene, py::list& out)
 	}
 }
 
+py::list SkinnedMeshRenderer__GetBones(SkinnedMeshRenderer* smr)
+{
+	return StdVector2PyList(smr->GetBones());
+}
 
 
 class PyScript : public Script
@@ -115,6 +123,11 @@ public:
 	void Update() override
 	{
 		PYBIND11_OVERLOAD(void, Script, Update,);
+	}
+	
+	void OnDrawGizmos() override
+	{
+		PYBIND11_OVERLOAD(void, Script, OnDrawGizmos,);
 	}
 };
 
@@ -145,18 +158,26 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 	// Vector3
 	class_<Vector3>(m, "Vector3")
-		.def(init<>())
-		.def(init<float, float, float>())
-		.def_readwrite("x", &Vector3::x)
-		.def_readwrite("y", &Vector3::y)
-		.def_readwrite("z", &Vector3::z)
-		.def("Set", &Vector3::Set)
-		.def(self + Vector3())
-		.def(self - Vector3())
-		.def(self*Vector3())
-		.def(self*float())
-		.def(float()*self)
-		.def_static("Dot", &Vector3::Dot)
+	.def(init<>())
+	.def(init<float, float, float>())
+	.def_readwrite("x", &Vector3::x)
+	.def_readwrite("y", &Vector3::y)
+	.def_readwrite("z", &Vector3::z)
+	.def("Set", &Vector3::Set)
+	.def(self + Vector3())
+	.def(self - Vector3())
+	.def(self*Vector3())
+	.def(self*float())
+	.def(float()*self)
+	.def_static("Dot", &Vector3::Dot)
+	.def_readonly_static("zero", &Vector3::zero)
+	.def_readonly_static("one", &Vector3::one)
+	.def_readonly_static("forward", &Vector3::forward)
+	.def_readonly_static("up", &Vector3::up)
+	.def_readonly_static("down", &Vector3::down)
+	.def_readonly_static("back", &Vector3::back)
+	.def_readonly_static("left", &Vector3::left)
+	.def_readonly_static("right", &Vector3::right)
 //		.def(py::pickle(
 //					[](const Vector3 & v) { // __getstate__
 //						return py::make_tuple(v.x, v.y, v.z);
@@ -193,6 +214,18 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("MultiplyPoint", &Matrix4x4::MultiplyPoint)
 		;
 
+	class_<Color>(m, "Color")
+	.def(init<>())
+	.def(init<float, float, float>())
+	.def(init<float, float, float, float>())
+	.def_readwrite("r", &Color::r)
+	.def_readwrite("g", &Color::g)
+	.def_readwrite("b", &Color::b)
+	.def_readwrite("a", &Color::a)
+	.def_readonly_static("red", &Color::red)
+	.def_readonly_static("green", &Color::green)
+	;
+	
 	enum_<HideFlags>(m, "HideFlags")
 		.value("None", HideFlags::None)
 	;
@@ -248,7 +281,7 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def("IsActiveInHierarchy", &GameObject::IsActiveInHierarchy)
 	// compile error in clang
 //		.def("GetComponent", py::overload_cast<int>(&GameObject::GetComponent), return_value_policy::reference)
-		.def("GetComponent", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)
+		.def("GetComponent_internal", (Component* (GameObject::*)(int))&GameObject::GetComponent, return_value_policy::reference)
 //		.def("GetPrefabInternal", &GameObject::GetPrefabInternal, return_value_policy::reference)
 	;
 
@@ -339,10 +372,24 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 	DefineFunc(MeshRenderer);
 	class_<MeshRenderer, Renderer>(m, "MeshRenderer")
 	;
+	
+	
+	m.def("SkinnedMeshRenderer__GetBones", &SkinnedMeshRenderer__GetBones);
+	DefineFunc(SkinnedMeshRenderer);
+	class_<SkinnedMeshRenderer, Renderer>(m, "SkinnedMeshRenderer")
+	;
 
 	class_<Graphics>(m, "Graphics")
 //		.def_static("DrawMesh", &Graphics::DrawMesh)
 		;
+	
+	class_<Gizmos>(m, "Gizmos")
+	.def_property_static("color",
+						 [](py::object) { return Gizmos::color(); },
+						 [](py::object, Color c) { Gizmos::SetColor(c); })
+	.def_static("DrawWireSphere", &Gizmos::DrawWireSphere)
+	.def_static("DrawLine", &Gizmos::DrawLine)
+	;
 
 	DefineFunc(Camera);
 	class_<Camera, Component>(m, "Camera")
@@ -397,17 +444,17 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 
 
 
-#if FISHENGINE_PLATFORM_WINDOWS
-const char* code = R"(
-import sys, os
-sys.path.insert(0, r'D:\program\FishEngine-Experiment\Script')
-)";
-#else
-const char* code = R"(
-import sys, os
-sys.path.insert(0, r'/Users/yushroom/program/FishEngine-Experiment/Script')
-)";
-#endif
+//#if FISHENGINE_PLATFORM_WINDOWS
+//const char* code = R"(
+//import sys, os
+//sys.path.insert(0, r'D:\program\FishEngine-Experiment\Script')
+//)";
+//#else
+//const char* code = R"(
+//import sys, os
+//sys.path.insert(0, r'/Users/yushroom/program/FishEngine-Experiment/Script')
+//)";
+//#endif
 
 namespace FishEngine
 {
@@ -417,7 +464,14 @@ namespace FishEngine
 		auto main = py::module::import("__main__");
 		auto globals = main.attr("__dict__");
 		py::module::import("FishEngineInternal");
-		py::exec(code, globals);
+//		py::exec(code, globals);
+		
+#if FISHENGINE_PLATFORM_WINDOWS
+		const char* script_root_dir = R"(D:\program\FishEngine-Experiment\Script)";
+#else
+		const char* script_root_dir = "/Users/yushroom/program/FishEngine-Experiment/Script";
+#endif
+		ScriptSystem::AddScriptDir(script_root_dir);
 	}
 	
 	void ScriptSystem::Start()
@@ -449,5 +503,13 @@ namespace FishEngine
 		auto app = py::module::import("app");
 		app.attr("Reload")();
 		Init();
+	}
+	
+	void ScriptSystem::AddScriptDir(const std::string& path)
+	{
+		auto code = Format("import sys, os\nsys.path.insert(0, r'{}')", path);
+		auto main = py::module::import("__main__");
+		auto globals = main.attr("__dict__");
+		py::exec(code, globals);
 	}
 }

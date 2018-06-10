@@ -8,6 +8,7 @@
 #include <FishEngine/System/UISystem.hpp>
 #include <FishEngine/System/PhysicsSystem.hpp>
 #include <FishEngine/System/AnimationSystem.hpp>
+#include <FishEngine/System/ScriptSystem.hpp>
 #include <FishEngine/Scene.hpp>
 #include <FishEngine/Transform.hpp>
 #include <FishEditor/Selection.hpp>
@@ -77,6 +78,8 @@ namespace FishEditor
 		FishEngine::Application::GetInstance().m_DataPath = projectPath+"/Assets";
 		AssetDatabase::s_AssetRootDir = new FileNode(projectPath+"/Assets");
 //		m_ApplicationPath = projectPath;
+		FishEngine::ScriptSystem::GetInstance().AddScriptDir(projectPath+"/FishEngine/Script");
+		
         OnProjectOpened();
 	}
 

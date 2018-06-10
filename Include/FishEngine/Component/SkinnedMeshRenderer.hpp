@@ -36,6 +36,8 @@ namespace FishEngine
 
 		void SetSharedMesh(Mesh* sharedMesh) { m_Mesh = sharedMesh; }
 		Mesh* GetSharedMesh() const { return m_Mesh; }
+		
+		const std::vector<Transform*>& GetBones() const { return m_Bones; }
 
 	private:
 		

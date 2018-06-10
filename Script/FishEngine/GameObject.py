@@ -89,10 +89,11 @@ class __GameObject(Object):
     def components(self):
         return FishEngineInternal.GameObject_GetAllComponents(self)
 
-    def GetComponent(self, type):
+    def GetComponent(self, ComponentType):
         from . import Component
-        assert(issubclass(type, Component))
-        return FishEngineInternal.GameObject_GetComopnent(self.m_CachedPtr, type.ClassID)
+        print('ComponentType:', ComponentType)
+        assert(issubclass(ComponentType, Component))
+        return self.GetComponent_internal(ComponentType.ClassID)
 
     def AddComponent(self, component:'Component')->'Component':
         from . import Component
@@ -136,5 +137,7 @@ GameObject.ClassID = FishEngineInternal.GameObjectClassID()
 GameObject.components = __GameObject.components
 GameObject.activeSelf = __GameObject.activeSelf
 GameObject.CreatePrimitive = __GameObject.CreatePrimitive
+# GameObject.GetComponent = __GameObject.GetComponent
+GameObject.GetComponent = __GameObject.GetComponent
 GameObject.AddComponent_internal = GameObject.AddComponent
 GameObject.AddComponent = __GameObject.AddComponent

@@ -50,7 +50,7 @@ namespace FishEngine
 			auto go = (GameObject*)o;
 			for (auto comp : go->GetAllComponents())
 			{
-				 if (comp->GetClassID() == Script::ClassID)
+				 if (comp->Is<Script>())
 				 {
 					 auto s = dynamic_cast<Script*>(comp);
 					 s->Start();
@@ -63,7 +63,7 @@ namespace FishEngine
 	{
 		for (auto comp : go->GetAllComponents())
 		{
-			if (comp->GetClassID() == Script::ClassID)
+			if (comp->Is<Script>())
 			{
 				auto s = dynamic_cast<Script*>(comp);
 				s->Update();

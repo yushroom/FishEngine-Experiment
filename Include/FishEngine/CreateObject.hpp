@@ -53,6 +53,10 @@ namespace FishEngine
 			return CreateEmptyObject<FishEditor::Animations::AnimatorStateMachine>();
 		else if (classID == RenderSettings::ClassID)
 			return CreateEmptyObject<RenderSettings>();
+		else
+		{
+			LogWarning("Unknown class ID");
+		}
 		return nullptr;
 	}
 }

@@ -27,8 +27,9 @@
 #endif
 
 
-#include <FishEngine/Animation/Animator.hpp>
+//#include <FishEngine/Animation/Animator.hpp>
 #include <FishEngine/Gizmos.hpp>
+#include <FishEngine/Script.hpp>
 
 namespace FishEngine
 {
@@ -415,26 +416,26 @@ namespace FishEngine
 	}
 
 
-	void DrawSkeleton(const std::vector<Transform*> & skeleton)
-	{
-//		glDisable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-//		glCheckError();
-		for (auto t : skeleton)
-		{
-//			auto t = p.second;
-			auto parent = t->GetParent();
-			if (parent != nullptr)
-			{
-				Gizmos::SetColor(Color::green);
-				Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
-				Gizmos::SetColor(Color::red);
-				Gizmos::DrawWireSphere(t->GetPosition(), 0.02f);
-			}
-		}
-//		glCheckError();
-		glEnable(GL_DEPTH_TEST);
-	}
+//	void DrawSkeleton(const std::vector<Transform*> & skeleton)
+//	{
+////		glDisable(GL_CULL_FACE);
+//		glDisable(GL_DEPTH_TEST);
+////		glCheckError();
+//		for (auto t : skeleton)
+//		{
+////			auto t = p.second;
+//			auto parent = t->GetParent();
+//			if (parent != nullptr)
+//			{
+//				Gizmos::SetColor(Color::green);
+//				Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
+//				Gizmos::SetColor(Color::red);
+//				Gizmos::DrawWireSphere(t->GetPosition(), 0.02f);
+//			}
+//		}
+////		glCheckError();
+//		glEnable(GL_DEPTH_TEST);
+//	}
 
 	void RenderSystem::Update()
 	{
@@ -566,11 +567,19 @@ namespace FishEngine
 			}
 		}
 
-		auto smrs = scene->FindComponents<SkinnedMeshRenderer>();
-		for (auto r : smrs)
+//		auto smrs = scene->FindComponents<SkinnedMeshRenderer>();
+//		for (auto r : smrs)
+//		{
+//			DrawSkeleton(r->m_Bones);
+//		}
+		
+		auto scripts = scene->FindComponents<Script>();
+		glDisable(GL_DEPTH_TEST);
+		for (auto s : scripts)
 		{
-			DrawSkeleton(r->m_Bones);
+			s->OnDrawGizmos();
 		}
+		glEnable(GL_DEPTH_TEST);
 
 #endif
 
