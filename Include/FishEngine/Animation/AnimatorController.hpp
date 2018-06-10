@@ -2,11 +2,13 @@
 
 #include "../Object.hpp"
 #include "AnimationClip.hpp"
+#include "AnimatorClipInfo.hpp"
 #include <map>
 
 namespace FishEngine
 {
 	class Transform;
+	class Animator;
 	
 	// Runtime representation of the AnimatorController.
 	// It can be used to change the Animator's controller during runtime.
@@ -26,7 +28,8 @@ namespace FishEngine
 		const std::vector<AnimationClip*>&
 		GetAnimationClips() const;
 		
-		virtual void ApplyAnimation(float deltaTime, std::map<std::string, Transform*> const & skeleton) = 0;
+		virtual std::vector<AnimatorClipInfo>
+		ApplyAnimation(float deltaTime, Animator* animator) = 0;
 	};
 	
 
@@ -281,7 +284,8 @@ namespace FishEditor::Animations
 			
 		}
 		
-		virtual void ApplyAnimation(float deltaTime, std::map<std::string, FishEngine::Transform*> const & skeleton)  override;
+		virtual std::vector<FishEngine::AnimatorClipInfo>
+		ApplyAnimation(float deltaTime, FishEngine::Animator* animator)  override;
 
 	private:
 		std::vector<AnimatorControllerLayer>

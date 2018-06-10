@@ -206,7 +206,11 @@ namespace FishEngine
 //			return m_worldToLocalMatrix;
 			return m_LocalToWorldMatrix.inverse();
 		}
-
+		
+		void SetWorldToLocalMatrix(const Matrix4x4& worldToLocal)
+		{
+			SetLocalToWorldMatrix(worldToLocal.inverse());
+		}
 		
 		
 		// Matrix that transforms a point from local space into world space (Read Only).

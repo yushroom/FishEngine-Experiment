@@ -31,9 +31,9 @@ namespace FishEngine
 	{
 	public:
 		std::string name;
-		Vector3 position;
-		Quaternion rotation;
-		Vector3 scale;
+		Vector3 position;		// The T-pose position of the bone in local space.
+		Quaternion rotation;	// The T-pose rotation of the bone in local space.
+		Vector3 scale;			// The T-pose scaling of the bone in local space.
 	};
 
 	struct HumanDescription

@@ -523,7 +523,6 @@ namespace FishEngine
 	{
 		Renderer::Deserialize(archive);
 		archive.AddNVP("m_Mesh", this->m_Mesh);
-		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
 		archive.AddNVP("m_Bones", this->m_Bones);
 	}
@@ -532,7 +531,6 @@ namespace FishEngine
 	{
 		Renderer::Serialize(archive);
 		archive.AddNVP("m_Mesh", this->m_Mesh);
-		archive.AddNVP("m_Avatar", this->m_Avatar);
 		archive.AddNVP("m_RootBone", this->m_RootBone);
 		archive.AddNVP("m_Bones", this->m_Bones);
 	}

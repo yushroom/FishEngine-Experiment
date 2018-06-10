@@ -30,10 +30,13 @@ namespace FishEditor
 		//glCheckError();
 		//glBindFramebuffer(GL_FRAMEBUFFER, defaultFBO);
 		
+		float x = FishGUI::Context::GetInstance().GetPixelRatioOfCurrentWindow();
+		float w = m_rect.width * x;
+		float h = m_rect.height * x;
 		auto size = m_Framebuffer.GetSize();
-		if (m_rect.width != size.width || m_rect.height != size.height)
+		if (w != size.width || h != size.height)
 		{
-			this->Resize(m_rect.width, m_rect.height);
+			this->Resize(w, h);
 		}
 	}
 	

@@ -126,9 +126,6 @@ namespace FishEditor
 		auto scene = FishEngine::SceneManager::GetActiveScene();
 		m_currentScene = scene;
 
-//		auto app = py::module::import("app");
-//		app.attr("Save")();
-//		std::map<Object*, Object*> memo;
 		m_SceneObjectMemo.clear();
 		scene = scene->CloneWithMemo(m_SceneObjectMemo);
 		FishEngine::SceneManager::SetActiveScene(scene);

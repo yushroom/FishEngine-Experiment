@@ -22,7 +22,6 @@ public:
 	boost::signals2::signal<void(void)> OnStop;
 	boost::signals2::signal<void(void)> OnPause;
 	boost::signals2::signal<void(void)> OnResume;
-//	boost::signals2::signal<void(void)> OnNextFrame;
 
 protected:
 	
@@ -35,6 +34,7 @@ protected:
 	void Stop()
 	{
 		OnStop();
+		m_PauseAfterNextFrame = false;
 		m_IsPlaying = false;
 		m_Paused = false;
 	}

@@ -17,7 +17,7 @@ namespace FishEngine
 	class Prefab;
 
 #define InjectClassName(className, classID) 				\
-	enum {ClassID = classID}; 								\
+	static constexpr int ClassID = classID; 				\
 	static constexpr const char* ClassName = #className;
 	
 #define OverrideSerializeFunc 												\

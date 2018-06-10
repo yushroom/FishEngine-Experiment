@@ -8,6 +8,7 @@
 #include "AnimationEvent.hpp"
 
 #include "AnimationCurve.hpp"
+#include "HumanBodyBones.hpp"
 
 namespace FishEngine
 {
@@ -25,12 +26,14 @@ namespace FishEngine
 	struct FE_EXPORT QuaternionCurve
 	{
 		std::string path;
+		HumanBodyBones boneId = HumanBodyBones::LastBone;
 		TAnimationCurve<Quaternion> curve;
 	};
 
 	struct FE_EXPORT Vector3Curve
 	{
 		std::string path;
+		HumanBodyBones boneId = HumanBodyBones::LastBone;
 		TAnimationCurve<Vector3> curve;
 	};
 	

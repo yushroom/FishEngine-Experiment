@@ -199,6 +199,7 @@ void UnityToolBar::Draw()
 		
 		SegmentedButtons::Begin(r, 3);
 		
+		// play / stop
 		if (SegmentedButtons::Button(CodePointToUTF8(icon1, icon), color,  m_IsPlaying))
 		{
 			if (m_IsPlaying)
@@ -207,6 +208,7 @@ void UnityToolBar::Draw()
 				Run();
 		}
 
+		// pause
 		if (SegmentedButtons::Button(CodePointToUTF8(ICO_PAUSE, icon), color, m_Paused))
 		{
 			if (!m_Paused)
@@ -214,6 +216,8 @@ void UnityToolBar::Draw()
 			else
 				Resume();
 		}
+		
+		// next frame
 		if (SegmentedButtons::Button(CodePointToUTF8(ICO_NEXT, icon), color, false))
 		{
 			if (m_IsPlaying)

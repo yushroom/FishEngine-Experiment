@@ -12,5 +12,8 @@ namespace FishEngine
 
 		// Returns the blending weight used by the Animator to blend this clip.
 		float weight;
+		
+		// TODO: remove this
+		float time;
 	};
 }

@@ -12,7 +12,7 @@
 using namespace FishEngine;
 
 Color       Gizmos::s_color         = Color::green;
-Matrix4x4   Gizmos::s_matrix        = Matrix4x4::identity;
+Matrix4x4   Gizmos::s_matrix;//        = Matrix4x4::identity;	// identity may not be initialized in macOS
 SimpleMesh* Gizmos::s_circleMesh    = nullptr;
 SimpleMesh* Gizmos::s_boxMesh       = nullptr;
 SimpleMesh* Gizmos::s_light         = nullptr;
@@ -194,6 +194,25 @@ DrawWireSphere(
 	}
 }
 
+
+void Gizmos::
+DrawWireCube(
+			 const Vector3& center,
+			 const Vector3& size)
+{
+	auto shader = solidColorShader;
+	shader->Use();
+	Matrix4x4 m;
+	m.SetTRS(center, Quaternion::identity, size);
+	ShaderUniforms uniforms;
+	auto const & v = Camera::GetMainCamera()->GetWorldToCameraMatrix();
+	auto const & p = Camera::GetMainCamera()->GetProjectionMatrix();
+	shader->BindUniform("_Color", s_color);
+	shader->BindUniform("MATRIX_MVP", p * v * s_matrix * m);
+	s_boxMesh->Render();
+}
+
+
 #if 0
 
 void Gizmos::
@@ -270,23 +289,6 @@ DrawHalfWireSphere(
 
 }
 
-
-void Gizmos::
-DrawWireCube(
-	const Vector3& center,
-	const Vector3& size)
-{
-	auto shader = Shader::FindBuiltin("SolidColor-Internal");
-	shader->Use();
-	Matrix4x4 m;
-	m.SetTRS(center, Quaternion::identity, size);
-	ShaderUniforms uniforms;
-	auto const & v = Camera::main()->worldToCameraMatrix();
-	auto const & p = Camera::main()->projectionMatrix();
-	shader->BindUniformVec4("_Color", s_color);
-	shader->BindUniformMat4("MATRIX_MVP", p * v * s_matrix * m);
-	s_boxMesh->Render();
-}
 
 
 void Gizmos::

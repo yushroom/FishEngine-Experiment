@@ -19,6 +19,7 @@ namespace FishEditor
 namespace FishEngine
 {
 	class SkinnedMeshRenderer;
+	class Avatar;
 
 	class Mesh : public Object
 	{
@@ -88,6 +89,8 @@ namespace FishEngine
 		// The size of the array is either the same as vertexCount or empty.
 		// Each vertex can be affected by up to 4 different bones.All 4 bone weights should sum up to 1.
 		std::vector<BoneWeight> m_boneWeights;
+		
+		Avatar* m_Avatar = nullptr;
 
 		
 	public:

@@ -72,12 +72,8 @@ try
 	editorApp.Init();
 
 	FishEditor::Init();
-//	auto app = new SceneViewApp();
-//	app->Init();
-
 
 	auto inspector = new InspectorView("Inspector");
-//	auto project = new FishGUI::Widget("Project");
 	auto console = new IMWidget2("Console");
 	auto hierarchy = new HierarchyView("Hierarchy");
 	auto scene = new IMWidget2("Scene");

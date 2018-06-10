@@ -27,7 +27,7 @@
 #endif
 
 
-#include <FishEngine/Animation/Animation.hpp>
+#include <FishEngine/Animation/Animator.hpp>
 #include <FishEngine/Gizmos.hpp>
 
 namespace FishEngine
@@ -415,22 +415,24 @@ namespace FishEngine
 	}
 
 
-	void DrawSkeleton(const std::map<std::string, Transform*> & skeleton)
+	void DrawSkeleton(const std::vector<Transform*> & skeleton)
 	{
+//		glDisable(GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
-		for (auto&& p : skeleton)
+//		glCheckError();
+		for (auto t : skeleton)
 		{
-			auto t = p.second;
+//			auto t = p.second;
 			auto parent = t->GetParent();
 			if (parent != nullptr)
 			{
 				Gizmos::SetColor(Color::green);
 				Gizmos::DrawLine(parent->GetPosition(), t->GetPosition());
-
 				Gizmos::SetColor(Color::red);
 				Gizmos::DrawWireSphere(t->GetPosition(), 0.02f);
 			}
 		}
+//		glCheckError();
 		glEnable(GL_DEPTH_TEST);
 	}
 
@@ -546,7 +548,7 @@ namespace FishEngine
 		glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		// Skybox
-		//if (false)
+//		if (false)
 		{
 			Scene* scene = SceneManager::GetActiveScene();
 			Material* mat = scene->GetRenderSettings()->GetSkyboxMaterial();
@@ -564,12 +566,11 @@ namespace FishEngine
 			}
 		}
 
-		auto animations = scene->FindComponents<Animation>();
-		for (auto animation : animations)
+		auto smrs = scene->FindComponents<SkinnedMeshRenderer>();
+		for (auto r : smrs)
 		{
-			DrawSkeleton(animation->m_skeleton);
+			DrawSkeleton(r->m_Bones);
 		}
-
 
 #endif
 

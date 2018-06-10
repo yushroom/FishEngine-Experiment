@@ -6,11 +6,15 @@
 #include "../Math/Quaternion.hpp"
 #include "../Math/Matrix4x4.hpp"
 #include "Avatar.hpp"
+#include "AnimatorClipInfo.hpp"
+#include "../Component/SkinnedMeshRenderer.hpp"
 
 namespace FishEngine
 {
 	class Avatar;
 	class RuntimeAnimatorController;
+	class SkinnedMeshRenderer;
+	class RenderSystem;
 
 	class FE_EXPORT Animator : public Behaviour
 	{
@@ -27,11 +31,31 @@ namespace FishEngine
 		Avatar*
 		GetAvatar() const { return m_Avatar; }
 		
+		// Returns transform mapped to this human bone id.
+		Transform*
+		GetBoneTransform(HumanBodyBones humanBoneId)
+		{
+			if (humanBoneId == HumanBodyBones::LastBone || !m_HumanBodyBonesMapped)
+				return nullptr;
+			return m_Skeleton2[static_cast<int>(humanBoneId)];
+		}
+		
+		Transform*
+		GetBoneTransformByPath(const std::string& path);
+		
+		std::vector<AnimatorClipInfo>
+		GetCurrentAnimatorClipInfo(int layerIndex);
+		
 		void Start();
 		void Play();
 		void Update(float deltaTime);
 		
+		// temp
+		bool IsHumanBodyBonesMapped() { return m_HumanBodyBonesMapped; }
+		
 	private:
+		friend class RenderSystem;
+		
 		Avatar* 					m_Avatar = nullptr;
 		RuntimeAnimatorController* 	m_Controller = nullptr;
 //		m_CullingMode;
@@ -42,97 +66,10 @@ namespace FishEngine
 		bool 						m_HasTransformHierarchy = true;
 		bool 						m_AllowConstantClipSamplingOptimization = true;
 		
-		float m_localTimer = 0.0f;
+		bool m_HumanBodyBonesMapped = false;
 		std::map<std::string, Transform*> m_Skeleton;
+		Transform* m_Skeleton2[static_cast<int>(HumanBodyBones::LastBone)] = {nullptr};
+		SkinnedMeshRenderer* m_SRenderer = nullptr;
 	};
 	
-	
-	
-#if 0
-	struct FE_EXPORT Vector3Key
-	{
-		float time;
-		Vector3 value;
-	};
-	
-	struct FE_EXPORT QuaternionKey
-	{
-		float time;
-		Quaternion value;
-	};
-	
-	struct FE_EXPORT TransformationKey
-	{
-		float time;
-		Matrix4x4 value;
-	};
-	
-	struct FE_EXPORT AnimationNode
-	{
-		std::string name;
-		std::vector<Vector3Key> positionKeys;
-		std::vector<QuaternionKey> rotationKeys;
-		std::vector<Vector3Key> scalingKeys;
-		//std::vector<TransformationKey> transformationKeys;
-	};
-	
-	struct FE_EXPORT AnimationChannel
-	{
-		std::string name;
-		float duration;
-		float ticksPerSecond;
-		std::map<std::string, AnimationNode> channels;
-	};
-	
-	typedef std::shared_ptr<AnimationChannel> AnimationChannelPtr;
-	
-	
-	
-	class FE_EXPORT Meta(DisallowMultipleComponent) Animator : public Component
-	{
-	public:
-		DefineComponent(Animator);
-		
-		float m_time;   // temp
-		bool m_playing = false;
-		bool m_playingOnce = false;
-		bool m_playOneFrame = false;
-		int m_currentFrame = 0;
-		
-		Meta(NonSerializable)
-		AnimationChannelPtr m_animation;
-		
-		//virtual void OnInspectorGUI() override;
-		
-		void Play();
-		
-		void PlayOnce();
-		
-		void NextFrame();
-		
-		void Stop() {
-			m_playing = false;
-			m_playingOnce = false;
-			m_playOneFrame = false;
-			//m_time = 0;
-		}
-		
-		virtual void Update() override;
-		
-		AvatarPtr& avatar() {
-			return m_avatar;
-		}
-		
-		void setAvatar(const AvatarPtr& avatar) {
-			m_avatar = avatar;
-		}
-		
-	private:
-		AvatarPtr m_avatar;
-		void RecursivelyUpdate(const GameObjectPtr& go);
-		//void RecursivelyUpdate2(const std::shared_ptr<GameObject>& go);
-		std::map<std::string, std::weak_ptr<GameObject>> m_nameToGameObject;
-	};
-#endif
-
 }

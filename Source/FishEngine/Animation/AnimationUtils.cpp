@@ -26,4 +26,20 @@ namespace FishEngine
 			GetSkeleton(child, current_path, skeleton, boneToIndex);
 		}
 	}
+	
+	void GetSkeleton(Transform* t, Transform* skeleton[], std::map<std::string, HumanBodyBones> nameToId)
+	{
+		auto name = t->GetName();
+		auto it = nameToId.find(name);
+		if (it != nameToId.end())
+		{
+			auto id = it->second;
+			skeleton[static_cast<int>(id)] = t;
+		}
+		
+		for (auto & child : t->GetChildren())
+		{
+			GetSkeleton(child, skeleton, nameToId);
+		}
+	}
 }

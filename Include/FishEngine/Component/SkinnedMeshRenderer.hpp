@@ -9,11 +9,13 @@ namespace FishEditor
 	class FBXImporter;
 }
 
+
 namespace FishEngine
 {
 	class Mesh;
 	class Avatar;
 	class RenderSystem;
+	class Animator;
 
 	class SkinnedMeshRenderer : public Renderer
 	{
@@ -26,8 +28,8 @@ namespace FishEngine
 		
 		~SkinnedMeshRenderer() = default;
 
-		void SetAvatar(Avatar* avatar) { m_Avatar = avatar; }
-		Avatar* GetAvater() const { return m_Avatar; }
+//		void SetAvatar(Avatar* avatar) { m_Avatar = avatar; }
+//		Avatar* GetAvater() const { return m_Avatar; }
 
 		void SetRootBone(Transform* rootBone) { m_RootBone = rootBone; }
 		Transform* GetRootBone() const { return  m_RootBone; }
@@ -36,19 +38,26 @@ namespace FishEngine
 		Mesh* GetSharedMesh() const { return m_Mesh; }
 
 	private:
+		
+		void SetOverrideAvatar(Avatar* avatar);
 
 		friend class RenderSystem;
 		friend class FishEditor::FBXImporter;
+		friend class Animator;
 		void UpdateMatrixPalette() const;
 
 		// The mesh used for skinning.
 		Mesh*		m_Mesh = nullptr;
-		Avatar*		m_Avatar = nullptr;
+//		Avatar*		m_Avatar = nullptr;		// origin avatar
 		Transform*	m_RootBone = nullptr;
 
 		// The bones used to skin the mesh.
 		// same size with sharedMesh.bindposes
 		std::vector<Transform*> m_Bones;
+		
+//		bool 		m_UseBindPosesInAvatar = false;
+		Avatar*		m_OverrideAvatar = nullptr;		// avatar in animation clips
+		mutable std::vector<Matrix4x4> m_BindPoses;
 
 		mutable std::vector<Matrix4x4> m_MatrixPalette;
 		mutable std::vector<Vector3> m_SkinnedVertexPosition;

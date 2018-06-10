@@ -152,6 +152,12 @@ inline Vector3 FbxVector4ToVector3WithXFlipped(FbxVector4 const & v)
 				   static_cast<float>(v[2]) );
 }
 
+inline Vector3 Euler2Euler(const Vector3& srcEuler, RotationOrder srcOrder)
+{
+	auto q = Quaternion::Euler(srcOrder, srcEuler);
+	return q.eulerAngles();
+}
+
 // skinned data
 void FishEditor::FBXImporter::GetLinkData(FbxMesh* pMesh, Mesh* mesh, std::map<uint32_t, uint32_t> const & vertexIndexRemapping)
 {
@@ -677,7 +683,7 @@ void SetKeyframeValues(TKeyframe<Vector3>& keyFrame, int idx, float value, float
 
 
 template<class T, int C>
-TAnimationCurve<T> ImportCurve(FbxAnimCurve*(&fbxCurve)[C], float(&defaultValues)[C], float start, float end)
+TAnimationCurve<T> ImportCurve(FbxAnimCurve*(&fbxCurve)[C], float(&defaultValues)[C], float& start, float& end)
 {
 	int keyCounts[C];
 	for (int i = 0; i < C; i++)
@@ -727,8 +733,15 @@ TAnimationCurve<T> ImportCurve(FbxAnimCurve*(&fbxCurve)[C], float(&defaultValues
 			if (foundMismatch)
 				break;
 			
-			if (time < start || time > end)
-				continue;
+//			if (time < start || time > end)
+//			{
+//				LogWarning("keyframe out of range");
+//				continue;
+//			}
+			if (time < start)
+				start = time;
+			if (time > end)
+				end = time;
 			
 			keyframes.push_back(TKeyframe<T>());
 			TKeyframe<T>& keyFrame = keyframes.back();
@@ -859,15 +872,10 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 	};
 	
 	EFbxRotationOrder order;
-	node->GetRotationOrder(FbxNode::eDestinationPivot, order);
+	node->GetRotationOrder(FbxNode::eSourcePivot, order);
 	RotationOrder rotationOrder = FBXToNativeType(order);
 	
 	bool hasBoneAnimation = hasCurveValues(translation) || hasCurveValues(rotation) || hasCurveValues(scale);
-	
-	if (order != eEulerXYZ && hasBoneAnimation)
-	{
-		LogWarning("here");
-	}
 	
 	if (hasBoneAnimation)
 	{
@@ -925,6 +933,10 @@ void FishEditor::FBXImporter::ImportAnimationLayer(fbxsdk::FbxAnimLayer* layer, 
 				v.value.x = -v.value.x;
 				v.inTangent.x = -v.inTangent.x;
 				v.outTangent.x = -v.outTangent.x;
+				
+//				v.value = Euler2Euler(v.value, rotationOrder);
+				
+				// TODO: in/out tangent
 			}
 		}
 		//else
@@ -990,14 +1002,20 @@ AnimationClip* FishEditor::FBXImporter::ConvertAnimationClip(const FBXAnimationC
 			path = name + "/" + path;
 			node = node->GetParent();
 		}
+		
+		HumanBodyBones boneId = HumanBodyBones::LastBone;
+		auto name = animation.node->GetName();
+		auto it = m_model.m_avatar->m_BoneNameToHuman.find(name);
+		if (it != m_model.m_avatar->m_BoneNameToHuman.end())
+			boneId = it->second;
 		if (animation.translation.keyframeCount() > 0)
-			result->m_positionCurve.emplace_back(Vector3Curve{ path, animation.translation });
+			result->m_positionCurve.emplace_back(Vector3Curve{ path, boneId, animation.translation });
 		if (animation.rotation.keyframeCount() > 0)
-			result->m_rotationCurves.emplace_back(QuaternionCurve{ path, animation.rotation });
+			result->m_rotationCurves.emplace_back(QuaternionCurve{ path, boneId, animation.rotation });
 		if (animation.eulers.keyframeCount() > 0)
-			result->m_eulersCurves.emplace_back(Vector3Curve{ path, animation.eulers});
+			result->m_eulersCurves.emplace_back(Vector3Curve{ path, boneId, animation.eulers});
 		if (animation.scale.keyframeCount() > 0)
-			result->m_scaleCurves.emplace_back(Vector3Curve{ path, animation.scale });
+			result->m_scaleCurves.emplace_back(Vector3Curve{ path, boneId, animation.scale });
 	}
 	return result;
 }
@@ -1014,16 +1032,19 @@ void FishEditor::FBXImporter::ImportAnimations(fbxsdk::FbxScene* scene)
 		m_model.m_clips.emplace_back();
 		auto & clip = m_model.m_clips.back();
 		clip.name = animStack->GetName();
+		auto start = animStack->LocalStart.EvaluateValue();
+		auto stop = animStack->LocalStop.EvaluateValue();
 		FbxTimeSpan timeSpan = animStack->GetLocalTimeSpan();
 		clip.start = (float)timeSpan.GetStart().GetSecondDouble();
 		clip.end = (float)timeSpan.GetStop().GetSecondDouble();
 		clip.sampleRate = (uint32_t)FbxTime::GetFrameRate(scene->GetGlobalSettings().GetTimeMode());
+		auto duration = timeSpan.GetDuration().GetSecondDouble();
 		
 		int layerCount = animStack->GetMemberCount<FbxAnimLayer>();
 		if (layerCount == 0)
 			continue;
-//		else if (layerCount > 1)
-//			LogWarning(Format("multiple animation clip in model: %{}", this->GetFullPath()));
+		else if (layerCount > 1)
+			LogWarning(Format("multiple animation clip in model: %{}", this->GetFullPath()));
 
 		for (int i = 0; i < layerCount; ++i)
 		{
@@ -1268,8 +1289,6 @@ void FishEditor::FBXImporter::Import()
 	{
 		abort();
 	}
-
-	m_model.m_avatar = new Avatar;
 	
 	FbxGeometryConverter converter(lSdkManager);
 	converter.Triangulate(lScene, true);
@@ -1281,10 +1300,6 @@ void FishEditor::FBXImporter::Import()
 //		coordSystem.ConvertScene(lScene);
 
 	BakeTransforms(lScene);
-
-	m_boneCount = 0;
-	ImportSkeleton(lScene);
-
 
 //	int geometryCount = lScene->GetGeometryCount();
 //	for (int i = 0; i < geometryCount; ++i) {
@@ -1311,14 +1326,21 @@ void FishEditor::FBXImporter::Import()
 		lRootNode = lRootNode->GetChild(0);
 	}
 	
-	//FbxAxisSystem::DirectX.ConvertChildren(lRootNode, fileAxisSystem);
-	
 	m_model.m_rootGameObject = ParseNode(lRootNode);
+	
+	m_model.m_avatar = Avatar::BuildHumanAvatar(m_model.m_rootGameObject, this->humanDescription);
+	m_boneCount = 0;
+	ImportSkeleton(lScene);
 	
 	for (auto r : m_model.m_skinnedMeshRenderers)
 	{
-		r->SetAvatar(m_model.m_avatar);
+//		r->SetAvatar(m_model.m_avatar);
 		r->SetRootBone(m_model.m_rootGameObject->GetTransform());
+	}
+	
+	for (auto mesh : m_model.m_meshes)
+	{
+		mesh->m_Avatar = m_model.m_avatar;
 	}
 	
 	m_model.name = fileName;

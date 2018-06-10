@@ -13,6 +13,11 @@
 
 #include <map>
 
+namespace FishEngine
+{
+	class Avatar;
+}
+
 namespace FishEditor
 {
 	class AssetDatabase;
@@ -106,6 +111,18 @@ namespace FishEditor
 		float fileScale = 1.0f;
 	};
 	
+	// A Takeinfo object contains all the information needed to describe a take.
+	struct TakeInfo
+	{
+		float bakeStartTime;	// Start time in second.
+		float bakeStopTime;		// Stop time in second.
+		std::string defaultClipName;	// This is the default clip name for the clip generated for this take.
+		std::string name;		// Take name as define from imported file.
+		float sampleRate;		// Sample rate of the take.
+		float startTime;		// Start time in second.
+		float stopTime;			// Stop time in second.
+	};
+	
 	class ModelImporter : public AssetImporter
 	{
 	public:
@@ -141,6 +158,9 @@ namespace FishEditor
 		{
 			return m_FileIDToObject;
 		}
+		
+		std::vector<TakeInfo>
+		GetImportedTakeInfos();
 
 		virtual void Import() override { }
 
@@ -182,11 +202,14 @@ namespace FishEditor
 		//ModelImporterMesh m_Meshes;
 		
 //		std::map<int64_t, std::string> fileIDToRecycleName;
-		ModelImporterAnimation animations;
-		ModelImporterMesh meshes;
-		bool importAnimation = true;
-		FishEngine::HumanDescription humanDescription;
-		ModelImporterAnimationType animationType = ModelImporterAnimationType::Generic;
+		ModelImporterAnimation 			animations;
+		ModelImporterMesh 				meshes;
+		bool 							importAnimation = true;
+		bool 							copyAvatar = false;
+		FishEngine::HumanDescription 	humanDescription;
+		FishEngine::Avatar*				lastHumanDescriptionAvatarSource = nullptr;
+		ModelImporterAnimationType 		animationType = ModelImporterAnimationType::Generic;
+		
 
 	}; // end of class ModelImporter
 }

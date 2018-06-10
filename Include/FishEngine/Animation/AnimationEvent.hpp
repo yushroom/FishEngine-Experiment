@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AnimationClipInfo.hpp"
+#include "AnimatorClipInfo.hpp"
 #include "AnimationState.hpp"
 
 namespace FishEngine

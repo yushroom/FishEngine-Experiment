@@ -175,7 +175,7 @@ schema_Object_FishEngine = '''
 @MeshRenderer: Renderer
 @SkinnedMeshRenderer: Renderer
 	m_Mesh
-	m_Avatar
+	# m_Avatar
 	m_RootBone
 	m_Bones
 
