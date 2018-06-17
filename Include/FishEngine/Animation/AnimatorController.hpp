@@ -30,6 +30,8 @@ namespace FishEngine
 		
 		virtual std::vector<AnimatorClipInfo>
 		ApplyAnimation(float deltaTime, Animator* animator) = 0;
+		
+		virtual void Reset() = 0;
 	};
 	
 
@@ -286,6 +288,8 @@ namespace FishEditor::Animations
 		
 		virtual std::vector<FishEngine::AnimatorClipInfo>
 		ApplyAnimation(float deltaTime, FishEngine::Animator* animator)  override;
+		
+		virtual void Reset() override;
 
 	private:
 		std::vector<AnimatorControllerLayer>

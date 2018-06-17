@@ -252,6 +252,9 @@ void Animator::Start()
 			GetSkeleton(t, "", m_Skeleton, m_Avatar->m_boneToIndex);
 		}
 	}
+	
+	if (m_Controller != nullptr)
+		m_Controller->Reset();
 }
 
 

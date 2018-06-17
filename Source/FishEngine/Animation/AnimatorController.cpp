@@ -7,6 +7,17 @@ using namespace FishEditor;
 using namespace FishEditor::Animations;
 
 
+void FishEditor::Animations::AnimatorController::Reset()
+{
+	for (auto& layer : m_AnimatorLayers)
+	{
+		for (auto& childState : layer.m_StateMachine->m_ChildStates)
+		{
+			childState.m_State->m_LocalPlayTimer = 0;
+		}
+	}
+}
+
 std::vector<AnimatorClipInfo>
 FishEditor::Animations::AnimatorController::ApplyAnimation(float deltaTime, Animator* animator)
 {
