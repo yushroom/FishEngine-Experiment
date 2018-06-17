@@ -40,7 +40,7 @@ namespace py = pybind11;
 
 Object* FindObjectOfType(int classID)
 {
-	auto& objs = Object::FindObjectsOfType(classID);
+	auto objs = Object::FindObjectsOfType(classID);
 	if (objs.size() == 0)
 		return nullptr;
 	return *objs.begin();
@@ -59,7 +59,7 @@ inline py::list StdVector2PyList(const std::vector<T>& v)
 
 py::list FindObjectsOfType(int classID)
 {
-	auto& objs = Object::FindObjectsOfType(classID);
+	auto objs = Object::FindObjectsOfType(classID);
 	py::list ret;
 	for (auto o : objs)
 	{
@@ -112,24 +112,29 @@ py::list SkinnedMeshRenderer__GetBones(SkinnedMeshRenderer* smr)
 }
 
 
-class PyScript : public Script
-{
-public:
-	void Start() override
-	{
-		PYBIND11_OVERLOAD(void, Script, Start,);
-	}
-	
-	void Update() override
-	{
-		PYBIND11_OVERLOAD(void, Script, Update,);
-	}
-	
-	void OnDrawGizmos() override
-	{
-		PYBIND11_OVERLOAD(void, Script, OnDrawGizmos,);
-	}
-};
+//class PyScript : public Script
+//{
+//public:
+//	void Start() override
+//	{
+//		PYBIND11_OVERLOAD(void, Script, Start,);
+//	}
+//
+//	void Update() override
+//	{
+//		PYBIND11_OVERLOAD(void, Script, Update,);
+//	}
+//
+//	void OnDrawGizmos() override
+//	{
+//		PYBIND11_OVERLOAD(void, Script, OnDrawGizmos,);
+//	}
+//
+//	Script* Clone() override
+//	{
+//		PYBIND11_OVERLOAD(Script*, Script, Clone,);
+//	}
+//};
 
 
 #define DefObject(classname) \
@@ -331,10 +336,14 @@ PYBIND11_EMBEDDED_MODULE(FishEngineInternal, m)
 		.def_readwrite("m_SizeDelta", &RectTransform::m_SizeDelta)
 		.def_readwrite("m_Pivot", &RectTransform::m_Pivot)
 		;
+	
+//	DefineFunc(Behaviour);
+	class_<Behaviour, Component>(m, "Behaviour");
+	
 
 	DefineFunc(Script);
-	class_<Script, Component, PyScript>(m, "Script")
-		.def(init<>())
+	class_<Script, Behaviour>(m, "Script")
+//		.def(init<>())
 		.def("GetPyObject", &Script::GetPyObject)
 		.def("SetPyObject", &Script::SetPyObject)
 	;

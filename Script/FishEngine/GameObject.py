@@ -91,14 +91,17 @@ class __GameObject(Object):
 
     def GetComponent(self, ComponentType):
         from . import Component
-        print('ComponentType:', ComponentType)
+        # print('ComponentType:', ComponentType)
         assert(issubclass(ComponentType, Component))
         return self.GetComponent_internal(ComponentType.ClassID)
 
     def AddComponent(self, component:'Component')->'Component':
-        from . import Component
-        assert(isinstance(component, Component))
-        self.AddComponent_internal(component)
+        from . import Component, Script
+        if isinstance(component, Script):
+            self.AddComponent_internal(component.GetCachedPtr())
+        else:
+            assert(isinstance(component, Component))
+            self.AddComponent_internal(component)
         return component
 
     # ret GameObject

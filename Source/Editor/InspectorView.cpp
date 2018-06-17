@@ -257,6 +257,9 @@ void DrawScript(Script* s)
 	FishGUI::Text("Script", scriptName);
 	
 	DrawObject(s);
+	
+	if (handle.is(pybind11::none()))
+		return;
 
 	auto attributes = handle.attr("GetVisiableAttributes")();		// list of str
 	for (const auto& a : attributes)

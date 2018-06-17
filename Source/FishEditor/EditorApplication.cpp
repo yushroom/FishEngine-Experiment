@@ -25,6 +25,33 @@ namespace py = pybind11;
 
 using namespace FishEngine;
 
+#include <FishEngine/Script.hpp>
+
+void Start_temp(std::deque<Transform*>& todo)
+{
+	while (!todo.empty())
+	{
+		auto t = todo.front();
+		auto go = t->GetGameObject();
+		todo.pop_front();
+		for (auto comp : go->GetAllComponents())
+		{
+			if (comp->Is<Script>())
+			{
+				auto s = dynamic_cast<Script*>(comp);
+				s->Start();
+			}
+		}
+		
+		for (auto child : t->GetChildren())
+		{
+			todo.push_back(child);
+		}
+	}
+}
+
+
+
 class EditorInternalApp : public FishEngine::AbstractGameApp
 {
 public:
@@ -152,6 +179,11 @@ namespace FishEditor
 		FishEngine::PhysicsSystem::GetInstance().Start();
 
 		FishEngine::AnimationSystem::GetInstance().Start();
+		
+		std::deque<Transform*> todo;
+		for (auto t : scene->GetRootTransforms())
+			todo.push_back(t);
+		Start_temp(todo);
 	}
 
 

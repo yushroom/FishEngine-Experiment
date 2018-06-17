@@ -1,15 +1,10 @@
 #include <FishEngine/Serialization/CloneArchive.hpp>
 #include <FishEngine/CreateObject.hpp>
 
+#include <FishEngine/Asset.hpp>
+
 namespace FishEngine
 {
-//	template<class K, class V>
-//	bool MapHasKey(const std::map<K, V>& dict, const K& key)
-//	{
-//		auto pos = dict.find(key);
-//
-//	};
-//
 	std::vector<Object*> CloneObjects(std::vector<Object*> objects, std::map<Object*, Object*>& memo)
 	{
 		// step 1: collect all objects
@@ -17,8 +12,7 @@ namespace FishEngine
 		for (auto obj : objects)
 			archive.Collect(obj);
 
-
-//		int size = archive.m_Objects.size();
+		// step 2: create empty objects
 		for (auto o : archive.m_Objects)
 		{
 			auto pos = memo.find(o);
@@ -26,30 +20,31 @@ namespace FishEngine
 				continue;
 
 			int classID = o->GetClassID();
-			if (classID == GameObject::ClassID)
+			Object* cloned = nullptr;
+			if (classID == Script::ClassID)
 			{
-//				printf("Clone GameObject %s %d\n", o->GetName().c_str(), o->GetInstanceID());
+				auto script = o->As<Script>();
+				cloned = script->Clone();
 			}
-//			Object* cloned = nullptr;
-//			if (classID != Prefab::ClassID)
-//				cloned = CreateEmptyObjectByClassID(classID);
-			Object* cloned = CreateEmptyObjectByClassID(classID);
-
-			if (cloned == nullptr)
-				memo[o] = o;	// mesh, material...
+			else if (IsAsset(o) || classID == 1001)
+			{
+				cloned = o;		// do not clone asset(mesh, material...)
+			}
 			else
 			{
-				memo[o] = cloned;
-//				printf("Cloned[%s] %d <- %d\n", cloned->GetClassName(), cloned->GetInstanceID(), o->GetInstanceID());
+				cloned = CreateEmptyObjectByClassID(classID);
 			}
+			
+			assert(cloned != nullptr);
+			memo[o] = cloned;
 		}
 
 		CloneOutputArchive out;
 
-		// clone GameObjects first
+		// step 3: clone GameObjects first
 		for (auto o : archive.m_Objects)
 		{
-			if (o->GetClassID() != GameObject::ClassID)
+			if (!o->Is<GameObject>())
 				continue;
 			auto cloned = memo[o];
 			if (cloned == o)		// mesh, material...
@@ -62,12 +57,15 @@ namespace FishEngine
 			out.AssertEmpty();	// make sure all serialized properties are deserialized
 		}
 
+		// step 4: copy values to cloned object
 		for (auto o : archive.m_Objects)
 		{
-			if (o->GetClassID() == GameObject::ClassID)
+			if (o->Is<GameObject>())
 				continue;
 			auto cloned = memo[o];
-			if (cloned == o)		// mesh, material...
+			if (cloned == o)
+				continue;	// mesh, material, prefab...
+			if (o->Is<Script>())
 				continue;
 			if (cloned == nullptr) // prefab instance
 				continue;
@@ -77,7 +75,6 @@ namespace FishEngine
 			out.AssertEmpty();	// make sure all serialized properties are deserialized
 		}
 
-//		auto cloned = memo[obj];
 		std::vector<Object*> result;
 		result.reserve(objects.size());
 		for (auto obj : objects)

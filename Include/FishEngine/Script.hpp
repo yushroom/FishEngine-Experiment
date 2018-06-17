@@ -1,95 +1,55 @@
 #pragma once
 
-#include "Component.hpp"
-
+#include "Component/Behaviour.hpp"
 #include <pybind11/pybind11.h>
 
-#if 0
-#define Func(name) void name() { m_PyObject.attr(#name)(); }
-
 namespace FishEngine
 {
-	class Script : public Component
-	{
-	public:
-		enum { ClassID = 115 };
-		Script() : Component(Script::ClassID)
-		{
-			LOGF;
-		}
-
-		virtual ~Script()
-		{
-			LOGF;
-		}
-
-		Func(Awake);
-		Func(Start);
-		Func(Update);
-		Func(FixedUpdate);
-		Func(LateUpdate);
-		Func(OnGUI);
-		Func(OnDisable);
-		Func(OnEnable);
-
-		virtual Script* Clone() const override;
-
-		void SetPyObject(const pybind11::object& obj)
-		{
-			m_PyObject = obj;
-		}
-
-		const pybind11::object& GetPyObject() const
-		{
-			return m_PyObject;
-		}
-
-	protected:
-		pybind11::object	m_PyObject = pybind11::none();
-	};
-}
-
-#else
-namespace FishEngine
-{
-	class Script : public Component
+	class Script : public Behaviour
 	{
 	public:
 		DeclareObject(Script, 115);
 
-		Script() : Component(Script::ClassID, ClassName)
+		Script() : Behaviour(Script::ClassID, ClassName)
 		{
 			LOGF;
+			s_LastScript = this;
 		}
 		
 		virtual ~Script()
 		{
 			puts("Script::~Script");
+			m_Script = pybind11::none();
 		}
 		
-		virtual void Start() { }
-		virtual void Update() { }
-		virtual void OnDrawGizmos() { }
-		
-		void SetPyObject(const pybind11::handle& obj)
+		void Start() { m_Script.attr("Start")(); }
+		void Update() { m_Script.attr("Update")(); }
+		void OnDrawGizmos() { m_Script.attr("OnDrawGizmos")(); }
+//		Script* Clone() { return nullptr; }
+		Script* Clone()
 		{
-			m_PyObject = obj;
+			m_Script.attr("Clone")();
+			return s_LastScript;
 		}
 		
-		const pybind11::handle& GetPyObject() const
+		void SetPyObject(const pybind11::object& obj)
 		{
-			return m_PyObject;
+			m_Script = obj;
 		}
 		
-//		void CallMethod(const std::string& methodName)
-//		{
-//			m_PyObject.attr(methodName);
-//		}
+		const pybind11::object& GetPyObject() const
+		{
+			return m_Script;
+		}
 		
 	protected:
-		pybind11::handle	m_PyObject = pybind11::none();
+		void CallMethod(const std::string& methodName)
+		{
+			m_Script.attr(methodName.c_str())();
+		}
+		
+		pybind11::object	m_Script = pybind11::none();
+		
+		inline static Script* s_LastScript = nullptr;
 	};
 }
-#endif
-
-#undef Func

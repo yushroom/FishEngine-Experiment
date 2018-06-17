@@ -1,7 +1,7 @@
 import FishEngineInternal
 from FishEngine import SceneManager, Material, MeshManager, Vector3, Quaternion, Script
 from timing import timing
-import demo1, demo2
+import demo2
 from collections import OrderedDict
 
 from FishEditor import EditorApplication
@@ -38,7 +38,7 @@ def Update():
 def Clean():
     # Material.StaticClean()
     MeshManager.StaticClean()
-    Script.StaticClean()
+    # Script.StaticClean()
     
 def Reload():
     print('Reload from Python.....')

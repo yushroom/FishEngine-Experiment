@@ -114,9 +114,9 @@ class __Object:
     @staticmethod
     def FindObjectsOfType(type: Type['Object']) -> List['Object']:
     # def FindObjectsOfType(type: Type[Object]):
-        from . import Script
-        if issubclass(type, Script):
-            return list(Script._Script__scripts[type])
+        # from . import Script
+        # if issubclass(type, Script):
+        #     return list(Script._Script__scripts[type])
         return FishEngineInternal.FindObjectsOfType(type.ClassID)
 
 

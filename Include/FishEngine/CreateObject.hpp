@@ -2,6 +2,8 @@
 
 #include "FishEngine2.hpp"
 
+#include "ClassID.hpp"
+
 namespace FishEngine
 {
 	template<class T>
@@ -17,46 +19,50 @@ namespace FishEngine
 	{
 //		if (classID == Prefab::ClassID)
 //			return CreateEmptyObject<Prefab>();
-		if (classID == GameObject::ClassID)
-			return CreateEmptyObject<GameObject>();
-		else if (classID == Transform::ClassID)
-			return CreateEmptyObject<Transform>();
-		else if (classID == Camera::ClassID)
-			return CreateEmptyObject<Camera>();
-		else if (classID == Light::ClassID)
-			return CreateEmptyObject<Light>();
-		else if (classID == RectTransform::ClassID)
-			return CreateEmptyObject<RectTransform>();
-		else if (classID == MeshFilter::ClassID)
-			return CreateEmptyObject<MeshFilter>();
-		else if (classID == MeshRenderer::ClassID)
-			return CreateEmptyObject<MeshRenderer>();
-		else if (classID == SkinnedMeshRenderer::ClassID)
-			return CreateEmptyObject<SkinnedMeshRenderer>();
-		else if (classID == BoxCollider::ClassID)
-			return CreateEmptyObject<BoxCollider>();
-		else if (classID == SphereCollider::ClassID)
-			return CreateEmptyObject<SphereCollider>();
-		else if (classID == Rigidbody::ClassID)
-			return CreateEmptyObject<Rigidbody>();
-		else if (classID == Animation::ClassID)
-			return CreateEmptyObject<Animation>();
-		else if (classID == Animator::ClassID)
-			return CreateEmptyObject<Animator>();
-		else if (classID == FishEditor::Animations::AnimatorStateTransition::ClassID)
-			return CreateEmptyObject<FishEditor::Animations::AnimatorStateTransition>();
-		else if (classID == FishEditor::Animations::AnimatorState::ClassID)
-			return CreateEmptyObject<FishEditor::Animations::AnimatorState>();
-		else if (classID == FishEditor::Animations::AnimatorController::ClassID)
-			return CreateEmptyObject<FishEditor::Animations::AnimatorController>();
-		else if (classID == FishEditor::Animations::AnimatorStateMachine::ClassID)
-			return CreateEmptyObject<FishEditor::Animations::AnimatorStateMachine>();
-		else if (classID == RenderSettings::ClassID)
-			return CreateEmptyObject<RenderSettings>();
-		else
+		Object* ret = nullptr;
+		switch(classID)
 		{
-			LogWarning("Unknown class ID");
+			case GameObject::ClassID:
+				ret = CreateEmptyObject<GameObject>(); break;
+			case Transform::ClassID:
+				ret = CreateEmptyObject<Transform>(); break;
+			case Camera::ClassID:
+				ret = CreateEmptyObject<Camera>(); break;
+			case Light::ClassID:
+				ret = CreateEmptyObject<Light>(); break;
+			case RectTransform::ClassID:
+				ret = CreateEmptyObject<RectTransform>(); break;
+			case MeshFilter::ClassID:
+				ret = CreateEmptyObject<MeshFilter>(); break;
+			case MeshRenderer::ClassID:
+				ret = CreateEmptyObject<MeshRenderer>(); break;
+			case SkinnedMeshRenderer::ClassID:
+				ret = CreateEmptyObject<SkinnedMeshRenderer>(); break;
+			case BoxCollider::ClassID:
+				ret = CreateEmptyObject<BoxCollider>(); break;
+			case SphereCollider::ClassID:
+				ret = CreateEmptyObject<SphereCollider>(); break;
+			case Rigidbody::ClassID:
+				ret = CreateEmptyObject<Rigidbody>(); break;
+			case Animation::ClassID:
+				ret = CreateEmptyObject<Animation>(); break;
+			case Animator::ClassID:
+				ret = CreateEmptyObject<Animator>(); break;
+//			case Script::ClassID:
+//				ret = CreateEmptyObject<Script>(); break;
+			case FishEditor::Animations::AnimatorStateTransition::ClassID:
+				ret = CreateEmptyObject<FishEditor::Animations::AnimatorStateTransition>(); break;
+			case FishEditor::Animations::AnimatorState::ClassID:
+				ret = CreateEmptyObject<FishEditor::Animations::AnimatorState>(); break;
+			case FishEditor::Animations::AnimatorController::ClassID:
+				ret = CreateEmptyObject<FishEditor::Animations::AnimatorController>(); break;
+			case FishEditor::Animations::AnimatorStateMachine::ClassID:
+				ret = CreateEmptyObject<FishEditor::Animations::AnimatorStateMachine>(); break;
+			case RenderSettings::ClassID:
+				ret = CreateEmptyObject<RenderSettings>(); break;
+			default:
+				LogWarning(Format("Unknown class ID: {}[{}]", classID, GetNameByClassID(classID)));
 		}
-		return nullptr;
+		return ret;
 	}
 }

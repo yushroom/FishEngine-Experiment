@@ -101,10 +101,8 @@ namespace FishEngine
 			return s_Objects[T::ClassID];
 		}
 		
-		static const std::unordered_set<Object*>& FindObjectsOfType(int classID)
-		{
-			return s_Objects[classID];
-		}
+		static std::vector<Object*>
+		FindObjectsOfType(int classID);
 
 		static const std::unordered_map<int, std::unordered_set<Object*>>& GetAllObjects()
 		{

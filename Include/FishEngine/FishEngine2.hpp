@@ -5,6 +5,7 @@
 #include <FishEngine/Transform.hpp>
 #include <FishEngine/Prefab.hpp>
 #include <FishEngine/RectTransform.hpp>
+#include <FishEngine/Script.hpp>
 #include <FishEngine/Component/MeshFilter.hpp>
 #include <FishEngine/Component/MeshRenderer.hpp>
 #include <FishEngine/Component/SkinnedMeshRenderer.hpp>

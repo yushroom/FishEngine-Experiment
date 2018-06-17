@@ -63,8 +63,9 @@ namespace FishEngine
 //		printf("~GameObject %s, %d\n", m_Name.c_str(), GetInstanceID());
 		for (auto comp : m_Component)
 		{
-			if (comp->GetClassID() != Script::ClassID)
-				delete comp;
+//			if (comp->GetClassID() != Script::ClassID)
+//				delete comp;
+			delete comp;
 		}
 		if (this->m_PrefabInternal != nullptr)
 		{

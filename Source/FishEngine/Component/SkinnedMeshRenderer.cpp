@@ -100,7 +100,7 @@ void RetargetAnimation(Avatar* modelAvatar, Avatar* animationAvatar, Matrix4x4 o
 		outBindPoses[i] = retargetedAccumBindPose[i].inverse();
 	}
 	
-	puts("here");
+//	puts("here");
 }
 
 void FishEngine::SkinnedMeshRenderer::SetOverrideAvatar(Avatar* avatar)
@@ -125,9 +125,9 @@ void FishEngine::SkinnedMeshRenderer::SetOverrideAvatar(Avatar* avatar)
 		{
 			int id = static_cast<int>(boneId);
 			m_BindPoses[i] = bindPoses[id];
-			auto& a = m_Mesh->m_bindposes[i];
-			auto& b = bindPoses[id];
-			puts("here");
+//			auto& a = m_Mesh->m_bindposes[i];
+//			auto& b = bindPoses[id];
+//			puts("here");
 		}
 		else
 		{
